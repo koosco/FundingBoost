@@ -46,12 +46,26 @@ class ItemQueryRepositoryTest {
     }
 
     @Test
-    void findAllItems() {
+    void givenItems_whenFindAllItems_thenReturnDtos() {
         // given
         PageRequest pageable = PageRequest.of(0, 10);
         // when
         GetItemListResponseDto dto = itemQueryRepository.getItems(pageable);
         // then
         assertThat(dto.getItems()).hasSize(3);
+    }
+
+    @Test
+    void givenNoItems_whenFindAllItems_thenReturnEmptyItemsDto() {
+        // given
+        em.createQuery("delete from Option").executeUpdate();
+        em.createQuery("delete from Item").executeUpdate();
+        em.flush();
+
+        PageRequest pageable = PageRequest.of(1, 10);
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getItems(pageable);
+        // then
+        assertThat(dto.getItems()).isEmpty();
     }
 }
