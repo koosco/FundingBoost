@@ -1,7 +1,22 @@
 spring:
+  application:
+    name: orbit
+  profiles:
+    active: dev
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/fundingboost}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:password}
+  jpa:
+    properties:
+      format_sql: true
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate:
+        default_batch_fetch_size: 10
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
   data:
-    mongodb:
-      uri: mongodb://root:password@localhost:27017
-      database: test
-      username: root
-      password: password
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
