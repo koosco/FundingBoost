@@ -11,6 +11,8 @@ import practice.fundingboost2.common.exception.ErrorCode;
 @NoArgsConstructor
 public class Point {
 
+    public final static Point ZERO = new Point(0);
+
     private int point;
 
     public Point(int point) {

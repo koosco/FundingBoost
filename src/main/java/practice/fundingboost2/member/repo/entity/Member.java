@@ -7,10 +7,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @Entity
+@ToString
 @Table(name = "member")
+@NoArgsConstructor
 public class Member {
 
     @Id
@@ -25,4 +29,14 @@ public class Member {
 
     @Embedded
     private Point point;
+
+    private String phoneNumber;
+
+    public Member(String email, String nickname, String imageUrl, String phoneNumber) {
+        this.email = email;
+        this.nickname = nickname;
+        this.imageUrl = imageUrl;
+        this.phoneNumber = phoneNumber;
+        this.point = Point.ZERO;
+    }
 }
