@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import practice.fundingboost2.member.repo.entity.Member;
 
 @Getter
 @Entity
@@ -58,5 +59,13 @@ public class Item {
         this.category = category;
         this.reviewCount = reviewCount;
         this.likeCount = likeCount;
+    }
+
+    public void mark() {
+        this.likeCount++;
+    }
+
+    public void unmark() {
+        this.likeCount--;
     }
 }

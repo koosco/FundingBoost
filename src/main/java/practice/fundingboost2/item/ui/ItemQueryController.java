@@ -19,5 +19,4 @@ public class ItemQueryController {
     public GetItemListResponseDto getItems(Pageable pageable) {
         return itemQueryRepository.getItems(pageable);
     }
-
 }
