@@ -5,8 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -32,12 +36,27 @@ public class Item {
     @Column(name = "item_image_url")
     private String imageUrl;
 
-    @Column(name = "brand_name", length = 100)
-    private String brandName;
+    @Column(name = "brand", length = 100)
+    private String brand;
 
     @Column(name = "category", length = 100)
     private String category;
 
-    @Column(name = "option_name", length = 100)
-    private String optionName;
+    private int reviewCount;
+
+    private int likeCount;
+
+    @OneToMany(mappedBy = "item")
+    private List<Option> options = new ArrayList<>();
+
+    public Item(String name, int price, String imageUrl, String brand, String category, int reviewCount,
+        int likeCount) {
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.brand = brand;
+        this.category = category;
+        this.reviewCount = reviewCount;
+        this.likeCount = likeCount;
+    }
 }
