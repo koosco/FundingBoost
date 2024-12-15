@@ -14,7 +14,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+  security:
+    secret: ${JWT_SECRET}
+    token-validity-time: ${JWT_TOKEN_VALIDITY_TIME}
