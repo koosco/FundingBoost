@@ -2,7 +2,7 @@ package practice.fundingboost2.auth.app;
 
 import java.util.List;
 import org.springframework.stereotype.Component;
-import practice.fundingboost2.auth.dao.entity.AuthMember;
+import practice.fundingboost2.auth.repo.entity.AuthMember;
 
 @Component
 public class AuthValidator {

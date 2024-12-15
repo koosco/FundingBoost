@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import practice.fundingboost2.auth.dao.entity.AuthMember;
+import practice.fundingboost2.auth.repo.entity.AuthMember;
 
 public class CustomUserDetails implements UserDetails {
 

@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import practice.fundingboost2.auth.dao.AuthMemberRepository;
-import practice.fundingboost2.auth.dao.entity.AuthMember;
+import practice.fundingboost2.auth.repo.AuthMemberRepository;
+import practice.fundingboost2.auth.repo.entity.AuthMember;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
 

@@ -1,4 +1,4 @@
-package practice.fundingboost2.auth.dao.entity;
+package practice.fundingboost2.auth.repo.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
