@@ -48,12 +48,10 @@ class ItemQueryRepositoryTest {
     @Test
     void findAllItems() {
         // given
-        PageRequest pageable = PageRequest.of(0, 1);
+        PageRequest pageable = PageRequest.of(0, 10);
         // when
         GetItemListResponseDto dto = itemQueryRepository.getItems(pageable);
         // then
         assertThat(dto.getItems()).hasSize(3);
     }
-
-
 }

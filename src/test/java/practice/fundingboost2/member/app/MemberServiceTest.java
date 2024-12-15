@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.member.app.dto.GetMemberResponseDto;
+import practice.fundingboost2.member.app.dto.UpdateMemberRequestDto;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @SpringBootTest
@@ -52,5 +53,35 @@ class MemberServiceTest {
         // when
         // then
         assertThrows(CommonException.class, () -> memberService.getMember(2L));
+    }
+
+    @Test
+    void givenCreatedMember_whenNewNickname_thenUpdateNickname() {
+        // given
+        UpdateMemberRequestDto dto = new UpdateMemberRequestDto("newNickname", null, null);
+        // when
+        GetMemberResponseDto updateDto = memberService.updateMember(member.getId(), dto);
+        // then
+        assertThat(updateDto.nickname()).isEqualTo("newNickname");
+    }
+
+    @Test
+    void givenCreatedMember_whenNewImageUrl_thenUpdateImageUrl() {
+        // given
+        UpdateMemberRequestDto dto = new UpdateMemberRequestDto(null, "newImageUrl", null);
+        // when
+        GetMemberResponseDto updateDto = memberService.updateMember(member.getId(), dto);
+        // then
+        assertThat(updateDto.imageUrl()).isEqualTo("newImageUrl");
+    }
+
+    @Test
+    void givenCreatedMember_whenNewPhoneNumber_thenUpdatePhoneNumber() {
+        // given
+        UpdateMemberRequestDto dto = new UpdateMemberRequestDto(null, null, "newPhoneNumber");
+        // when
+        GetMemberResponseDto updateDto = memberService.updateMember(member.getId(), dto);
+        // then
+        assertThat(updateDto.phoneNumber()).isEqualTo("newPhoneNumber");
     }
 }
