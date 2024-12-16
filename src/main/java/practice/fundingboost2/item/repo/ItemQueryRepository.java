@@ -7,4 +7,5 @@ public interface ItemQueryRepository {
 
     GetItemListResponseDto getItems(Pageable pageable);
 
+    GetItemListResponseDto getLikedItems(Long memberId, Pageable pageable);
 }

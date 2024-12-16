@@ -5,15 +5,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.item.app.dto.GetItemListResponseDto;
+import practice.fundingboost2.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.repo.entity.Item;
 import practice.fundingboost2.item.repo.entity.Option;
+import practice.fundingboost2.member.repo.entity.Member;
 
 @Transactional
 @SpringBootTest
@@ -25,22 +30,41 @@ class ItemQueryRepositoryTest {
     @PersistenceContext
     EntityManager em;
 
+    Member member;
+    List<Item> items = new ArrayList<>();
+    List<Bookmark> bookmarks = new ArrayList<>();
+    @Autowired
+    private PageableHandlerMethodArgumentResolver pageableResolver;
+
+    final int ITEM_SIZE = 12;
+
     @BeforeEach
     void init() {
-        Item item1 = new Item("item1", 1000, "https://koosco.tistory.com", "brand1", "category1", 0, 0);
-        em.persist(item1);
-        Option option1 = new Option(item1, "option1", 10);
-        em.persist(option1);
+        member = new Member("member1", "password", "nickname", "email");
+        em.persist(member);
 
-        Item item2 = new Item("item2", 2000, "https://koosco.tistory.com", "brand2", "category2", 5, 10);
-        em.persist(item2);
-        Option option2 = new Option(item2, "option2", 20);
-        em.persist(option2);
+        for (int i = 1; i <= ITEM_SIZE; i++) {
+            Item item = new Item(
+                "item" + i,
+                i * 1000,
+                "https://koosco.tistory.com",
+                "brand" + i,
+                "category" + i,
+                (i % 3) * 5,  // popularity
+                (i % 3) * 10  // stock count
+            );
+            em.persist(item);
+            items.add(item);
 
-        Item item3 = new Item("item3", 3000, "https://koosco.tistory.com", "brand3", "category3", 15, 30);
-        em.persist(item3);
-        Option option3 = new Option(item3, "option3", 30);
-        em.persist(option3);
+            Option option = new Option(item, "option" + i, i * 10);
+            em.persist(option);
+        }
+
+        for (Item item : items) {
+            Bookmark bookmark = new Bookmark(member.getId(), item.getId());
+            em.persist(bookmark);
+            bookmarks.add(bookmark);
+        }
 
         em.flush();
     }
@@ -52,7 +76,7 @@ class ItemQueryRepositoryTest {
         // when
         GetItemListResponseDto dto = itemQueryRepository.getItems(pageable);
         // then
-        assertThat(dto.getItems()).hasSize(3);
+        assertThat(dto.getItems()).hasSize(10);
     }
 
     @Test
@@ -67,5 +91,48 @@ class ItemQueryRepositoryTest {
         GetItemListResponseDto dto = itemQueryRepository.getItems(pageable);
         // then
         assertThat(dto.getItems()).isEmpty();
+    }
+    
+    @Test
+    void givenItems_whenMemberIdAndPageRequest_thenReturn10Dtos() {
+        // given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
+
+        // then
+        assertThat(dto.getItems()).hasSize(10);
+    }
+
+    @Test
+    void givenItems_whenMemberIdNotFound_thenReturnEmptyDtos() {
+        // given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(2L, pageRequest);
+
+        // then
+        assertThat(dto.getItems()).isEmpty();
+    }
+
+    @Test
+    void givenItems_whenPageIsOne_thenReturnSecondPageItemsDto() {
+        // given
+        PageRequest pageRequest = PageRequest.of(1, 10);
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
+        // then
+        assertThat(dto.getItems()).hasSize(2);
+    }
+
+    @Test
+    void givenItems_whenPageSizeIsOne_thenReturnOneDtoItem() {
+        // given
+        PageRequest pageRequest = PageRequest.of(0, 1);
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
+        // then
+        assertThat(dto.getItems()).hasSize(1);
     }
 }
