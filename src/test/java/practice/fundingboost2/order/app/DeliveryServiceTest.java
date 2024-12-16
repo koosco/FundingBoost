@@ -12,8 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.member.repo.entity.Member;
+import practice.fundingboost2.order.app.dto.CreateDeliveryRequestDto;
 import practice.fundingboost2.order.app.dto.GetDeliveryListResponseDto;
 import practice.fundingboost2.order.repo.entity.Delivery;
 
@@ -58,6 +60,8 @@ class DeliveryServiceTest {
     void givenNoDeliveries_whenCalled_thenReturnEmptyDto() {
         // given
         Member member2 = new Member("member2", "password", "nickname", "email");
+        em.persist(member2);
+        em.flush();
 
         // when
         GetDeliveryListResponseDto dto = deliveryService.getDeliveries(member2.getId());
@@ -72,5 +76,25 @@ class DeliveryServiceTest {
         // when
         // then
         assertThrows(CommonException.class, () -> deliveryService.getDeliveries(1L));
+    }
+
+    @Test
+    void givenCreateMember_whenCreateDtoGiven_thenCreateNewDelivery() {
+        // given
+        Member member2 = new Member("member2", "password", "nickname", "email");
+        em.persist(member2);
+        em.flush();
+        CreateDeliveryRequestDto dto = new CreateDeliveryRequestDto("receiver", "address",
+            "010-1234-5678");
+        // when
+        CommonSuccessDto responseDto = deliveryService.createDelivery(member2.getId(), dto);
+        Delivery delivery = em.createQuery("select d from Delivery d join Member m on d.member.id = m.id where m.id = :memberId",
+                Delivery.class)
+            .setParameter("memberId", member2.getId())
+            .getSingleResult();
+
+        // then
+        assertThat(responseDto.isSuccess()).isTrue();
+        assertThat(delivery.getMember()).isEqualTo(member2);
     }
 }
