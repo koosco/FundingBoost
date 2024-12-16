@@ -22,6 +22,11 @@ public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final MemberService memberService;
 
+    public Delivery findDelivery(Long deliveryId) {
+        return deliveryRepository.findById(deliveryId)
+            .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_DELIVERY));
+    }
+
     @Transactional(readOnly = true)
     public GetDeliveryListResponseDto getDeliveries(Long memberId) {
         if (!memberService.existsById(memberId)) {
@@ -38,6 +43,16 @@ public class DeliveryService {
 
         Delivery delivery = new Delivery(dto.userName(), dto.address(), dto.phoneNumber(), member);
         deliveryRepository.save(delivery);
+
+        return CommonSuccessDto.fromEntity(true);
+    }
+
+    public CommonSuccessDto deleteDelivery(Long memberId, Long deliveryId) {
+        Member member = memberService.findMember(memberId);
+        Delivery delivery = findDelivery(deliveryId);
+
+        delivery.validateMember(member);
+        deliveryRepository.delete(delivery);
 
         return CommonSuccessDto.fromEntity(true);
     }

@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import practice.fundingboost2.common.exception.CommonException;
+import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @Getter
@@ -37,5 +39,11 @@ public class Delivery {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.member = member;
+    }
+
+    public void validateMember(Member member) {
+        if (!this.member.equals(member)) {
+            throw new CommonException(ErrorCode.ACCESS_DENIED);
+        }
     }
 }

@@ -2,8 +2,10 @@ package practice.fundingboost2.order.app;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.util.AssertionErrors.assertNull;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,5 +98,34 @@ class DeliveryServiceTest {
         // then
         assertThat(responseDto.isSuccess()).isTrue();
         assertThat(delivery.getMember()).isEqualTo(member2);
+    }
+
+    @Test
+    void givenDelivery_whenDeliveryDelete_thenDeleteDelivery() {
+        // given
+        Delivery delivery = deliveries.getFirst();
+
+        // when
+        CommonSuccessDto responseDto = deliveryService.deleteDelivery(member.getId(), delivery.getId());
+
+        // then
+        assertThat(responseDto.isSuccess()).isTrue();
+        assertThrows(NoResultException.class,
+            () -> em.createQuery("select d from Delivery d where d.id=:deliveryId", Delivery.class)
+                .setParameter("deliveryId", delivery.getId())
+                .getSingleResult());
+    }
+
+    @Test
+    void givenDelivery_whenOtherCall_thenThrowException() {
+        // given
+        Member other = new Member("member2", "password", "nickname", "email");
+        em.persist(other);
+        em.flush();
+        Delivery delivery = deliveries.getFirst();
+
+        // when
+        // then
+        assertThrows(CommonException.class, () -> deliveryService.deleteDelivery(other.getId(), delivery.getId()));
     }
 }
