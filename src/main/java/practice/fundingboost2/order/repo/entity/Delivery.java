@@ -11,12 +11,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @Getter
 @Entity
+@DynamicUpdate
 @NoArgsConstructor
 public class Delivery {
 
@@ -44,6 +46,18 @@ public class Delivery {
     public void validateMember(Member member) {
         if (!this.member.equals(member)) {
             throw new CommonException(ErrorCode.ACCESS_DENIED);
+        }
+    }
+
+    public void update(String username, String address, String phoneNumber) {
+        if (username != null) {
+            this.userName = username;
+        }
+        if (address != null) {
+            this.address = address;
+        }
+        if (phoneNumber != null) {
+            this.phoneNumber = phoneNumber;
         }
     }
 }

@@ -14,8 +14,8 @@ import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.dto.ResponseDto;
 import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.order.app.DeliveryService;
-import practice.fundingboost2.order.app.dto.CreateDeliveryRequestDto;
-import practice.fundingboost2.order.app.dto.DeliveryDto;
+import practice.fundingboost2.order.app.dto.DeliveryRequestDto;
+import practice.fundingboost2.order.app.dto.DeliveryResponseDto;
 import practice.fundingboost2.order.app.dto.GetDeliveryListResponseDto;
 
 @RestController
@@ -31,12 +31,20 @@ public class DeliveryController {
     }
 
     @PostMapping
-    public ResponseDto<CommonSuccessDto> createDelivery(@Auth Long memberId, @Valid @RequestBody CreateDeliveryRequestDto dto) {
+    public ResponseDto<CommonSuccessDto> createDelivery(@Auth Long memberId,
+        @Valid @RequestBody DeliveryRequestDto dto) {
         return ResponseDto.ok(deliveryService.createDelivery(memberId, dto));
     }
 
     @DeleteMapping("/{delivery_id}")
-    public ResponseDto<CommonSuccessDto> deleteDelivery(@Auth Long memberId, @PathVariable("delivery_id") Long deliveryId) {
+    public ResponseDto<CommonSuccessDto> deleteDelivery(@Auth Long memberId,
+        @PathVariable("delivery_id") Long deliveryId) {
         return ResponseDto.ok(deliveryService.deleteDelivery(memberId, deliveryId));
+    }
+
+    @PatchMapping("/{delivery_id}")
+    public ResponseDto<DeliveryResponseDto> updateDelivery(@Auth Long memberId,
+        @PathVariable("delivery_id") Long deliveryId, @Valid @RequestBody DeliveryRequestDto dto) {
+        return ResponseDto.ok(deliveryService.updateDelivery(memberId, deliveryId, dto));
     }
 }

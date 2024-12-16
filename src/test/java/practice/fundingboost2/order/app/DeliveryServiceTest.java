@@ -2,7 +2,6 @@ package practice.fundingboost2.order.app;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.test.util.AssertionErrors.assertNull;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -17,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.member.repo.entity.Member;
-import practice.fundingboost2.order.app.dto.CreateDeliveryRequestDto;
+import practice.fundingboost2.order.app.dto.DeliveryRequestDto;
+import practice.fundingboost2.order.app.dto.DeliveryResponseDto;
 import practice.fundingboost2.order.app.dto.GetDeliveryListResponseDto;
 import practice.fundingboost2.order.repo.entity.Delivery;
 
@@ -86,7 +86,7 @@ class DeliveryServiceTest {
         Member member2 = new Member("member2", "password", "nickname", "email");
         em.persist(member2);
         em.flush();
-        CreateDeliveryRequestDto dto = new CreateDeliveryRequestDto("receiver", "address",
+        DeliveryRequestDto dto = new DeliveryRequestDto("receiver", "address",
             "010-1234-5678");
         // when
         CommonSuccessDto responseDto = deliveryService.createDelivery(member2.getId(), dto);
@@ -127,5 +127,93 @@ class DeliveryServiceTest {
         // when
         // then
         assertThrows(CommonException.class, () -> deliveryService.deleteDelivery(other.getId(), delivery.getId()));
+    }
+
+    @Test
+    void givenDelivery_whenDtoGiven_thenUpdate() {
+        // given
+        Delivery delivery = deliveries.getFirst();
+        DeliveryRequestDto dto = new DeliveryRequestDto("newReceiver", "newAddress", "010-1234-5678");
+        // when
+        DeliveryResponseDto responseDto = deliveryService.updateDelivery(member.getId(), delivery.getId(), dto);
+        // then
+        assertThat(responseDto.deliveryId()).isEqualTo(delivery.getId());
+        assertThat(responseDto.userName()).isEqualTo(dto.userName());
+        assertThat(responseDto.address()).isEqualTo(dto.address());
+        assertThat(responseDto.phoneNumber()).isEqualTo(dto.phoneNumber());
+    }
+
+    @Test
+    void givenDelivery_whenUsernameGivenElseNull_thenUpdateUsername() {
+        // given
+        Delivery delivery = deliveries.getFirst();
+        DeliveryRequestDto dto = new DeliveryRequestDto("newReceiver", null, null);
+
+        // when
+        DeliveryResponseDto responseDto = deliveryService.updateDelivery(member.getId(), delivery.getId(), dto);
+        // then
+        assertThat(responseDto.deliveryId()).isEqualTo(delivery.getId());
+        assertThat(responseDto.userName()).isEqualTo(dto.userName());
+        assertThat(responseDto.address()).isEqualTo(delivery.getAddress());
+        assertThat(responseDto.phoneNumber()).isEqualTo(delivery.getPhoneNumber());
+    }
+
+    @Test
+    void givenDelivery_whenAddressGiven_thenUpdateAddress() {
+        // given
+        Delivery delivery = deliveries.getFirst();
+        DeliveryRequestDto dto = new DeliveryRequestDto(null, "newAddress", null);
+
+        // when
+        DeliveryResponseDto responseDto = deliveryService.updateDelivery(member.getId(), delivery.getId(), dto);
+        // then
+        assertThat(responseDto.deliveryId()).isEqualTo(delivery.getId());
+        assertThat(responseDto.userName()).isEqualTo(delivery.getUserName());
+        assertThat(responseDto.address()).isEqualTo(dto.address());
+        assertThat(responseDto.phoneNumber()).isEqualTo(delivery.getPhoneNumber());
+    }
+
+    @Test
+    void givenDelivery_whenPhoneNumber_thenUpdatePhoneNumber() {
+        // given
+        Delivery delivery = deliveries.getFirst();
+        DeliveryRequestDto dto = new DeliveryRequestDto(null, null, "010-1234-5678");
+
+        // when
+        DeliveryResponseDto responseDto = deliveryService.updateDelivery(member.getId(), delivery.getId(), dto);
+        // then
+        assertThat(responseDto.deliveryId()).isEqualTo(delivery.getId());
+        assertThat(responseDto.userName()).isEqualTo(delivery.getUserName());
+        assertThat(responseDto.address()).isEqualTo(delivery.getAddress());
+        assertThat(responseDto.phoneNumber()).isEqualTo(dto.phoneNumber());
+    }
+
+    @Test
+    void givenDelivery_whenEmptyDtoGiven_thenNoUpdate() {
+        // given
+        Delivery delivery = deliveries.getFirst();
+        DeliveryRequestDto dto = new DeliveryRequestDto(null, null, null);
+
+        // when
+        DeliveryResponseDto responseDto = deliveryService.updateDelivery(member.getId(), delivery.getId(), dto);
+        // then
+        assertThat(responseDto.deliveryId()).isEqualTo(delivery.getId());
+        assertThat(responseDto.userName()).isEqualTo(delivery.getUserName());
+        assertThat(responseDto.address()).isEqualTo(delivery.getAddress());
+        assertThat(responseDto.phoneNumber()).isEqualTo(delivery.getPhoneNumber());
+    }
+
+    @Test
+    void givenDelivery_whenOtherUpdate_thenThrowException() {
+        // given
+        Member other = new Member("member2", "password", "nickname", "email");
+        em.persist(other);
+        em.flush();
+        Delivery delivery = deliveries.getFirst();
+        DeliveryRequestDto dto = new DeliveryRequestDto("receiver", "address", "010-1234-5678");
+
+        // when
+        // then
+        assertThrows(CommonException.class, () -> deliveryService.updateDelivery(other.getId(), delivery.getId(), dto));
     }
 }
