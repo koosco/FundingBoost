@@ -1,12 +1,16 @@
 spring:
   application:
-    name: orbit
-  profiles:
-    active: dev
+    name: fundingboost
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/fundingboost}
     username: ${DB_USER:root}
     password: ${DB_PASSWORD:password}
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        size-parameter: size
+        page-parameter: size
   jpa:
     properties:
       format_sql: true
