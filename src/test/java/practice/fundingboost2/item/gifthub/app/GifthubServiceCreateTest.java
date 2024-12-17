@@ -4,7 +4,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +21,7 @@ import practice.fundingboost2.member.repo.entity.Member;
 
 @Transactional
 @SpringBootTest
-class GifthubServiceTest {
+class GifthubServiceCreateTest {
 
     @Autowired
     GifthubService gifthubService;
@@ -33,6 +32,8 @@ class GifthubServiceTest {
     Item item;
 
     Member member;
+
+    Option option;
 
     @BeforeEach
     void init() {
@@ -46,6 +47,7 @@ class GifthubServiceTest {
             Option option = new Option(item, optionName, optionPrice);
             em.persist(option);
         }
+        option = item.getOptions().getFirst();
 
         member = new Member("member", "name", "imageUrl", "phone");
         em.persist(member);
@@ -55,7 +57,6 @@ class GifthubServiceTest {
     @Test
     void givenNoGifthub_whenCreateGifthub_thenQuantityMustBeOne() {
         // given
-        Option option = item.getOptions().getFirst();
         // when
         CommonSuccessDto dto = gifthubService.addToCart(member.getId(), item.getId(), option.getId());
         Gifthub findGifthub = em.createQuery(
@@ -74,7 +75,6 @@ class GifthubServiceTest {
     @Test
     void givenOneGifthub_whenCreateGifthub_thenQuantityMustBeTwo() {
         // given
-        Option option = item.getOptions().getFirst();
         gifthubService.addToCart(member.getId(), item.getId(), option.getId());
 
         // when
@@ -94,7 +94,6 @@ class GifthubServiceTest {
     @Test
     void givenMyGifthub_whenOtherCreateGifthub_thenQuantityMustBeOne() {
         // given
-        Option option = item.getOptions().getFirst();
         Member other = new Member("member2", "name", "imageUrl", "phone");
         em.persist(other);
         em.flush();
@@ -121,28 +120,5 @@ class GifthubServiceTest {
         // when
         // then
         assertThrows(CommonException.class, () -> gifthubService.addToCart(member.getId(), notExistsItemId, 1L));
-    }
-
-    @Test
-    void givenGifthub_whenDeleteGifthub_thenMustSuccess() {
-        // given
-        Option option = item.getOptions().getFirst();
-        gifthubService.addToCart(member.getId(), item.getId(), option.getId());
-        // when
-        gifthubService.deleteGifthub(member.getId(), item.getId(), option.getId());
-        // then
-        assertThrows(NoResultException.class, () -> em.createQuery("select g from Gifthub g where g.id=:id", Gifthub.class)
-            .setParameter("id", new GifthubId(member.getId(), item.getId(), option.getId()))
-            .getSingleResult());
-    }
-
-    @Test
-    void givenNotExistsItem_whenDeleteGifthub_thenThrowException() {
-        // given
-        Long notExistsItemId = 100000000000000L;
-
-        // when
-        // then
-        assertThrows(CommonException.class, () -> gifthubService.deleteGifthub(member.getId(), notExistsItemId, 1L));
     }
 }
