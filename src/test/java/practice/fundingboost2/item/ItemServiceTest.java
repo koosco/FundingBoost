@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.item.app.ItemService;
-import practice.fundingboost2.item.item.repo.BookmarkRepository;
+import practice.fundingboost2.item.item.repo.jpa.BookmarkRepository;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.member.repo.entity.Member;

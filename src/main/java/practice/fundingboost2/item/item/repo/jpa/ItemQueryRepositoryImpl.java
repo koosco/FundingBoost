@@ -1,7 +1,8 @@
-package practice.fundingboost2.item.item.repo;
+package practice.fundingboost2.item.item.repo.jpa;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -47,5 +48,14 @@ public class ItemQueryRepositoryImpl implements ItemQueryRepository {
             .fetch();
 
         return new GetItemListResponseDto(items);
+    }
+
+    @Override
+    public Optional<Item> findItemByIdWithOptions(Long itemId) {
+        return Optional.ofNullable(queryFactory
+            .selectFrom(item)
+            .join(item.options, option).fetchJoin()
+            .where(item.id.eq(itemId))
+            .fetchOne());
     }
 }

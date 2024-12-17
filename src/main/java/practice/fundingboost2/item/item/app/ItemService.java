@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
-import practice.fundingboost2.common.exception.CommonException;
-import practice.fundingboost2.common.exception.ErrorCode;
-import practice.fundingboost2.item.item.repo.BookmarkRepository;
+import practice.fundingboost2.item.item.repo.jpa.BookmarkRepository;
 import practice.fundingboost2.item.item.repo.ItemRepository;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.BookmarkId;
@@ -24,10 +22,12 @@ public class ItemService {
         return itemRepository.existsById(itemId);
     }
 
-    @Transactional(readOnly = true)
     public Item findItem(Long id) {
-        return itemRepository.findById(id)
-            .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_ITEM));
+        return itemRepository.findById(id);
+    }
+
+    public Item findItemWithOptions(Long itemId) {
+        return itemRepository.findItemByIdWithOptions(itemId);
     }
 
     public CommonSuccessDto likeItem(Long memberId, Long itemId) {

@@ -15,7 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.item.item.app.dto.GetItemListResponseDto;
-import practice.fundingboost2.item.item.repo.ItemQueryRepository;
+import practice.fundingboost2.item.item.repo.jpa.ItemQueryRepository;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;

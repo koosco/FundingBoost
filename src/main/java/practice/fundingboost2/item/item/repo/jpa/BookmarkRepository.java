@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.item.repo;
+package practice.fundingboost2.item.item.repo.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
