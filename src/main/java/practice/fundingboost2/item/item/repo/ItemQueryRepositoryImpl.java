@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import practice.fundingboost2.item.item.app.dto.GetItemListResponseDto;
 import practice.fundingboost2.item.item.repo.entity.Item;
-import practice.fundingboost2.item.repo.entity.QBookmark;
-import practice.fundingboost2.item.repo.entity.QItem;
-import practice.fundingboost2.item.repo.entity.QOption;
+import practice.fundingboost2.item.item.repo.entity.QBookmark;
+import practice.fundingboost2.item.item.repo.entity.QItem;
+import practice.fundingboost2.item.item.repo.entity.QOption;
 
 @Repository
 @RequiredArgsConstructor

@@ -20,6 +20,10 @@ public class ItemService {
     private final BookmarkRepository bookmarkRepository;
     private final ItemRepository itemRepository;
 
+    public boolean checkItem(Long itemId) {
+        return itemRepository.existsById(itemId);
+    }
+
     @Transactional(readOnly = true)
     public Item findItem(Long id) {
         return itemRepository.findById(id)
