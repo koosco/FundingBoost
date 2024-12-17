@@ -15,11 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
+import practice.fundingboost2.item.order.app.DeliveryService;
 import practice.fundingboost2.member.repo.entity.Member;
-import practice.fundingboost2.order.app.dto.DeliveryRequestDto;
-import practice.fundingboost2.order.app.dto.DeliveryResponseDto;
-import practice.fundingboost2.order.app.dto.GetDeliveryListResponseDto;
-import practice.fundingboost2.order.repo.entity.Delivery;
+import practice.fundingboost2.item.order.app.dto.DeliveryRequestDto;
+import practice.fundingboost2.item.order.app.dto.DeliveryResponseDto;
+import practice.fundingboost2.item.order.app.dto.GetDeliveryListResponseDto;
+import practice.fundingboost2.item.order.repo.entity.Delivery;
 
 @Transactional
 @SpringBootTest
