@@ -6,7 +6,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import practice.fundingboost2.item.item.app.dto.GetItemListResponseDto;
+import practice.fundingboost2.item.item.ui.dto.GetItemListResponseDto;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.QBookmark;
 import practice.fundingboost2.item.item.repo.entity.QItem;

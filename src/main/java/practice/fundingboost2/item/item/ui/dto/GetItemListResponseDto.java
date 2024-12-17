@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.item.app.dto;
+package practice.fundingboost2.item.item.ui.dto;
 
 import java.util.List;
 import lombok.Data;

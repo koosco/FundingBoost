@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.item.app.dto;
+package practice.fundingboost2.item.item.ui.dto;
 
 import lombok.Data;
 import practice.fundingboost2.item.item.repo.entity.Item;
