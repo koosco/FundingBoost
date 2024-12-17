@@ -1,4 +1,4 @@
-package practice.fundingboost2.item;
+package practice.fundingboost2.item.item.app;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
-import practice.fundingboost2.item.item.app.ItemService;
 import practice.fundingboost2.item.item.repo.jpa.BookmarkRepository;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
