@@ -54,11 +54,11 @@ public class GifthubServiceDeleteTest {
     }
 
     @Test
-    void givenGifthub_whenDeleteGifthub_thenMustSuccess() {
+    void givenGifthub_whenDeleteFromCart_thenMustSuccess() {
         // given
         gifthubService.addToCart(member.getId(), item.getId(), option.getId());
         // when
-        gifthubService.deleteGifthub(member.getId(), item.getId(), option.getId());
+        gifthubService.deleteFromCart(member.getId(), item.getId(), option.getId());
         // then
         assertThrows(NoResultException.class, () -> em.createQuery("select g from Gifthub g where g.id=:id", Gifthub.class)
             .setParameter("id", new GifthubId(member.getId(), item.getId(), option.getId()))
@@ -66,12 +66,12 @@ public class GifthubServiceDeleteTest {
     }
 
     @Test
-    void givenNotExistsItem_whenDeleteGifthub_thenThrowException() {
+    void givenNotExistsItem_whenDeleteFromCart_thenThrowException() {
         // given
         Long notExistsItemId = 100000000000000L;
 
         // when
         // then
-        assertThrows(CommonException.class, () -> gifthubService.deleteGifthub(member.getId(), notExistsItemId, 1L));
+        assertThrows(CommonException.class, () -> gifthubService.deleteFromCart(member.getId(), notExistsItemId, 1L));
     }
 }

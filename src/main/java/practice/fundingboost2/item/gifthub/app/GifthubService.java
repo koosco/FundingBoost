@@ -39,7 +39,7 @@ public class GifthubService {
         return CommonSuccessDto.fromEntity(true);
     }
 
-    public CommonSuccessDto deleteGifthub(Long memberId, Long itemId, Long optionId) {
+    public CommonSuccessDto deleteFromCart(Long memberId, Long itemId, Long optionId) {
         Gifthub cart = findCart(new GifthubId(memberId, itemId, optionId));
         gifthubRepository.delete(cart);
 

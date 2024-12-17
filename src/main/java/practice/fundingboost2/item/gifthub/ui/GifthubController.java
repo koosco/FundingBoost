@@ -29,7 +29,7 @@ public class GifthubController {
     @DeleteMapping("{item_id}/{option_id}")
     public ResponseDto<CommonSuccessDto> deleteGifthub(@Auth Long memberId, @PathVariable("item_id") Long itemId,
         @PathVariable("option_id") Long optionId) {
-        return ResponseDto.ok(gifthubService.deleteGifthub(memberId, itemId, optionId));
+        return ResponseDto.ok(gifthubService.deleteFromCart(memberId, itemId, optionId));
     }
 
     @PatchMapping("/{item_id}/{option_id}")
