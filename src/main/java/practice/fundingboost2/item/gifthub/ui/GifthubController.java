@@ -2,7 +2,6 @@ package practice.fundingboost2.item.gifthub.ui;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +12,6 @@ import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.dto.ResponseDto;
 import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.item.gifthub.app.GifthubService;
-import practice.fundingboost2.item.gifthub.ui.dto.GetGifthubResponseDto;
 
 @RestController
 @RequestMapping("/api/gifthub")

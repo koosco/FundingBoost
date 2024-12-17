@@ -10,6 +10,8 @@ import practice.fundingboost2.common.exception.ErrorCode;
 @Embeddable
 public class Quantity {
 
+    private static final Integer INITIAL_QUANTITY = 1;
+
     @ColumnDefault("1")
     private Integer quantity;
 
@@ -21,6 +23,6 @@ public class Quantity {
     }
 
     public Quantity() {
-        this(1);
+        this(INITIAL_QUANTITY);
     }
 }

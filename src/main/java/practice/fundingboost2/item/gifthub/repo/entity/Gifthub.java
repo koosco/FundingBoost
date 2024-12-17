@@ -5,7 +5,6 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import practice.fundingboost2.item.item.repo.entity.Item;
 
 @Entity
 @NoArgsConstructor
@@ -18,7 +17,7 @@ public class Gifthub {
     @Embedded
     private Quantity quantity;
 
-    public Gifthub(GifthubId id, Item item) {
+    public Gifthub(GifthubId id) {
         this.id = id;
         this.quantity = new Quantity();
     }

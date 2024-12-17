@@ -33,7 +33,7 @@ public class GifthubService {
             gifthubRepository.updateQuantityById(id);
             return CommonSuccessDto.fromEntity(true);
         }
-        Gifthub gifthub = new Gifthub(id, item);
+        Gifthub gifthub = new Gifthub(id);
         gifthubRepository.save(gifthub);
 
         return CommonSuccessDto.fromEntity(true);
