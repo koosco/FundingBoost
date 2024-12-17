@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.item.repo.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -45,8 +46,8 @@ public class Item {
 
     private int likeCount;
 
-    @OneToMany(mappedBy = "item")
-    private List<Option> options = new ArrayList<>();
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Option> options = new ArrayList<>();
 
     public Item(String name, int price, String imageUrl, String brand, String category, int reviewCount,
         int likeCount) {
