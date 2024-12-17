@@ -25,4 +25,8 @@ public class Price {
     public Price() {
         this(ZERO);
     }
+
+    public Price add(Price price) {
+        return new Price(this.price + price.price);
+    }
 }

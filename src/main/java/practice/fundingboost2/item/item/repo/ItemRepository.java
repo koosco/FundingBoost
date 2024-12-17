@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.item.repo;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import practice.fundingboost2.common.exception.CommonException;
@@ -27,5 +28,9 @@ public class ItemRepository {
     public Item findItemByIdWithOptions(Long itemId) {
         return itemQueryRepository.findItemByIdWithOptions(itemId)
             .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_ITEM));
+    }
+
+    public List<Item> findByIdIn(List<Long> ids) {
+        return itemRepository.findByIdIn(ids);
     }
 }

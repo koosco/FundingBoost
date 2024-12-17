@@ -72,4 +72,8 @@ public class Item {
     public Integer getPrice() {
         return price.getPrice();
     }
+
+    public Price getPriceEntity() {
+        return price;
+    }
 }

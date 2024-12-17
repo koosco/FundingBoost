@@ -46,7 +46,7 @@ public class Order {
 
     @Embedded
     @Column(nullable = false)
-    private Price price;
+    private Price totalPrice = new Price();
 
     @Embedded
     @Column(nullable = false)
@@ -55,4 +55,16 @@ public class Order {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus orderStatus = OrderStatus.PENDING_PAYMENT;
+
+    public Order(Member member, Item item, Delivery delivery, Quantity quantity) {
+        this.member = member;
+        this.item = item;
+        this.delivery = delivery;
+        this.totalPrice = totalPrice.add(item.getPriceEntity());
+        this.quantity = quantity;
+    }
+
+    public Order(Member member, Item item, Delivery delivery) {
+        this(member, item, delivery, new Quantity(1));
+    }
 }

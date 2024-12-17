@@ -1,14 +1,15 @@
 package practice.fundingboost2.item.item.app;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
-import practice.fundingboost2.item.item.repo.jpa.BookmarkRepository;
 import practice.fundingboost2.item.item.repo.ItemRepository;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.BookmarkId;
 import practice.fundingboost2.item.item.repo.entity.Item;
+import practice.fundingboost2.item.item.repo.jpa.BookmarkRepository;
 
 @Service
 @Transactional
@@ -18,8 +19,8 @@ public class ItemService {
     private final BookmarkRepository bookmarkRepository;
     private final ItemRepository itemRepository;
 
-    public boolean checkItem(Long itemId) {
-        return itemRepository.existsById(itemId);
+    public List<Item> findItemIn(List<Long> ids) {
+        return itemRepository.findByIdIn(ids);
     }
 
     public Item findItem(Long id) {
