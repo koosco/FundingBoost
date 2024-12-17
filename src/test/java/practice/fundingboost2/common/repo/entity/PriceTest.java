@@ -52,4 +52,37 @@ class PriceTest {
         // then
         assertThrows(CommonException.class, () -> new Price(Integer.MAX_VALUE + 1));
     }
+    
+    @Test
+    void givenTwoPrice_whenAdd_thenReturnAddedPrice() {
+        // given
+        Price price1 = new Price(10_000);
+        Price price2 = new Price(20_000);
+        // when
+        Price newPrice = price1.add(price2);
+        // then
+        assertThat(newPrice.getPrice()).isEqualTo(30_000);
+    }
+
+    @Test
+    void givenTwoPrice_whenPriceEquals_thenInstancesAreEqual() {
+        // given
+        Price price1 = new Price(10_000);
+        Price price2 = new Price(10_000);
+
+        // when
+        // then
+        assertThat(price1).isEqualTo(price2);
+    }
+
+    @Test
+    void givenTwoPrice_whenPriceDifferent_thenInstancesAreDifferent() {
+        // given
+        Price price1 = new Price(10_000);
+        Price price2 = new Price(20_000);
+
+        // when
+        // then
+        assertThat(price1).isNotEqualTo(price2);
+    }
 }
