@@ -1,6 +1,7 @@
 package practice.fundingboost2.item.gifthub.ui;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,12 @@ public class GifthubController {
     private final GifthubService gifthubService;
 
     @PostMapping("/item/{item_id}")
-    public ResponseDto<CommonSuccessDto> addItem(@Auth Long memberId, @PathVariable("item_id") Long itemId) {
+    public ResponseDto<CommonSuccessDto> addItemToCart(@Auth Long memberId, @PathVariable("item_id") Long itemId) {
         return ResponseDto.ok(gifthubService.addToCart(memberId, itemId));
+    }
+
+    @DeleteMapping("/{item_id}")
+    public ResponseDto<CommonSuccessDto> deleteGifthub(@Auth Long memberId, @PathVariable("item_id") Long itemId) {
+        return ResponseDto.ok(gifthubService.deleteGifthub(memberId, itemId));
     }
 }

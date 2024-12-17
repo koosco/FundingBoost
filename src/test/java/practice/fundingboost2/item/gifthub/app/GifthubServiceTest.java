@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.item.gifthub.repo.entity.Gifthub;
+import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.member.repo.entity.Member;
 
@@ -111,5 +113,27 @@ class GifthubServiceTest {
         // when
         // then
         assertThrows(CommonException.class, () -> gifthubService.addToCart(member.getId(), notExistsItemId));
+    }
+
+    @Test
+    void givenGifthub_whenDeleteGifthub_thenMustSuccess() {
+        // given
+        gifthubService.addToCart(member.getId(), item.getId());
+        // when
+        gifthubService.deleteGifthub(member.getId(), item.getId());
+        // then
+        assertThrows(NoResultException.class, () -> em.createQuery("select g from Gifthub g where g.id=:id", Gifthub.class)
+            .setParameter("id", new GifthubId(member.getId(), item.getId()))
+            .getSingleResult());
+    }
+
+    @Test
+    void givenNotExistsItem_whenDeleteGifthub_thenThrowException() {
+        // given
+        Long notExistsItemId = 100000000000000L;
+
+        // when
+        // then
+        assertThrows(CommonException.class, () -> gifthubService.deleteGifthub(member.getId(), notExistsItemId));
     }
 }
