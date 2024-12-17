@@ -12,7 +12,6 @@ import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.dto.ResponseDto;
 import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.item.gifthub.app.GifthubService;
-import practice.fundingboost2.item.gifthub.app.dto.GifthubResponseDto;
 
 @RestController
 @RequestMapping("/api/gifthub")
@@ -34,8 +33,8 @@ public class GifthubController {
     }
 
     @PatchMapping("/{item_id}/{option_id}")
-    public ResponseDto<GifthubResponseDto> updateGifthub(@Auth Long memberId, @PathVariable("item_id") Long itemId,
+    public ResponseDto<CommonSuccessDto> updateGifthub(@Auth Long memberId, @PathVariable("item_id") Long itemId,
         @PathVariable("option_id") Long optionId, @RequestParam("quantity") Integer quantity) {
-        return ResponseDto.ok(gifthubService.updateGifthub(memberId, itemId, optionId, quantity));
+        return ResponseDto.ok(gifthubService.updateCart(memberId, itemId, optionId, quantity));
     }
 }
