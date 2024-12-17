@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import practice.fundingboost2.common.repo.entity.Price;
 
 @Getter
 @Entity
@@ -31,7 +32,7 @@ public class Item {
     private String name;
 
     @Column(name = "item_price")
-    private int price;
+    private Price price;
 
     @Column(name = "item_image_url")
     private String imageUrl;
@@ -52,7 +53,7 @@ public class Item {
     public Item(String name, int price, String imageUrl, String brand, String category, int reviewCount,
         int likeCount) {
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.imageUrl = imageUrl;
         this.brand = brand;
         this.category = category;
@@ -66,5 +67,9 @@ public class Item {
 
     public void unmark() {
         this.likeCount--;
+    }
+
+    public Integer getPrice() {
+        return price.getPrice();
     }
 }
