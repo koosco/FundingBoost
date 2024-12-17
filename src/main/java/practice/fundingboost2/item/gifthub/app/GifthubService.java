@@ -10,8 +10,7 @@ import practice.fundingboost2.item.gifthub.repo.GifthubRepository;
 import practice.fundingboost2.item.gifthub.repo.entity.Gifthub;
 import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
 import practice.fundingboost2.item.item.app.ItemService;
-import practice.fundingboost2.member.app.MemberService;
-import practice.fundingboost2.member.repo.entity.Member;
+import practice.fundingboost2.item.item.repo.entity.Item;
 
 @Service
 @Transactional
@@ -19,7 +18,6 @@ import practice.fundingboost2.member.repo.entity.Member;
 public class GifthubService {
 
     private final GifthubRepository gifthubRepository;
-    private final MemberService memberService;
     private final ItemService itemService;
 
     public Gifthub findCart(GifthubId gifthubId) {
@@ -27,29 +25,22 @@ public class GifthubService {
             .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_GIFTHUB_ITEM));
     }
 
-    public CommonSuccessDto addToCart(Long memberId, Long itemId) {
-        validateItem(itemId);
-
-        GifthubId id = new GifthubId(memberId, itemId);
+    public CommonSuccessDto addToCart(Long memberId, Long itemId, Long optionId) {
+        Item item = itemService.findItem(itemId);
+        GifthubId id = new GifthubId(memberId, itemId, optionId);
 
         if (gifthubRepository.existsById(id)) {
             gifthubRepository.updateQuantityById(id);
             return CommonSuccessDto.fromEntity(true);
         }
-        Gifthub gifthub = new Gifthub(id);
+        Gifthub gifthub = new Gifthub(id, item);
         gifthubRepository.save(gifthub);
 
         return CommonSuccessDto.fromEntity(true);
     }
 
-    private void validateItem(Long itemId) {
-        if (!itemService.checkItem(itemId)) {
-            throw new CommonException(ErrorCode.NOT_FOUND_ITEM);
-        }
-    }
-
-    public CommonSuccessDto deleteGifthub(Long memberId, Long itemId) {
-        Gifthub cart = findCart(new GifthubId(memberId, itemId));
+    public CommonSuccessDto deleteGifthub(Long memberId, Long itemId, Long optionId) {
+        Gifthub cart = findCart(new GifthubId(memberId, itemId, optionId));
         gifthubRepository.delete(cart);
 
         return CommonSuccessDto.fromEntity(true);

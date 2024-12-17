@@ -15,4 +15,5 @@ public class GifthubId {
 
     private Long memberId;
     private Long itemId;
+    private Long optionId;
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import practice.fundingboost2.item.item.repo.entity.Item;
 
 @Getter
 @Entity
@@ -17,12 +18,16 @@ public class Gifthub {
     @ColumnDefault("1")
     private Integer quantity;
 
-    public Gifthub(GifthubId id) {
+    public Gifthub(GifthubId id, Item item) {
         this.id = id;
         this.quantity = 1;
     }
 
-    public Gifthub(Long memberId, Long itemId) {
-        this(new GifthubId(memberId, itemId));
+    public void updateQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Long getItemId() {
+        return id.getItemId();
     }
 }
