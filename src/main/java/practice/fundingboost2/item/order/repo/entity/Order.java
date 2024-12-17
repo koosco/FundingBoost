@@ -13,11 +13,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import practice.fundingboost2.common.repo.entity.Price;
 import practice.fundingboost2.item.gifthub.repo.entity.Quantity;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.member.repo.entity.Member;
@@ -40,13 +38,9 @@ public class Order {
     @JoinColumn(name = "item_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Item item;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Delivery delivery;
-
-    @Embedded
-    @Column(nullable = false)
-    private Price totalPrice = new Price();
 
     @Embedded
     @Column(nullable = false)
@@ -60,7 +54,6 @@ public class Order {
         this.member = member;
         this.item = item;
         this.delivery = delivery;
-        this.totalPrice = totalPrice.add(item.getPriceEntity());
         this.quantity = quantity;
     }
 

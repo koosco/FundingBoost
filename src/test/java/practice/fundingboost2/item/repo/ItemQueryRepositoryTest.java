@@ -12,13 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.transaction.annotation.Transactional;
-import practice.fundingboost2.item.item.ui.dto.GetItemListResponseDto;
-import practice.fundingboost2.item.item.repo.jpa.ItemQueryRepository;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
+import practice.fundingboost2.item.item.repo.jpa.ItemQueryRepository;
+import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
+import practice.fundingboost2.item.item.ui.dto.GetItemListResponseDto;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @Transactional
@@ -34,8 +34,6 @@ class ItemQueryRepositoryTest {
     Member member;
     List<Item> items = new ArrayList<>();
     List<Bookmark> bookmarks = new ArrayList<>();
-    @Autowired
-    private PageableHandlerMethodArgumentResolver pageableResolver;
 
     final int ITEM_SIZE = 12;
 
@@ -93,7 +91,7 @@ class ItemQueryRepositoryTest {
         // then
         assertThat(dto.getItems()).isEmpty();
     }
-    
+
     @Test
     void givenItems_whenMemberIdAndPageRequest_thenReturn10Dtos() {
         // given
@@ -135,5 +133,43 @@ class ItemQueryRepositoryTest {
         GetItemListResponseDto dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
         // then
         assertThat(dto.getItems()).hasSize(1);
+    }
+
+    @Test
+    void givenCreateItem_whenMemberLike_thenReturnDtoWithLike() {
+        // given
+        Item item = items.getFirst();
+
+        // when
+        GetItemDetailResponseDto dto = itemQueryRepository.getItemInfo(member.getId(), item.getId());
+
+        // then
+        assertThat(dto.isLiked()).isTrue();
+    }
+
+    @Test
+    void givenCreateItem_whenMemberDoesNotLike_thenReturnDtoWithOutLike() {
+        // given
+        Item newItem = new Item("item", 1000, "https://koosco.tistory.com", "brand", "category", 0, 0);
+        em.persist(newItem);
+        em.flush();
+
+        // when
+        GetItemDetailResponseDto dto = itemQueryRepository.getItemInfo(member.getId(), newItem.getId());
+
+        // then
+        assertThat(dto.isLiked()).isFalse();
+    }
+
+    @Test
+    void givenCreateItem_whenMemberIdIsNull_thenReturnDtoWithOutLike() {
+        // given
+        Item item = items.getFirst();
+
+        // when
+        GetItemDetailResponseDto dto = itemQueryRepository.getItemInfo(null, item.getId());
+
+        // then
+        assertThat(dto.isLiked()).isFalse();
     }
 }
