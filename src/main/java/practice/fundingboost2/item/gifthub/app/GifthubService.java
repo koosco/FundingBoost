@@ -49,15 +49,8 @@ public class GifthubService {
     public CommonSuccessDto updateCart(Long memberId, Long itemId, Long optionId, Integer quantity) {
         Gifthub cart = findCart(new GifthubId(memberId, itemId, optionId));
 
-        validateQuantity(quantity);
         cart.updateQuantity(quantity);
 
         return CommonSuccessDto.fromEntity(true);
-    }
-
-    private static void validateQuantity(Integer quantity) {
-        if (quantity <= 0) {
-            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
-        }
     }
 }
