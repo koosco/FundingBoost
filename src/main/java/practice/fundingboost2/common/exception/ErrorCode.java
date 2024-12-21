@@ -36,7 +36,7 @@ public enum ErrorCode {
   BAD_REQUEST_PARAMETER(40005, HttpStatus.BAD_REQUEST, "잘못된 요청 파라미터입니다."),
   BAD_REQUEST_JSON(40006, HttpStatus.BAD_REQUEST, "잘못된 JSON 형식입니다."),
   SEARCH_SHORT_LENGTH_ERROR(40007, HttpStatus.BAD_REQUEST, "검색어는 2글자 이상이어야 합니다."),
-  INVALID_FUNDING_STATUS(40009, HttpStatus.BAD_REQUEST, "펀딩이 정상적이지 않습니다."),
+  INVALID_FUNDING_STATUS(40009, HttpStatus.BAD_REQUEST, "이미 종료된 펀딩입니다."),
   INVALID_POINT_LACK(40010, HttpStatus.BAD_REQUEST, "point가 부족합니다."),
   INVALID_FUNDING_MONEY(40011, HttpStatus.BAD_REQUEST, "펀딩 금액 이상을 후원할 수 없습니다"),
   INVALID_FUNDING_OR_PRICE(40012, HttpStatus.BAD_REQUEST, "펀딩에 담긴 상품이 없거나, 상품의 가격이 이상합니다."),

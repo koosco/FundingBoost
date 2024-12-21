@@ -20,6 +20,8 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import practice.fundingboost2.common.exception.CommonException;
+import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.common.repo.entity.BaseTimeEntity;
 import practice.fundingboost2.member.repo.entity.Member;
 
@@ -27,6 +29,8 @@ import practice.fundingboost2.member.repo.entity.Member;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Funding extends BaseTimeEntity {
+
+    private static final int MAXIMUM_EXTEND_DAYS = 30;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +46,7 @@ public class Funding extends BaseTimeEntity {
     private FundingTag tag;
 
     @Min(0)
-    @Column(name = "toatl_price")
+    @Column(name = "total_price")
     private Integer totalPrice;
 
     @Min(0)
@@ -65,5 +69,58 @@ public class Funding extends BaseTimeEntity {
         this.totalPrice = 0;
         this.collectPrice = 0;
         this.status = FundingStatus.PENDING;
+    }
+
+    public void validateMember(Member member) {
+        if (!this.member.equals(member)) {
+            throw new CommonException(ErrorCode.ACCESS_DENIED);
+        }
+    }
+
+    public void update(LocalDateTime deadline, String fundingStatus) {
+        isTerminated();
+
+        if (deadline != null) {
+            validateDeadline(deadline);
+            this.deadLine = deadline;
+        }
+
+        if (fundingStatus != null) {
+            this.status = FundingStatus.valueOf(fundingStatus);
+        }
+    }
+
+    private void validateDeadline(LocalDateTime deadline) {
+        isDeadlineEarlierThanNow(deadline);
+        idDeadlineOverMaxExtendDays(deadline);
+    }
+
+    private void isTerminated() {
+        isDeadlineExceed();
+        isFundingStatusTerminated();
+    }
+
+    private void idDeadlineOverMaxExtendDays(LocalDateTime deadline) {
+        if (deadline.isAfter(this.deadLine.plusDays(MAXIMUM_EXTEND_DAYS))) {
+            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
+    }
+
+    private static void isDeadlineEarlierThanNow(LocalDateTime deadline) {
+        if (deadline.isBefore(LocalDateTime.now())) {
+            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
+    }
+
+    private void isDeadlineExceed() {
+        if (this.deadLine.isBefore(LocalDateTime.now())) {
+            throw new CommonException(ErrorCode.INVALID_FUNDING_STATUS);
+        }
+    }
+
+    private void isFundingStatusTerminated() {
+        if (this.status.equals(FundingStatus.FAILED) || this.status.equals(FundingStatus.SUCCESS)) {
+            throw new CommonException(ErrorCode.INVALID_FUNDING_STATUS);
+        }
     }
 }
