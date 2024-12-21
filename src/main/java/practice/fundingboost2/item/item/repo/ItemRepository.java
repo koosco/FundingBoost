@@ -16,10 +16,6 @@ public class ItemRepository {
     private final JpaItemRepository itemRepository;
     private final ItemQueryRepository itemQueryRepository;
 
-    public boolean existsById(Long itemId) {
-        return itemRepository.existsById(itemId);
-    }
-
     public Item findById(Long id) {
         return itemRepository.findById(id)
             .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_ITEM));
