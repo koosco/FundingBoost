@@ -48,9 +48,7 @@ class ItemQueryRepositoryTest {
                 i * 1000,
                 "https://koosco.tistory.com",
                 "brand" + i,
-                "category" + i,
-                (i % 3) * 5,  // popularity
-                (i % 3) * 10  // stock count
+                "category" + i
             );
             em.persist(item);
             items.add(item);
@@ -150,7 +148,7 @@ class ItemQueryRepositoryTest {
     @Test
     void givenCreateItem_whenMemberDoesNotLike_thenReturnDtoWithOutLike() {
         // given
-        Item newItem = new Item("item", 1000, "https://koosco.tistory.com", "brand", "category", 0, 0);
+        Item newItem = new Item("item", 1000, "https://koosco.tistory.com", "brand", "category");
         em.persist(newItem);
         em.flush();
 
