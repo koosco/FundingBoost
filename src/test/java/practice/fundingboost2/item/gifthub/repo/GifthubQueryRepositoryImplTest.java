@@ -45,7 +45,7 @@ class GifthubQueryRepositoryImplTest {
         em.persist(member);
 
         // 2. Item 생성 및 저장
-        item = new Item("name", 1000, "imageUrl", "brand", "category", 0, 0);
+        item = new Item("name", 1000, "imageUrl", "brand", "category");
         em.persist(item);
 
         for (int i = 0;i<GIFTHUB_SIZE;i++) {
