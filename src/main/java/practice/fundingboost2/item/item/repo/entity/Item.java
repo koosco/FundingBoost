@@ -47,6 +47,8 @@ public class Item {
 
     private Integer likeCount;
 
+    private Integer fundingCount;
+
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Option> options = new ArrayList<>();
 
@@ -58,6 +60,7 @@ public class Item {
         this.category = category;
         this.reviewCount = 0;
         this.likeCount = 0;
+        this.fundingCount = 0;
     }
 
     public void mark() {
