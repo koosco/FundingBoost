@@ -28,7 +28,7 @@ class OrderTest {
     void init() {
         member = new Member("email", "name", "image", "phoneNumber");
         em.persist(member);
-        item = new Item("name", 10_000, "item_image_url", "brand", "category");
+        item = new Item("name", 10_000, "item_image_url", "brand", "category", 0, 0);
         em.persist(item);
         delivery = new Delivery("user1", "address1", "phoneNumber", member);
         em.persist(delivery);

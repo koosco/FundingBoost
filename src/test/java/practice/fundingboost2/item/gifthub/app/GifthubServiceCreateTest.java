@@ -37,7 +37,7 @@ class GifthubServiceCreateTest {
 
     @BeforeEach
     void init() {
-        item = new Item("item", 1000, "url", "brand", "category");
+        item = new Item("item", 1000, "url", "brand", "category", 0, 0);
         em.persist(item);
         em.flush();
 

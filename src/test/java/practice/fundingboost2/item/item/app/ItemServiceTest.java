@@ -39,7 +39,7 @@ class ItemServiceTest {
         member = new Member("email", "name", "imageUrl", "phone");
         em.persist(member);
 
-        item = new Item("name", 1000, "imageUrl", "brand", "category");
+        item = new Item("name", 1000, "imageUrl", "brand", "category", 0, 0);
         em.persist(item);
 
         em.flush();

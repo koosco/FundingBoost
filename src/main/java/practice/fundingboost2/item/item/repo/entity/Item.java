@@ -50,14 +50,15 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Option> options = new ArrayList<>();
 
-    public Item(String name, int price, String imageUrl, String brand, String category) {
+    public Item(String name, int price, String imageUrl, String brand, String category, int reviewCount,
+        int likeCount) {
         this.name = name;
         this.price = new Price(price);
         this.imageUrl = imageUrl;
         this.brand = brand;
         this.category = category;
-        this.reviewCount = 0;
-        this.likeCount = 0;
+        this.reviewCount = reviewCount;
+        this.likeCount = likeCount;
     }
 
     public void mark() {
