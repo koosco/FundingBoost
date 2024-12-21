@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.item.repo.jpa;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
@@ -36,11 +38,26 @@ public class ItemQueryRepositoryImpl implements ItemQueryRepository {
             .selectFrom(item)
             .where(hasCategory(category))
             .leftJoin(item.options, option)
+            .orderBy(hasSort(pageable.getSort()))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
         return new GetItemListResponseDto(items);
+    }
+
+    private OrderSpecifier<?> hasSort(Sort sort) {
+        if (sort.isEmpty()) {
+            return item.likeCount.desc();
+        }
+
+        String order = sort.iterator().next().getProperty();
+
+        return switch (order) {
+            case "funding" -> item.fundingCount.desc();
+            case "review" -> item.reviewCount.desc();
+            default -> item.likeCount.desc();
+        };
     }
 
     private BooleanExpression hasCategory(String category) {

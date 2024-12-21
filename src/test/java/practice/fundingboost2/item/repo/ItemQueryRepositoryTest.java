@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
@@ -19,6 +21,7 @@ import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.item.item.repo.jpa.ItemQueryRepository;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemListResponseDto;
+import practice.fundingboost2.item.item.ui.dto.GetItemResponseDto;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @Transactional
@@ -50,6 +53,9 @@ class ItemQueryRepositoryTest {
                 "brand" + i,
                 "category" + i
             );
+
+            initCount(item, i);
+
             em.persist(item);
             items.add(item);
 
@@ -64,6 +70,99 @@ class ItemQueryRepositoryTest {
         }
 
         em.flush();
+    }
+
+    private void initCount(Item item, int i) {
+        try {
+            Field fundingCountField = Item.class.getDeclaredField("fundingCount");
+            Field likeCountField = Item.class.getDeclaredField("likeCount");
+            Field reviewCountField = Item.class.getDeclaredField("reviewCount");
+
+            fundingCountField.setAccessible(true);
+            likeCountField.setAccessible(true);
+            reviewCountField.setAccessible(true);
+
+            fundingCountField.set(item, i);
+            likeCountField.set(item, ITEM_SIZE - i);
+            reviewCountField.set(item, i * 2);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to set count fields", e);
+        }
+    }
+
+    @Test
+    void givenItems_whenOrderIsFunding_thenReturnItemsOrderByFundingCount() {
+        // given
+        PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.desc("funding")));
+
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+
+        // then
+        List<GetItemResponseDto> dtos = dto.getItems();
+        assertThat(dtos).hasSize(10);
+        assertThat(dtos.get(0).getFundingCount()).isGreaterThan(dtos.get(1).getFundingCount());
+        assertThat(dtos.get(1).getFundingCount()).isGreaterThan(dtos.get(2).getFundingCount());
+    }
+
+    @Test
+    void givenItems_whenOrderIsLike_thenReturnItemsOrderByLikeCount() {
+        // given
+        PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.desc("most")));
+
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+
+        // then
+        List<GetItemResponseDto> dtos = dto.getItems();
+        assertThat(dtos).hasSize(10);
+        assertThat(dtos.get(0).getLikeCount()).isGreaterThan(dtos.get(1).getLikeCount());
+        assertThat(dtos.get(1).getLikeCount()).isGreaterThan(dtos.get(2).getLikeCount());
+    }
+
+    @Test
+    void givenItems_whenOrderIsReview_thenReturnItemsOrderByReviewCount() {
+        // given
+        PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.desc("review")));
+
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+
+        // then
+        List<GetItemResponseDto> dtos = dto.getItems();
+        assertThat(dtos).hasSize(10);
+        assertThat(dtos.get(0).getReviewCount()).isGreaterThan(dtos.get(1).getReviewCount());
+        assertThat(dtos.get(1).getReviewCount()).isGreaterThan(dtos.get(2).getReviewCount());
+    }
+
+    @Test
+    void givenItems_whenOrderIsNull_thenReturnItemsOrderByLikeCount() {
+        // given
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+
+        // then
+        List<GetItemResponseDto> dtos = dto.getItems();
+        assertThat(dtos).hasSize(10);
+        assertThat(dtos.get(0).getLikeCount()).isGreaterThan(dtos.get(1).getLikeCount());
+        assertThat(dtos.get(1).getLikeCount()).isGreaterThan(dtos.get(2).getLikeCount());
+    }
+
+    @Test
+    void givenItems_whenOrderIsInvalid_thenReturnItemsOrderByLikeCount() {
+        // given
+        PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.desc("xxxx")));
+
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+
+        // then
+        List<GetItemResponseDto> dtos = dto.getItems();
+        assertThat(dtos).hasSize(10);
+        assertThat(dtos.get(0).getLikeCount()).isGreaterThan(dtos.get(1).getLikeCount());
+        assertThat(dtos.get(1).getLikeCount()).isGreaterThan(dtos.get(2).getLikeCount());
     }
 
     @Test

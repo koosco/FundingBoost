@@ -13,6 +13,7 @@ public class GetItemResponseDto {
     private String category;
     private int reviewCount;
     private int likeCount;
+    private int fundingCount;
 
     public GetItemResponseDto(Item item) {
         this.itemId = item.getId();
@@ -23,5 +24,6 @@ public class GetItemResponseDto {
         this.category = item.getCategory();
         this.reviewCount = item.getReviewCount();
         this.likeCount = item.getLikeCount();
+        this.fundingCount = item.getFundingCount();
     }
 }
