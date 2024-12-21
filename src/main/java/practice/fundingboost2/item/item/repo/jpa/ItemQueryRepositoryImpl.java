@@ -30,16 +30,21 @@ public class ItemQueryRepositoryImpl implements ItemQueryRepository {
     private static final QBookmark bookmark = QBookmark.bookmark;
 
     @Override
-    public GetItemListResponseDto getItems(Pageable pageable) {
+    public GetItemListResponseDto getItems(String category, Pageable pageable) {
 
         List<Item> items = queryFactory
             .selectFrom(item)
+            .where(hasCategory(category))
             .leftJoin(item.options, option)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
         return new GetItemListResponseDto(items);
+    }
+
+    private BooleanExpression hasCategory(String category) {
+        return category != null ? item.category.eq(category) : null;
     }
 
     @Override

@@ -71,7 +71,7 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageable = PageRequest.of(0, 10);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getItems(pageable);
+        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
         // then
         assertThat(dto.getItems()).hasSize(10);
     }
@@ -85,9 +85,20 @@ class ItemQueryRepositoryTest {
 
         PageRequest pageable = PageRequest.of(1, 10);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getItems(pageable);
+        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
         // then
         assertThat(dto.getItems()).isEmpty();
+    }
+
+    @Test
+    void givenItems_whenSearchWithCategory_thenReturnGivenCategoryItems() {
+        // given
+        PageRequest pageable = PageRequest.of(0, 10);
+        // when
+        GetItemListResponseDto dto = itemQueryRepository.getItems("category1", pageable);
+        // then
+        assertThat(dto.getItems()).hasSize(1);
+        assertThat(dto.getItems().getFirst().getCategory()).isEqualTo("category1");
     }
 
     @Test

@@ -8,7 +8,7 @@ import practice.fundingboost2.item.item.repo.entity.Item;
 
 public interface ItemQueryRepository {
 
-    GetItemListResponseDto getItems(Pageable pageable);
+    GetItemListResponseDto getItems(String category, Pageable pageable);
 
     GetItemListResponseDto getLikedItems(Long memberId, Pageable pageable);
 

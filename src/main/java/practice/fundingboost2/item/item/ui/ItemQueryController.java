@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
@@ -19,8 +20,8 @@ public class ItemQueryController {
     private final ItemQueryRepository itemQueryRepository;
 
     @GetMapping
-    public GetItemListResponseDto getItems(Pageable pageable) {
-        return itemQueryRepository.getItems(pageable);
+    public GetItemListResponseDto getItems(@RequestParam("category") String category, Pageable pageable) {
+        return itemQueryRepository.getItems(category, pageable);
     }
 
     @GetMapping("/like")
