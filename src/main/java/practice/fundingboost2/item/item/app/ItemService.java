@@ -19,16 +19,16 @@ public class ItemService {
     private final BookmarkRepository bookmarkRepository;
     private final ItemRepository itemRepository;
 
+    public Boolean existsById(Long itemId, Long optionId) {
+        return itemRepository.existsById(itemId, optionId);
+    }
+
     public List<Item> findItemIn(List<Long> ids) {
         return itemRepository.findByIdIn(ids);
     }
 
     public Item findItem(Long id) {
         return itemRepository.findById(id);
-    }
-
-    public Item findItemWithOptions(Long itemId) {
-        return itemRepository.findItemByIdWithOptions(itemId);
     }
 
     public CommonSuccessDto likeItem(Long memberId, Long itemId) {

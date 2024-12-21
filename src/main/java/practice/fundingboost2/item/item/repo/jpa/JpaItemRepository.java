@@ -7,4 +7,6 @@ import practice.fundingboost2.item.item.repo.entity.Item;
 public interface JpaItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findByIdIn(List<Long> ids);
+
+    Boolean existsByIdAndOptions_Id(Long itemId, Long optionId);
 }

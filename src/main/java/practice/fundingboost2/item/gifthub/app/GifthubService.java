@@ -10,7 +10,6 @@ import practice.fundingboost2.item.gifthub.repo.GifthubRepository;
 import practice.fundingboost2.item.gifthub.repo.entity.Gifthub;
 import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
 import practice.fundingboost2.item.item.app.ItemService;
-import practice.fundingboost2.item.item.repo.entity.Item;
 
 @Service
 @Transactional
@@ -26,7 +25,8 @@ public class GifthubService {
     }
 
     public CommonSuccessDto addToCart(Long memberId, Long itemId, Long optionId) {
-        Item item = itemService.findItem(itemId);
+        validateItem(itemId, optionId);
+
         GifthubId id = new GifthubId(memberId, itemId, optionId);
 
         if (gifthubRepository.existsById(id)) {
@@ -37,6 +37,12 @@ public class GifthubService {
         gifthubRepository.save(gifthub);
 
         return CommonSuccessDto.fromEntity(true);
+    }
+
+    private void validateItem(Long itemId, Long optionId) {
+        if (!itemService.existsById(itemId, optionId)) {
+            throw new CommonException(ErrorCode.NOT_FOUND_ITEM);
+        }
     }
 
     public CommonSuccessDto deleteFromCart(Long memberId, Long itemId, Long optionId) {

@@ -39,7 +39,6 @@ class GifthubServiceCreateTest {
     void init() {
         item = new Item("item", 1000, "url", "brand", "category");
         em.persist(item);
-        em.flush();
 
         List<String> optionNames = List.of("option1", "option2", "option3");
         int optionPrice = 100;
@@ -47,6 +46,7 @@ class GifthubServiceCreateTest {
             Option option = new Option(item, optionName, optionPrice);
             em.persist(option);
         }
+
         option = item.getOptions().getFirst();
 
         member = new Member("member", "name", "imageUrl", "phone");
