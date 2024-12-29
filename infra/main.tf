@@ -56,6 +56,18 @@ module "alb" {
 }
 
 module "s3" {
-  source = "./modules/s3"
+  source      = "./modules/s3"
   bucket_name = "${var.project_name}-bucket"
+}
+
+module "rds" {
+  source       = "./modules/rds"
+  project_name = var.project_name
+  subnet_ids = [
+    module.subnet.private_subnet1_id,
+    module.subnet.private_subnet2_id
+  ]
+  vpc_security_group_ids = [
+  module.security_group.rds_security_group_id
+  ]
 }

@@ -17,14 +17,14 @@ resource "aws_lb_target_group" "main" {
   protocol = "HTTP"
   vpc_id   = var.vpc_id
 
-  health_check {
-    path                = "/api"
-    protocol            = "HTTP"
-    interval            = 30
-    timeout             = 30
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-  }
+  # health_check {
+  #   path                = "/api"
+  #   protocol            = "HTTP"
+  #   interval            = 30
+  #   timeout             = 30
+  #   healthy_threshold   = 2
+  #   unhealthy_threshold = 2
+  # }
 }
 
 resource "aws_lb_listener" "main" {
