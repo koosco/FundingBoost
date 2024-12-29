@@ -16,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingItemRequestDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.repo.entity.Contributor;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
+import practice.fundingboost2.item.funding.repo.entity.FundingTag;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.member.repo.entity.Member;
@@ -36,6 +38,7 @@ class FundingServiceTest {
 
     final List<Item> items = new ArrayList<>();
     Member member;
+
 
     final int ITEM_SIZE = 5;
     final int OPTION_SIZE = 5;
@@ -138,5 +141,57 @@ class FundingServiceTest {
 
         assertThat(result.getFundingParticipantDtos().getFirst().memberId()).isEqualTo(friend1.getId());
         assertThat(result.getFundingParticipantDtos().getFirst().price()).isEqualTo(1000);
+    }
+
+    @Test
+    public void givenMemberId_whenGetFundingHistory_thenGetFundingHistoryList() {
+
+        Funding funding1 = new Funding(member, "happy birthday", "BIRTHDAY", LocalDateTime.of(2025, 1, 31, 0, 0));
+        Funding funding2 = new Funding(member, "happy graduate", "GRADUATE", LocalDateTime.of(2024, 12, 29, 0, 0));
+        em.persist(funding1);
+        em.persist(funding2);
+
+        FundingItem fundingItem1 = new FundingItem(funding2, items.get(2), items.get(2).getOptions().get(1), 1);
+        FundingItem fundingItem2 = new FundingItem(funding2, items.get(3), items.get(3).getOptions().get(2), 2);
+        em.persist(fundingItem1);
+        em.persist(fundingItem2);
+
+        items.forEach(item -> {
+            Option firstOption = item.getOptions().getFirst();
+            int sequence = items.indexOf(item);
+            FundingItem funding1Item =  new FundingItem(funding1, item, firstOption, sequence);
+            em.persist(funding1Item);
+        });
+
+        Member friend1 = new Member("friend1", "password", "nickname", "email");
+        Member friend2 = new Member("friend2", "password", "nickname", "email");
+        Member friend3 = new Member("friend3", "password", "nickname", "email");
+        Member friend4 = new Member("friend4", "password", "nickname", "email");
+        em.persist(friend1);
+        em.persist(friend2);
+        em.persist(friend3);
+        em.persist(friend4);
+
+        Contributor contributor1 = new Contributor(friend1, funding1, 1000);
+        Contributor contributor2 = new Contributor(friend2, funding1, 2000);
+        Contributor contributor3 = new Contributor(friend3, funding2, 3000);
+        Contributor contributor4 = new Contributor(friend4, funding2, 4000);
+        em.persist(contributor1);
+        em.persist(contributor2);
+        em.persist(contributor3);
+        em.persist(contributor4);
+
+        //when
+        GetFundingHistoryListResponseDto result = fundingService.getFundingHistory(member.getId());
+
+        //then
+        assertThat(result.fundingHistoryDtos().size()).isEqualTo(2);
+
+        assertThat(result.fundingHistoryDtos().getLast().fundingTag()).isEqualTo(FundingTag.GRADUATE);
+        assertThat(result.fundingHistoryDtos().getLast().collectPrice()).isEqualTo(7000);
+        assertThat(result.fundingHistoryDtos().getFirst().fundingDeadline()).isEqualTo(funding1.getDeadLine());
+        assertThat(result.fundingHistoryDtos().getFirst().fundingStart()).isEqualTo(funding1.getCreatedAt());
+        assertThat(result.fundingHistoryDtos().getFirst().collectPrice()).isEqualTo(3000);
+        assertThat(result.fundingHistoryDtos().getFirst().contributorCount()).isEqualTo(2);
     }
 }
