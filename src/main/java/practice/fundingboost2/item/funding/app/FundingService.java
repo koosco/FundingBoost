@@ -1,11 +1,14 @@
 package practice.fundingboost2.item.funding.app;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponseDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingInfoResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingItemResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
@@ -78,4 +81,13 @@ public class FundingService {
         return new GetFundingResponseDto(getFundingInfoResponseDto,getFundingItemResponseDtos,getFundingParticipantDtos);
     }
 
+    public GetFundingHistoryListResponseDto getFundingHistory(Long memberId) {
+
+        List<GetFundingHistoryResponseDto> getFundingHistoryResponseDtos = fundingRepository.findAllByMemberId(memberId).stream().map(funding -> {
+            int contributorCount = contributorRepository.findAll_ByFundingId(funding.getId()).size();
+            return GetFundingHistoryResponseDto.from(funding, contributorCount);
+        }).toList();
+
+        return new GetFundingHistoryListResponseDto(getFundingHistoryResponseDtos);
+    }
 }
