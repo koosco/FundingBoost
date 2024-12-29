@@ -1,6 +1,7 @@
 package practice.fundingboost2.item.funding.app;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -15,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingItemRequestDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
+import practice.fundingboost2.item.funding.repo.entity.Contributor;
+import practice.fundingboost2.item.funding.repo.entity.Funding;
+import practice.fundingboost2.item.funding.repo.entity.FundingItem;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.member.repo.entity.Member;
@@ -95,5 +100,43 @@ class FundingServiceTest {
 
         // then
         assertTrue(resultDto.isSuccess());
+    }
+
+    @Test
+    public void givenMemberIdAndFundingId_whenGetFunding_thenGetFundingDetails() {
+
+        //given
+        Funding funding = new Funding(member, "happy birthday", "BIRTHDAY", LocalDateTime.of(2025, 1, 31, 0, 0));
+        em.persist(funding);
+
+        items.forEach(item -> {
+                    Option firstOption = item.getOptions().getFirst();
+                    int sequence = items.indexOf(item);
+                    FundingItem fundingItem =  new FundingItem(funding, item, firstOption, sequence);
+                    em.persist(fundingItem);
+                });
+
+        Member friend1 = new Member("member2", "password", "nickname", "email");
+        Member friend2 = new Member("member3", "password", "nickname", "email");
+        em.persist(friend1);
+        em.persist(friend2);
+
+        Contributor contributor1 = new Contributor(friend1, funding, 1000);
+        Contributor contributor2 = new Contributor(friend2, funding, 2000);
+        em.persist(contributor1);
+        em.persist(contributor2);
+
+        //when
+        GetFundingResponseDto result = fundingService.getFunding(member.getId(), funding.getId());
+
+        //then
+        assertThat(result.getFundingInfoResponseDto().fundingId()).isEqualTo(funding.getId());
+        assertThat(result.getFundingInfoResponseDto().collectPrice()).isEqualTo(3000);
+
+        assertThat(result.getFundingItemResponseDtos().get(3).itemName()).isEqualTo("item4");
+        assertThat(result.getFundingItemResponseDtos().get(3).itemOption()).isEqualTo("option1");
+
+        assertThat(result.getFundingParticipantDtos().getFirst().memberId()).isEqualTo(friend1.getId());
+        assertThat(result.getFundingParticipantDtos().getFirst().price()).isEqualTo(1000);
     }
 }

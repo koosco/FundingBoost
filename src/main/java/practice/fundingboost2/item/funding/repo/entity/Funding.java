@@ -71,6 +71,10 @@ public class Funding extends BaseTimeEntity {
         this.status = FundingStatus.PENDING;
     }
 
+    public void plusCollectPrice(int fundMoney){
+        collectPrice+=fundMoney;
+    }
+
     public void validateMember(Member member) {
         if (!this.member.equals(member)) {
             throw new CommonException(ErrorCode.ACCESS_DENIED);
