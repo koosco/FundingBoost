@@ -1,20 +1,20 @@
 resource "aws_subnet" "private1" {
   vpc_id            = var.vpc_id
   cidr_block        = "10.0.1.0/24"
-  availability_zone = "ap-northeast-2a"
+  availability_zone = var.az_1
 
   tags = {
-    Name = "funding-boost-private-subnet-1"
+    Name = "${var.project_name}-private-subnet-1"
   }
 }
 
 resource "aws_subnet" "private2" {
   vpc_id            = var.vpc_id
   cidr_block        = "10.0.2.0/24"
-  availability_zone = "ap-northeast-2c"
+  availability_zone = var.az_2
 
   tags = {
-    Name = "funding-boost-private-subnet-2"
+    Name = "${var.project_name}-private-subnet-2"
   }
 }
 

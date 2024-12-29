@@ -24,6 +24,6 @@ resource "aws_security_group" "allow_ssh" {
   }
 
   tags = {
-    Name = "allow_ssh"
+    Name = "${var.project_name}-allow_ssh"
   }
 }
