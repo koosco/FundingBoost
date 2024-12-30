@@ -1,6 +1,7 @@
 package practice.fundingboost2.item.funding.ui;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +42,7 @@ public class FundingController {
     }
 
     @GetMapping
-    public ResponseDto<GetFundingListResponseDto> getFundings(@Auth Long memberId) {
-        return ResponseDto.ok(fundingService.getFundings(memberId));
+    public ResponseDto<GetFundingListResponseDto> getFundings(@Auth Long memberId, Pageable pageable) {
+        return ResponseDto.ok(fundingService.getFundings(memberId, pageable));
     }
 }

@@ -4,11 +4,13 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
 
 @Getter
 @Entity
+@ToString
 @NoArgsConstructor
 public class Relation {
 
@@ -17,7 +19,7 @@ public class Relation {
 
     public Relation(Long member1Id, Long member2Id) {
         validate(member1Id, member2Id);
-        if (member1Id < member2Id) {
+        if (member1Id > member2Id) {
             Long tmp = member1Id;
             member1Id = member2Id;
             member2Id = tmp;

@@ -2,6 +2,7 @@ package practice.fundingboost2.item.funding.app;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
@@ -76,7 +77,7 @@ public class FundingService {
             getFundingParticipantDtos);
     }
 
-    public GetFundingListResponseDto getFundings(Long memberId) {
-        return fundingRepository.findFundings(memberId);
+    public GetFundingListResponseDto getFundings(Long memberId, Pageable pageable) {
+        return fundingRepository.findFundings(memberId, pageable);
     }
 }

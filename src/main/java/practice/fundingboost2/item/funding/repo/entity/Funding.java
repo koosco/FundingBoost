@@ -20,6 +20,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.common.repo.entity.BaseTimeEntity;
@@ -27,6 +28,7 @@ import practice.fundingboost2.member.repo.entity.Member;
 
 @Getter
 @Entity
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Funding extends BaseTimeEntity {
 
@@ -73,6 +75,10 @@ public class Funding extends BaseTimeEntity {
 
     public void plusCollectPrice(int fundMoney){
         collectPrice+=fundMoney;
+    }
+
+    public void plusTotalPrice(int money) {
+        totalPrice += money;
     }
 
     public void validateMember(Member member) {
