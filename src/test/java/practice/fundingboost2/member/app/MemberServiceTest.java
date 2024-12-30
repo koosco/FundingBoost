@@ -58,7 +58,7 @@ class MemberServiceTest {
     @Test
     void givenCreatedMember_whenNewNickname_thenUpdateNickname() {
         // given
-        UpdateMemberRequestDto dto = new UpdateMemberRequestDto("newNickname", null, null);
+        UpdateMemberRequestDto dto = new UpdateMemberRequestDto("newNickname", null);
         // when
         GetMemberResponseDto updateDto = memberService.updateMember(member.getId(), dto);
         // then
@@ -66,19 +66,9 @@ class MemberServiceTest {
     }
 
     @Test
-    void givenCreatedMember_whenNewImageUrl_thenUpdateImageUrl() {
-        // given
-        UpdateMemberRequestDto dto = new UpdateMemberRequestDto(null, "newImageUrl", null);
-        // when
-        GetMemberResponseDto updateDto = memberService.updateMember(member.getId(), dto);
-        // then
-        assertThat(updateDto.imageUrl()).isEqualTo("newImageUrl");
-    }
-
-    @Test
     void givenCreatedMember_whenNewPhoneNumber_thenUpdatePhoneNumber() {
         // given
-        UpdateMemberRequestDto dto = new UpdateMemberRequestDto(null, null, "newPhoneNumber");
+        UpdateMemberRequestDto dto = new UpdateMemberRequestDto(null, "newPhoneNumber");
         // when
         GetMemberResponseDto updateDto = memberService.updateMember(member.getId(), dto);
         // then

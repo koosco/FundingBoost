@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
+import practice.fundingboost2.member.app.dto.GetMemberResponseDto;
 import practice.fundingboost2.member.app.dto.UpdateMemberRequestDto;
 import practice.fundingboost2.member.repo.MemberRepository;
-import practice.fundingboost2.member.app.dto.GetMemberResponseDto;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @Service
@@ -35,7 +35,7 @@ public class MemberService {
 
     public GetMemberResponseDto updateMember(Long id, UpdateMemberRequestDto dto) {
         Member member = findMember(id);
-        member.update(dto.nickname(), dto.imageUrl(), dto.phoneNumber());
+        member.update(dto.nickname(), null, dto.phoneNumber());
 
         return GetMemberResponseDto.from(member);
     }
