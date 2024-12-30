@@ -34,7 +34,7 @@ public class JwtProvider implements AuthenticationProvider {
 
     private static SecretKey key;
 
-    @Value("${JWT_SECRET}")
+    @Value("${spring.security.secret}")
     private String secret;
 
     @PostConstruct
