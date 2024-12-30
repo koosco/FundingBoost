@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.funding.repo;
+package practice.fundingboost2.item.funding.repo.jpa;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
