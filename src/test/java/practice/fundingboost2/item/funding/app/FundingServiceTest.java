@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingItemRequestDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
 import practice.fundingboost2.item.funding.repo.entity.Contributor;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
@@ -127,7 +127,7 @@ class FundingServiceTest {
         em.persist(contributor2);
 
         //when
-        GetFundingResponseDto result = fundingService.getFunding(member.getId(), funding.getId());
+        GetFundingDetailResponseDto result = fundingService.getFunding(member.getId(), funding.getId());
 
         //then
         assertThat(result.getFundingInfoResponseDto().fundingId()).isEqualTo(funding.getId());

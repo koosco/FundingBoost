@@ -13,7 +13,7 @@ import practice.fundingboost2.common.dto.ResponseDto;
 import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.item.funding.app.FundingService;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
 import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequest;
 
 @RestController
@@ -35,7 +35,7 @@ public class FundingController {
     }
 
     @GetMapping("/{funding_id}")
-    public ResponseDto<GetFundingResponseDto> getFunding(@Auth Long memberId, @PathVariable("funding_id") Long fundingId){
+    public ResponseDto<GetFundingDetailResponseDto> getFunding(@Auth Long memberId, @PathVariable("funding_id") Long fundingId){
         return ResponseDto.ok(fundingService.getFunding(memberId, fundingId));
     }
 }

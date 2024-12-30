@@ -6,15 +6,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingInfoResponseDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingItemResponseDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequest;
 import practice.fundingboost2.item.funding.repo.ContributorRepository;
 import practice.fundingboost2.item.funding.repo.FundingRepository;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
 import practice.fundingboost2.item.item.app.ItemService;
+import practice.fundingboost2.item.item.app.dto.GetItemResponseDto;
 import practice.fundingboost2.item.item.repo.OptionRepository;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
@@ -64,18 +64,19 @@ public class FundingService {
         return CommonSuccessDto.fromEntity(true);
     }
 
-    public GetFundingResponseDto getFunding(Long memberId, Long fundingId) {
+    public GetFundingDetailResponseDto getFunding(Long memberId, Long fundingId) {
         Member member = memberService.findMember(memberId);
         Funding funding = findFunding(fundingId);
         funding.validateMember(member);
 
         GetFundingInfoResponseDto getFundingInfoResponseDto = GetFundingInfoResponseDto.from(funding);
-        List<GetFundingItemResponseDto> getFundingItemResponseDtos = funding.getFundingItems()
-                .stream().map(GetFundingItemResponseDto::from).toList();
+        List<GetItemResponseDto> getFundingItemResponseDtos = funding.getFundingItems().stream()
+            .map(GetItemResponseDto::from).toList();
         List<GetFundingParticipantDto> getFundingParticipantDtos = contributorRepository.findAll_ByFundingId(fundingId)
-                .stream().map(GetFundingParticipantDto::from).toList();
+            .stream().map(GetFundingParticipantDto::from).toList();
 
-        return new GetFundingResponseDto(getFundingInfoResponseDto,getFundingItemResponseDtos,getFundingParticipantDtos);
+        return new GetFundingDetailResponseDto(getFundingInfoResponseDto, getFundingItemResponseDtos,
+            getFundingParticipantDtos);
     }
 
 }
