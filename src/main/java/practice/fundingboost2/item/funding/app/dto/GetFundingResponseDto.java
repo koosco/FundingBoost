@@ -1,8 +1,10 @@
 package practice.fundingboost2.item.funding.app.dto;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
+import practice.fundingboost2.item.funding.repo.entity.FundingItem;
 import practice.fundingboost2.item.funding.repo.entity.FundingStatus;
 import practice.fundingboost2.item.funding.repo.entity.FundingTag;
 import practice.fundingboost2.member.app.dto.GetMemberInfoDto;
@@ -32,6 +34,7 @@ public record GetFundingResponseDto(
             funding.getStatus(),
             GetMemberInfoDto.from(funding.getMember()),
             funding.getFundingItems().stream()
+                .sorted(Comparator.comparingInt(FundingItem::getSequence))
                 .map(GetFundingItemResponseDto::from)
                 .toList());
     }
