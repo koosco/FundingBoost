@@ -22,7 +22,7 @@ public class ItemQueryController {
     private final ItemQueryRepository itemQueryRepository;
 
     @GetMapping
-    public Page<GetItemResponseDto> getItems(@RequestParam("category") String category, Pageable pageable) {
+    public Page<GetItemResponseDto> getItems(@RequestParam(value = "category", required = false) String category, Pageable pageable) {
         return itemQueryRepository.getItems(category, pageable);
     }
 
