@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -24,6 +25,7 @@ public class FundingQueryRepositoryImpl implements FundingQueryRepository {
 
     @Override
     public Page<GetFundingResponseDto> findFundings(Long memberId, Pageable pageable) {
+        Pageable orderedPageable = initPageable(pageable);
         List<GetFundingResponseDto> dtos = queryFactory
             .selectFrom(funding)
             .where(funding.member.id.in(
@@ -31,14 +33,34 @@ public class FundingQueryRepositoryImpl implements FundingQueryRepository {
                     .from(relation)
                     .where(relation.id.member1Id.eq(memberId))
             ))
-            .orderBy(hasSort(pageable.getSort()))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
+            .orderBy(hasSort(orderedPageable.getSort()))
+            .offset(orderedPageable.getOffset())
+            .limit(orderedPageable.getPageSize())
             .fetch()
             .stream()
             .map(GetFundingResponseDto::from)
             .toList();
 
+        Long pageCount = getPageCount(memberId);
+        return new PageImpl<>(dtos, orderedPageable, pageCount);
+    }
+
+    private Pageable initPageable(Pageable pageable) {
+        return pageable.getSort().isUnsorted() ?
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Order.desc("createdAt")))
+            : pageable;
+    }
+
+    private OrderSpecifier<?> hasSort(Sort sort) {
+        String order = sort.iterator().next().getProperty();
+
+        return switch (order) {
+            case "deadline" -> funding.deadLine.asc();
+            default -> funding.createdAt.desc();
+        };
+    }
+
+    private Long getPageCount(Long memberId) {
         Long pageCount = queryFactory.select(funding.count())
             .from(funding)
             .where(funding.member.id.in(
@@ -48,20 +70,6 @@ public class FundingQueryRepositoryImpl implements FundingQueryRepository {
             ))
             .fetchOne();
 
-        pageCount = pageCount != null ? pageCount : 0;
-        return new PageImpl<>(dtos, pageable, pageCount);
-    }
-
-    private OrderSpecifier<?> hasSort(Sort sort) {
-        if (sort.isEmpty()) {
-            return funding.createdAt.desc();
-        }
-
-        String order = sort.iterator().next().getProperty();
-
-        return switch (order) {
-            case "deadline" -> funding.deadLine.asc();
-            default -> funding.createdAt.desc();
-        };
+        return pageCount != null ? pageCount : 0;
     }
 }

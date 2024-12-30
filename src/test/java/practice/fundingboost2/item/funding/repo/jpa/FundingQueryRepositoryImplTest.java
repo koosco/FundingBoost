@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
@@ -103,9 +105,6 @@ class FundingQueryRepositoryImplTest {
     @Test
     void givenFunding_whenPageNumberIsOne_thenReturnSecondPageElements() {
         // given
-        PageRequest firstPageRequest = PageRequest.of(0, 10);
-        Page<GetFundingResponseDto> firstDto = fundingQueryRepositoryImpl.findFundings(member.getId(),
-            firstPageRequest);
         PageRequest pageRequest = PageRequest.of(1, 10);
         // when
         Page<GetFundingResponseDto> dto = fundingQueryRepositoryImpl.findFundings(member.getId(), pageRequest);
@@ -114,9 +113,38 @@ class FundingQueryRepositoryImplTest {
     }
     
     @Test
-    void givenFunding_whenSort() {
+    void givenFunding_whenSortIsNone_thenPageMustBeSortByCreatedDateDesc() {
         // given
+        PageRequest pageRequest = PageRequest.of(0, 10);
         // when
+        Page<GetFundingResponseDto> dto = fundingQueryRepositoryImpl.findFundings(member.getId(), pageRequest);
         // then
+        Order order = dto.getPageable().getSort().iterator().next();
+        assertThat(order.getProperty()).isEqualTo("createdAt");
+        assertThat(order.isDescending()).isTrue();
+    }
+
+    @Test
+    void givenFunding_whenSortIsCreatedAt_thenPageMustBeSortByCreatedDateDesc() {
+        // given
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Order.desc("createdAt")));
+        // when
+        Page<GetFundingResponseDto> dto = fundingQueryRepositoryImpl.findFundings(member.getId(), pageRequest);
+        // then
+        Order order = dto.getPageable().getSort().iterator().next();
+        assertThat(order.getProperty()).isEqualTo("createdAt");
+        assertThat(order.isDescending()).isTrue();
+    }
+
+    @Test
+    void givenFunding_whenSortIsDeadLine_thenPageMustBeSortByDeadLineAsc() {
+        // given
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Order.asc("deadLine")));
+        // when
+        Page<GetFundingResponseDto> dto = fundingQueryRepositoryImpl.findFundings(member.getId(), pageRequest);
+        // then
+        Order order = dto.getPageable().getSort().iterator().next();
+        assertThat(order.getProperty()).isEqualTo("deadLine");
+        assertThat(order.isAscending()).isTrue();
     }
 }
