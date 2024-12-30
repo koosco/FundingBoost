@@ -5,7 +5,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,7 +20,6 @@ import practice.fundingboost2.item.item.repo.entity.QBookmark;
 import practice.fundingboost2.item.item.repo.entity.QItem;
 import practice.fundingboost2.item.item.repo.entity.QOption;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
-import practice.fundingboost2.item.item.ui.dto.GetItemListResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetOptionResponseDto;
 
@@ -90,27 +88,29 @@ public class ItemQueryRepositoryImpl implements ItemQueryRepository {
     }
 
     @Override
-    public GetItemListResponseDto getLikedItems(Long memberId, Pageable pageable) {
+    public Page<GetItemResponseDto> getLikedItems(Long memberId, Pageable pageable) {
 
-        List<Item> items = queryFactory
+        List<GetItemResponseDto> dtos = queryFactory
             .select(item)
             .from(bookmark)
             .join(item).on(bookmark.id.itemId.eq(item.id))
             .where(bookmark.id.memberId.eq(memberId))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .fetch();
+            .fetch()
+            .stream()
+            .map(GetItemResponseDto::new)
+            .toList();
 
-        return new GetItemListResponseDto(items);
-    }
+        Long count = queryFactory
+            .select(item.count())
+            .from(item)
+            .join(bookmark).on(bookmark.id.itemId.eq(item.id))
+            .fetchOne();
 
-    @Override
-    public Optional<Item> findItemByIdWithOptions(Long itemId) {
-        return Optional.ofNullable(queryFactory
-            .selectFrom(item)
-            .join(item.options, option).fetchJoin()
-            .where(item.id.eq(itemId))
-            .fetchOne());
+        count = count != null ? count : 0;
+
+        return new PageImpl<>(dtos, pageable, count);
     }
 
     @Override

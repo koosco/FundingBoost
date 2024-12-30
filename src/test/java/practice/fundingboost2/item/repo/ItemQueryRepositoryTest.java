@@ -21,7 +21,6 @@ import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.item.item.repo.querydsl.ItemQueryRepository;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
-import practice.fundingboost2.item.item.ui.dto.GetItemListResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemResponseDto;
 import practice.fundingboost2.member.repo.entity.Member;
 
@@ -208,10 +207,10 @@ class ItemQueryRepositoryTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
 
         // then
-        assertThat(dto.getItems()).hasSize(10);
+        assertThat(dto.getContent()).hasSize(10);
     }
 
     @Test
@@ -219,10 +218,10 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 10);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(2L, pageRequest);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getLikedItems(2L, pageRequest);
 
         // then
-        assertThat(dto.getItems()).isEmpty();
+        assertThat(dto.getContent()).isEmpty();
     }
 
     @Test
@@ -230,9 +229,9 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageRequest = PageRequest.of(1, 10);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
         // then
-        assertThat(dto.getItems()).hasSize(2);
+        assertThat(dto.getContent()).hasSize(2);
     }
 
     @Test
@@ -240,9 +239,9 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 1);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
         // then
-        assertThat(dto.getItems()).hasSize(1);
+        assertThat(dto.getContent()).hasSize(1);
     }
 
     @Test
