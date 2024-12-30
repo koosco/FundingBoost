@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.funding.ui.dto;
+package practice.fundingboost2.item.funding.app.dto;
 
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
 

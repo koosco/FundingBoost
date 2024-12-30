@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.funding.repo;
+package practice.fundingboost2.item.funding.repo.jpa;
 
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.QFunding;
 import practice.fundingboost2.item.funding.repo.entity.QFundingItem;
-import practice.fundingboost2.item.funding.ui.dto.GetFundingListResponseDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingListResponseDto;
 import practice.fundingboost2.member.repo.entity.QMember;
 import practice.fundingboost2.member.repo.entity.QRelation;
 

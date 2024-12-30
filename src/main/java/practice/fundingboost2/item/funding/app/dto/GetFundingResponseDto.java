@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.funding.ui.dto;
+package practice.fundingboost2.item.funding.app.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;

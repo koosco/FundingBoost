@@ -9,10 +9,11 @@ import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingInfoResponseDto;
 import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequest;
-import practice.fundingboost2.item.funding.repo.ContributorRepository;
-import practice.fundingboost2.item.funding.repo.FundingRepository;
+import practice.fundingboost2.item.funding.app.interfaces.FundingRepository;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
+import practice.fundingboost2.item.funding.repo.jpa.ContributorRepository;
+import practice.fundingboost2.item.funding.app.dto.GetFundingListResponseDto;
 import practice.fundingboost2.item.item.app.ItemService;
 import practice.fundingboost2.item.item.app.dto.GetItemResponseDto;
 import practice.fundingboost2.item.item.repo.OptionRepository;
@@ -33,10 +34,6 @@ public class FundingService {
     private final OptionRepository optionRepository;
     private final ContributorRepository contributorRepository;
 
-    public Funding findFunding(Long fundingId) {
-        return fundingRepository.findById(fundingId)
-            .orElseThrow();
-    }
 
     public CommonSuccessDto createFunding(Long memberId, CreateFundingRequestDto dto) {
         Member member = memberService.findMember(memberId);
@@ -56,7 +53,7 @@ public class FundingService {
 
     public CommonSuccessDto updateFunding(Long memberId, Long fundingId, UpdateFundingRequest dto) {
         Member member = memberService.findMember(memberId);
-        Funding funding = findFunding(fundingId);
+        Funding funding = fundingRepository.findFunding(fundingId);
         funding.validateMember(member);
 
         funding.update(dto.deadline(), dto.fundingStatus());
@@ -66,7 +63,7 @@ public class FundingService {
 
     public GetFundingDetailResponseDto getFunding(Long memberId, Long fundingId) {
         Member member = memberService.findMember(memberId);
-        Funding funding = findFunding(fundingId);
+        Funding funding = fundingRepository.findFunding(fundingId);
         funding.validateMember(member);
 
         GetFundingInfoResponseDto getFundingInfoResponseDto = GetFundingInfoResponseDto.from(funding);
@@ -79,4 +76,7 @@ public class FundingService {
             getFundingParticipantDtos);
     }
 
+    public GetFundingListResponseDto getFundings(Long memberId) {
+        return fundingRepository.findFundings(memberId);
+    }
 }

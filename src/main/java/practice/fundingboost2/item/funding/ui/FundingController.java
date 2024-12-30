@@ -15,6 +15,7 @@ import practice.fundingboost2.item.funding.app.FundingService;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
 import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequest;
+import practice.fundingboost2.item.funding.app.dto.GetFundingListResponseDto;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,5 +38,10 @@ public class FundingController {
     @GetMapping("/{funding_id}")
     public ResponseDto<GetFundingDetailResponseDto> getFunding(@Auth Long memberId, @PathVariable("funding_id") Long fundingId){
         return ResponseDto.ok(fundingService.getFunding(memberId, fundingId));
+    }
+
+    @GetMapping
+    public ResponseDto<GetFundingListResponseDto> getFundings(@Auth Long memberId) {
+        return ResponseDto.ok(fundingService.getFundings(memberId));
     }
 }
