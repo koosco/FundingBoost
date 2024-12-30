@@ -6,6 +6,6 @@ public record GetMemberResponseDto(Long id, String nickname, String email, Strin
 
     public static GetMemberResponseDto from(Member member) {
         return new GetMemberResponseDto(member.getId(), member.getNickname(), member.getEmail(), member.getImageUrl(),
-            member.getPoint().getPoint(), member.getPhoneNumber());
+            member.getPoint(), member.getPhoneNumber());
     }
 }
