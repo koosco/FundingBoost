@@ -44,7 +44,7 @@ public class DeliveryController {
 
     @PatchMapping("/{delivery_id}")
     public ResponseDto<DeliveryResponseDto> updateDelivery(@Auth Long memberId,
-        @PathVariable("delivery_id") Long deliveryId, @Valid @RequestBody DeliveryRequestDto dto) {
+        @PathVariable("delivery_id") Long deliveryId, @RequestBody DeliveryRequestDto dto) {
         return ResponseDto.ok(deliveryService.updateDelivery(memberId, deliveryId, dto));
     }
 }
