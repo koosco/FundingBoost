@@ -21,6 +21,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.common.repo.entity.BaseTimeEntity;
@@ -48,10 +49,12 @@ public class Funding extends BaseTimeEntity {
     private FundingTag tag;
 
     @Min(0)
+    @ColumnDefault("0")
     @Column(name = "total_price")
     private Integer totalPrice;
 
     @Min(0)
+    @ColumnDefault("0")
     @Column(name = "collect_price")
     private Integer collectPrice;
 

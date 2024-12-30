@@ -46,10 +46,13 @@ public class Item {
     @Column(name = "category", length = 100)
     private String category;
 
+    @ColumnDefault("0")
     private Integer reviewCount;
 
+    @ColumnDefault("0")
     private Integer likeCount;
 
+    @ColumnDefault("0")
     private Integer fundingCount;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
