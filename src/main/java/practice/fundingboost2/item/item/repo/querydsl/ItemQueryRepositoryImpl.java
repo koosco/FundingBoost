@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.item.repo.jpa;
+package practice.fundingboost2.item.item.repo.querydsl;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -7,6 +7,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -19,6 +22,7 @@ import practice.fundingboost2.item.item.repo.entity.QItem;
 import practice.fundingboost2.item.item.repo.entity.QOption;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemListResponseDto;
+import practice.fundingboost2.item.item.ui.dto.GetItemResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetOptionResponseDto;
 
 @Repository
@@ -32,19 +36,40 @@ public class ItemQueryRepositoryImpl implements ItemQueryRepository {
     private static final QBookmark bookmark = QBookmark.bookmark;
 
     @Override
-    public GetItemListResponseDto getItems(String category, Pageable pageable) {
+    public Page<GetItemResponseDto> getItems(String category, Pageable pageable) {
 
-        List<Item> items = queryFactory
+        Pageable orderedPageable = initPageable(pageable);
+
+        List<GetItemResponseDto> dtos = queryFactory
             .selectFrom(item)
             .where(hasCategory(category))
             .leftJoin(item.options, option)
-            .orderBy(hasSort(pageable.getSort()))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-        return new GetItemListResponseDto(items);
+            .orderBy(hasSort(orderedPageable.getSort()))
+            .offset(orderedPageable.getOffset())
+            .limit(orderedPageable.getPageSize())
+            .fetch()
+            .stream()
+            .map(GetItemResponseDto::new)
+            .toList();
+        
+        return new PageImpl<>(dtos, orderedPageable, getPageCount(category));
     }
+
+    private Long getPageCount(String category) {
+        Long itemCount = queryFactory.select(item.count())
+            .from(item)
+            .where(hasCategory(category))
+            .fetchOne();
+        
+        return itemCount != null ? itemCount : 0;
+    }
+
+    private Pageable initPageable(Pageable pageable) {
+        return pageable.getSort().isUnsorted() ?
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Order.desc("likeCount")))
+            : pageable;
+    }
+
 
     private OrderSpecifier<?> hasSort(Sort sort) {
         if (sort.isEmpty()) {
