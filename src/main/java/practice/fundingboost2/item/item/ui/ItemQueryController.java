@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemListResponseDto;
-import practice.fundingboost2.item.item.repo.jpa.ItemQueryRepository;
+import practice.fundingboost2.item.item.repo.querydsl.ItemQueryRepository;
 
 @RestController
 @RequestMapping("/api/item")

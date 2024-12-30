@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
-import practice.fundingboost2.item.item.repo.jpa.ItemQueryRepository;
+import practice.fundingboost2.item.item.repo.querydsl.ItemQueryRepository;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemListResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemResponseDto;

@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.item.repo.jpa;
+package practice.fundingboost2.item.item.repo.querydsl;
 
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;

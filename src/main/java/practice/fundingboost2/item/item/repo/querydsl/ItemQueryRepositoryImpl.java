@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.item.repo.jpa;
+package practice.fundingboost2.item.item.repo.querydsl;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
