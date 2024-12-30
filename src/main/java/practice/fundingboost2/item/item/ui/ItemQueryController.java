@@ -22,8 +22,8 @@ public class ItemQueryController {
     private final ItemQueryRepository itemQueryRepository;
 
     @GetMapping
-    public ResponseDto<Page<GetItemResponseDto>> getItems(@RequestParam("category") String category, Pageable pageable) {
-        return ResponseDto.ok(itemQueryRepository.getItems(category, pageable));
+    public Page<GetItemResponseDto> getItems(@RequestParam(value = "category", required = false) String category, Pageable pageable) {
+        return itemQueryRepository.getItems(category, pageable);
     }
 
     @GetMapping("/like")

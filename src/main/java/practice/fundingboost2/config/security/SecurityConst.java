@@ -6,5 +6,5 @@ public class SecurityConst {
 
   private SecurityConst() {}
   public static final List<String> ALLOWED_URLS =
-      List.of("/api/**");
+      List.of("/api/auth/register", "/api/auth/login");
 }
