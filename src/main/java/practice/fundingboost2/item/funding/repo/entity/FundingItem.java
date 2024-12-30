@@ -15,11 +15,13 @@ import jakarta.validation.constraints.Max;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 
 @Getter
 @Entity
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FundingItem {
 
@@ -52,5 +54,6 @@ public class FundingItem {
         this.sequence = sequence;
         this.status = FundingItemStatus.PENDING;
         funding.getFundingItems().add(this);
+        funding.plusTotalPrice(item.getPrice());
     }
 }
