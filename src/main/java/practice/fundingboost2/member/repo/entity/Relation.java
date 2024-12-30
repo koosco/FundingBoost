@@ -19,11 +19,6 @@ public class Relation {
 
     public Relation(Long member1Id, Long member2Id) {
         validate(member1Id, member2Id);
-        if (member1Id > member2Id) {
-            Long tmp = member1Id;
-            member1Id = member2Id;
-            member2Id = tmp;
-        }
         this.id = new RelationId(member1Id, member2Id);
     }
 
