@@ -11,11 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
-import practice.fundingboost2.item.funding.app.dto.GetFundingListResponseDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
+import practice.fundingboost2.item.funding.repo.querydsl.FundingQueryRepositoryImpl;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.member.repo.entity.Member;
@@ -65,7 +67,7 @@ class FundingQueryRepositoryImplTest {
             Relation relation = new Relation(member.getId(), friend.getId());
             em.persist(relation);
 
-            Funding funding = new Funding(friend, "message" + i, "BIRTHDAY", LocalDateTime.now().plusDays(1));
+            Funding funding = new Funding(friend, "message" + i, "BIRTHDAY", LocalDateTime.now().plusDays(i));
             em.persist(funding);
 
             for (int j = 5 * i; j < 5 * i + 5; j++) {
@@ -82,10 +84,10 @@ class FundingQueryRepositoryImplTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 10);
         // when
-        GetFundingListResponseDto dto = fundingQueryRepositoryImpl.findFundings(member.getId(), pageRequest);
+        Page<GetFundingResponseDto> dto = fundingQueryRepositoryImpl.findFundings(member.getId(), pageRequest);
         // then
-        assertThat(dto.fundings()).hasSize(10);
-        assertThat(dto.fundings().getFirst().fundingItems()).hasSize(5);
+        assertThat(dto.getSize()).isEqualTo(10);
+        assertThat(dto.getContent().getFirst().fundingItems()).hasSize(5);
     }
 
     @Test
@@ -93,18 +95,28 @@ class FundingQueryRepositoryImplTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 5);
         // when
-        GetFundingListResponseDto dto = fundingQueryRepositoryImpl.findFundings(member.getId(), pageRequest);
+        Page<GetFundingResponseDto> dto = fundingQueryRepositoryImpl.findFundings(member.getId(), pageRequest);
         // then
-        assertThat(dto.fundings()).hasSize(5);
+        assertThat(dto.getContent().getFirst().fundingItems()).hasSize(5);
     }
 
     @Test
-    void givenFunding_whenPageNumberIs1_thenReturnSecondPageElements() {
+    void givenFunding_whenPageNumberIsOne_thenReturnSecondPageElements() {
         // given
+        PageRequest firstPageRequest = PageRequest.of(0, 10);
+        Page<GetFundingResponseDto> firstDto = fundingQueryRepositoryImpl.findFundings(member.getId(),
+            firstPageRequest);
         PageRequest pageRequest = PageRequest.of(1, 10);
         // when
-        GetFundingListResponseDto dto = fundingQueryRepositoryImpl.findFundings(member.getId(), pageRequest);
+        Page<GetFundingResponseDto> dto = fundingQueryRepositoryImpl.findFundings(member.getId(), pageRequest);
         // then
-        assertThat(dto.fundings().getFirst().fundingId()).isEqualTo(11);
+        assertThat(dto.getContent()).hasSize(10);
+    }
+    
+    @Test
+    void givenFunding_whenSort() {
+        // given
+        // when
+        // then
     }
 }

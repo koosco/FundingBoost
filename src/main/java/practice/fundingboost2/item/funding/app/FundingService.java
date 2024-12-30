@@ -2,6 +2,7 @@ package practice.fundingboost2.item.funding.app;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,12 +10,12 @@ import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingInfoResponseDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequest;
 import practice.fundingboost2.item.funding.app.interfaces.FundingRepository;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
 import practice.fundingboost2.item.funding.repo.jpa.ContributorRepository;
-import practice.fundingboost2.item.funding.app.dto.GetFundingListResponseDto;
 import practice.fundingboost2.item.item.app.ItemService;
 import practice.fundingboost2.item.item.app.dto.GetItemResponseDto;
 import practice.fundingboost2.item.item.repo.OptionRepository;
@@ -77,7 +78,7 @@ public class FundingService {
             getFundingParticipantDtos);
     }
 
-    public GetFundingListResponseDto getFundings(Long memberId, Pageable pageable) {
+    public Page<GetFundingResponseDto> getFundings(Long memberId, Pageable pageable) {
         return fundingRepository.findFundings(memberId, pageable);
     }
 }

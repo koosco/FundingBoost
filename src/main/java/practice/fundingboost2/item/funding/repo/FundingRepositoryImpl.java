@@ -1,13 +1,14 @@
 package practice.fundingboost2.item.funding.repo;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import practice.fundingboost2.item.funding.app.dto.GetFundingListResponseDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.app.interfaces.FundingRepository;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
-import practice.fundingboost2.item.funding.repo.jpa.FundingQueryRepository;
 import practice.fundingboost2.item.funding.repo.jpa.JpaFundingRepository;
+import practice.fundingboost2.item.funding.repo.querydsl.FundingQueryRepository;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class FundingRepositoryImpl implements FundingRepository {
     }
 
     @Override
-    public GetFundingListResponseDto findFundings(Long memberId, Pageable pageable) {
+    public Page<GetFundingResponseDto> findFundings(Long memberId, Pageable pageable) {
         return fundingQueryRepository.findFundings(memberId, pageable);
     }
 }
