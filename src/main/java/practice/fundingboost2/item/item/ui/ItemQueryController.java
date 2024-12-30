@@ -22,7 +22,8 @@ public class ItemQueryController {
     private final ItemQueryRepository itemQueryRepository;
 
     @GetMapping
-    public Page<GetItemResponseDto> getItems(@RequestParam(value = "category", required = false) String category, Pageable pageable) {
+    public Page<GetItemResponseDto> getItems(@RequestParam(value = "category", required = false) String category,
+        Pageable pageable) {
         return itemQueryRepository.getItems(category, pageable);
     }
 
@@ -32,7 +33,8 @@ public class ItemQueryController {
     }
 
     @GetMapping("{item_id}")
-    public ResponseDto<GetItemDetailResponseDto> getItemInfo(@Auth Long memberId, @PathVariable("item_id") Long itemId) {
+    public ResponseDto<GetItemDetailResponseDto> getItemInfo(@Auth Long memberId,
+        @PathVariable("item_id") Long itemId) {
         return ResponseDto.ok(itemQueryRepository.getItemInfo(memberId, itemId));
     }
 }
