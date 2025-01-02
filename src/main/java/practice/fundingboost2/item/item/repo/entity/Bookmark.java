@@ -16,4 +16,8 @@ public class Bookmark {
     public Bookmark(Long memberId, Long itemId) {
         this.id = new BookmarkId(memberId, itemId);
     }
+
+    public Bookmark(BookmarkId bookmarkId) {
+        this.id = bookmarkId;
+    }
 }

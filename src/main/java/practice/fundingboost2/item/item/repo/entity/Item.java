@@ -69,8 +69,9 @@ public class Item {
         this.fundingCount = 0;
     }
 
-    public void mark() {
+    public Bookmark mark(BookmarkId bookmarkId) {
         this.likeCount++;
+        return new Bookmark(bookmarkId);
     }
 
     public void unmark() {

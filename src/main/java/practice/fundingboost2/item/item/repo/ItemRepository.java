@@ -26,4 +26,12 @@ public class ItemRepository {
     public Boolean existsById(Long itemId, Long optionId) {
         return itemRepository.existsByIdAndOptions_Id(itemId, optionId);
     }
+
+    public Item concurrencyFindItem(Long itemId) {
+        return itemRepository.findByIdUsingLock(itemId);
+    }
+
+    public Item save(Item item) {
+        return itemRepository.save(item);
+    }
 }
