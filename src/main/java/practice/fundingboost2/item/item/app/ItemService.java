@@ -31,19 +31,26 @@ public class ItemService {
         return itemRepository.findById(id);
     }
 
+    public Item concurrencyFindItem(Long id) {
+        return itemRepository.concurrencyFindItem(id);
+    }
+
     public CommonSuccessDto likeItem(Long memberId, Long itemId) {
-        Item item = findItem(itemId);
-        Bookmark bookmark = new Bookmark(memberId, itemId);
+        Item item = concurrencyFindItem(itemId);
+        BookmarkId bookmarkId = new BookmarkId(memberId, itemId);
 
-        if (checkBookmark(bookmark.getId())) {
-            bookmarkRepository.delete(bookmark);
-            item.unmark();
-
-            return CommonSuccessDto.fromEntity(true);
+        if (checkBookmark(bookmarkId)) {
+            return dislikeItem(bookmarkId, item);
         }
-
-        item.mark();
+        Bookmark bookmark = item.mark(bookmarkId);
         bookmarkRepository.save(bookmark);
+
+        return CommonSuccessDto.fromEntity(true);
+    }
+
+    private CommonSuccessDto dislikeItem(BookmarkId bookmarkId, Item item) {
+        bookmarkRepository.deleteById(bookmarkId);
+        item.unmark();
 
         return CommonSuccessDto.fromEntity(true);
     }

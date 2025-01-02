@@ -4,31 +4,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
-import practice.fundingboost2.item.item.repo.jpa.BookmarkRepository;
+import practice.fundingboost2.item.item.repo.ItemRepository;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
+import practice.fundingboost2.item.item.repo.jpa.BookmarkRepository;
+import practice.fundingboost2.member.repo.MemberRepository;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @SpringBootTest
-@Transactional
 class ItemServiceTest {
 
     @Autowired
     ItemService itemService;
 
     @Autowired
+    ItemRepository itemRepository;
+
+    @Autowired
     BookmarkRepository bookmarkRepository;
 
-    @PersistenceContext
-    EntityManager em;
+    @Autowired
+    MemberRepository memberRepository;
 
     Member member;
 
@@ -37,12 +43,10 @@ class ItemServiceTest {
     @BeforeEach
     void init() {
         member = new Member("email", "name", "imageUrl", "phone");
-        em.persist(member);
+        memberRepository.save(member);
 
         item = new Item("name", 1000, "imageUrl", "brand", "category");
-        em.persist(item);
-
-        em.flush();
+        item = itemRepository.save(item);
     }
 
     @Test
@@ -56,6 +60,8 @@ class ItemServiceTest {
         CommonSuccessDto dto = itemService.likeItem(memberId, itemId);
 
         // then
+        item = itemRepository.findById(item.getId());
+        assertThat(dto.isSuccess()).isTrue();
         assertThat(item.getLikeCount()).isEqualTo(1);
         assertTrue(bookmarkRepository.existsById(bookmark.getId()));
     }
@@ -74,5 +80,35 @@ class ItemServiceTest {
         // then
         assertThat(item.getLikeCount()).isEqualTo(0);
         assertFalse(bookmarkRepository.existsById(bookmark.getId()));
+    }
+
+    @Test
+    void givenItem_whenHundredMemberLikeConcurrently_thenItemLikeCountMustBeHundred() throws InterruptedException {
+        // given
+        final int MEMBER_COUNT = 100;
+        List<Member> members = new ArrayList<>();
+        for (int i = 0; i < MEMBER_COUNT; i++) {
+            Member friend = new Member("email" + i, "name" + i, "imageUrl" + i, "phone" + i);
+            members.add(friend);
+        }
+        members = memberRepository.saveAll(members);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(MEMBER_COUNT);
+        CountDownLatch latch = new CountDownLatch(MEMBER_COUNT);
+
+        // when
+        for (Member member : members) {
+            executorService.execute(() -> {
+                itemService.likeItem(member.getId(), item.getId());
+                latch.countDown();
+            });
+        }
+
+        latch.await();
+        executorService.close();
+
+        item = itemRepository.findById(item.getId());
+
+        assertThat(item.getLikeCount()).isEqualTo(MEMBER_COUNT);
     }
 }
