@@ -1,7 +1,7 @@
 package practice.fundingboost2.item.funding.app;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingItemRequestDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.repo.entity.Contributor;
@@ -38,7 +39,6 @@ class FundingServiceTest {
 
     final List<Item> items = new ArrayList<>();
     Member member;
-
 
     final int ITEM_SIZE = 5;
     final int OPTION_SIZE = 5;
@@ -130,7 +130,7 @@ class FundingServiceTest {
         em.persist(contributor2);
 
         //when
-        GetFundingResponseDto result = fundingService.getFunding(member.getId(), funding.getId());
+        GetFundingDetailResponseDto result = fundingService.getFunding(member.getId(), funding.getId());
 
         //then
         assertThat(result.getFundingInfoResponseDto().fundingId()).isEqualTo(funding.getId());

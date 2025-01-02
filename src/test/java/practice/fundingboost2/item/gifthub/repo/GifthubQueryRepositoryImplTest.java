@@ -10,11 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.item.gifthub.repo.entity.Gifthub;
 import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
-import practice.fundingboost2.item.gifthub.ui.dto.GetGifthubListResponseDto;
 import practice.fundingboost2.item.gifthub.ui.dto.GetGifthubResponseDto;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
@@ -63,10 +63,10 @@ class GifthubQueryRepositoryImplTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 10);
         // when
-        GetGifthubListResponseDto dto = gifthubQueryRepository.getAllGifthub(member.getId(), pageRequest);
+        Page<GetGifthubResponseDto> dto = gifthubQueryRepository.getAllGifthub(member.getId(), pageRequest);
 
         // then
-        assertThat(dto.gifthubs()).hasSize(10);
+        assertThat(dto.getContent()).hasSize(10);
     }
 
     @Test
@@ -74,18 +74,18 @@ class GifthubQueryRepositoryImplTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 5);
         // when
-        GetGifthubListResponseDto dto = gifthubQueryRepository.getAllGifthub(member.getId(), pageRequest);
+        Page<GetGifthubResponseDto> dto = gifthubQueryRepository.getAllGifthub(member.getId(), pageRequest);
         // then
-        assertThat(dto.gifthubs()).hasSize(5);
+        assertThat(dto.getContent()).hasSize(5);
     }
 
     @Test
     void givenCreateFifteenGifthub_whenPageIsTwo_thenReturnFiveGifthub() {
         // given
         PageRequest pageRequest = PageRequest.of(1, 10);
-        GetGifthubListResponseDto dto = gifthubQueryRepository.getAllGifthub(member.getId(), pageRequest);
+        Page<GetGifthubResponseDto> dto = gifthubQueryRepository.getAllGifthub(member.getId(), pageRequest);
         // then
-        assertThat(dto.gifthubs()).hasSize(5);
+        assertThat(dto.getContent()).hasSize(5);
     }
 
     @Test
@@ -96,9 +96,9 @@ class GifthubQueryRepositoryImplTest {
         em.flush();
         PageRequest pageRequest = PageRequest.of(0, 10);
         // when
-        GetGifthubListResponseDto dto = gifthubQueryRepository.getAllGifthub(other.getId(), pageRequest);
+        Page<GetGifthubResponseDto> dto = gifthubQueryRepository.getAllGifthub(other.getId(), pageRequest);
         // then
-        assertThat(dto.gifthubs()).isEmpty();
+        assertThat(dto.getContent()).isEmpty();
     }
 
     @Test
@@ -106,8 +106,8 @@ class GifthubQueryRepositoryImplTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 10);
         // when
-        GetGifthubListResponseDto dto = gifthubQueryRepository.getAllGifthub(member.getId(), pageRequest);
-        GetGifthubResponseDto firstDto = dto.gifthubs().getFirst();
+        Page<GetGifthubResponseDto> dto = gifthubQueryRepository.getAllGifthub(member.getId(), pageRequest);
+        GetGifthubResponseDto firstDto = dto.getContent().getFirst();
 
         // then
         assertThat(firstDto.itemId()).isEqualTo(item.getId());

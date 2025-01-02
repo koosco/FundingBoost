@@ -1,23 +1,25 @@
 package practice.fundingboost2.item.funding.app;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingInfoResponseDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingItemResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequest;
-import practice.fundingboost2.item.funding.repo.ContributorRepository;
-import practice.fundingboost2.item.funding.repo.FundingRepository;
+import practice.fundingboost2.item.funding.app.interfaces.FundingRepository;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
+import practice.fundingboost2.item.funding.repo.jpa.ContributorRepository;
 import practice.fundingboost2.item.item.app.ItemService;
+import practice.fundingboost2.item.item.app.dto.GetItemResponseDto;
 import practice.fundingboost2.item.item.repo.OptionRepository;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
@@ -36,10 +38,6 @@ public class FundingService {
     private final OptionRepository optionRepository;
     private final ContributorRepository contributorRepository;
 
-    public Funding findFunding(Long fundingId) {
-        return fundingRepository.findById(fundingId)
-            .orElseThrow();
-    }
 
     public CommonSuccessDto createFunding(Long memberId, CreateFundingRequestDto dto) {
         Member member = memberService.findMember(memberId);
@@ -59,7 +57,7 @@ public class FundingService {
 
     public CommonSuccessDto updateFunding(Long memberId, Long fundingId, UpdateFundingRequest dto) {
         Member member = memberService.findMember(memberId);
-        Funding funding = findFunding(fundingId);
+        Funding funding = fundingRepository.findFunding(fundingId);
         funding.validateMember(member);
 
         funding.update(dto.deadline(), dto.fundingStatus());
@@ -67,18 +65,23 @@ public class FundingService {
         return CommonSuccessDto.fromEntity(true);
     }
 
-    public GetFundingResponseDto getFunding(Long memberId, Long fundingId) {
+    public GetFundingDetailResponseDto getFunding(Long memberId, Long fundingId) {
         Member member = memberService.findMember(memberId);
-        Funding funding = findFunding(fundingId);
+        Funding funding = fundingRepository.findFunding(fundingId);
         funding.validateMember(member);
 
         GetFundingInfoResponseDto getFundingInfoResponseDto = GetFundingInfoResponseDto.from(funding);
-        List<GetFundingItemResponseDto> getFundingItemResponseDtos = funding.getFundingItems()
-                .stream().map(GetFundingItemResponseDto::from).toList();
+        List<GetItemResponseDto> getFundingItemResponseDtos = funding.getFundingItems().stream()
+            .map(GetItemResponseDto::from).toList();
         List<GetFundingParticipantDto> getFundingParticipantDtos = contributorRepository.findAll_ByFundingId(fundingId)
-                .stream().map(GetFundingParticipantDto::from).toList();
+            .stream().map(GetFundingParticipantDto::from).toList();
 
-        return new GetFundingResponseDto(getFundingInfoResponseDto,getFundingItemResponseDtos,getFundingParticipantDtos);
+        return new GetFundingDetailResponseDto(getFundingInfoResponseDto, getFundingItemResponseDtos,
+            getFundingParticipantDtos);
+    }
+
+    public Page<GetFundingResponseDto> getFundings(Long memberId, Pageable pageable) {
+        return fundingRepository.findFundings(memberId, pageable);
     }
 
     public GetFundingHistoryListResponseDto getFundingHistory(Long memberId) {

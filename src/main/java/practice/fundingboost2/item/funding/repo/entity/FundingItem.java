@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.funding.repo.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,15 +12,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.Max;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 
 @Getter
 @Entity
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FundingItem {
 
@@ -39,9 +41,10 @@ public class FundingItem {
     @JoinColumn(name = "option_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Option option;
 
-    @Max(5)
+    @Column(columnDefinition = "INTEGER CHECK (sequence BETWEEN 1 AND 5)")
     private Integer sequence;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FundingItemStatus status;
 
@@ -52,5 +55,6 @@ public class FundingItem {
         this.sequence = sequence;
         this.status = FundingItemStatus.PENDING;
         funding.getFundingItems().add(this);
+        funding.plusTotalPrice(item.getPrice());
     }
 }

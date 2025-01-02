@@ -14,12 +14,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.common.repo.entity.BaseTimeEntity;
@@ -27,6 +29,7 @@ import practice.fundingboost2.member.repo.entity.Member;
 
 @Getter
 @Entity
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Funding extends BaseTimeEntity {
 
@@ -46,15 +49,19 @@ public class Funding extends BaseTimeEntity {
     private FundingTag tag;
 
     @Min(0)
-    @Column(name = "total_price")
+    @NotNull
+    @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
     @Min(0)
-    @Column(name = "collect_price")
+    @NotNull
+    @Column(name = "collect_price", nullable = false)
     private Integer collectPrice;
 
+    @Column(nullable = false)
     private LocalDateTime deadLine;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FundingStatus status;
 
@@ -71,8 +78,12 @@ public class Funding extends BaseTimeEntity {
         this.status = FundingStatus.PENDING;
     }
 
-    public void plusCollectPrice(int fundMoney){
-        collectPrice+=fundMoney;
+    public void plusCollectPrice(int fundMoney) {
+        collectPrice += fundMoney;
+    }
+
+    public void plusTotalPrice(int money) {
+        totalPrice += money;
     }
 
     public void validateMember(Member member) {

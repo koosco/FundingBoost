@@ -1,12 +1,15 @@
 package practice.fundingboost2.member.repo.entity;
 
-import jakarta.persistence.Embedded;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -17,12 +20,14 @@ import practice.fundingboost2.common.exception.ErrorCode;
 @Entity
 @ToString
 @Table(name = "member")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String password;
 
     @NotBlank
     private String email;
@@ -30,10 +35,12 @@ public class Member {
     @NotBlank
     private String nickname;
 
+    @Column(length = 500)
     private String imageUrl;
 
-    @Embedded
-    private Point point;
+    @Min(0)
+    @NotNull
+    private Integer point;
 
     private String phoneNumber;
 
@@ -43,7 +50,29 @@ public class Member {
         this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.phoneNumber = phoneNumber;
-        this.point = Point.ZERO;
+        this.point = 0;
+    }
+
+    public static Member create(String email, String nickname, String password) {
+        Member member = new Member();
+        member.email = email;
+        member.nickname = nickname;
+        member.password = password;
+        member.point = 0;
+
+        return member;
+    }
+
+    public void validateEmail(String email) {
+        if (this.email.equals(email)) {
+            throw new CommonException(ErrorCode.ALREADY_EXISTS_EMAIL);
+        }
+    }
+
+    public void validateNickname(String nickname) {
+        if (this.email.equals(nickname)) {
+            throw new CommonException(ErrorCode.ALREADY_EXISTS_EMAIL);
+        }
     }
 
     private static void validate(String email, String nickname) {
