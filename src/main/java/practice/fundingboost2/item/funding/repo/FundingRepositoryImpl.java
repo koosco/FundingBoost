@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.funding.repo;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,5 +32,10 @@ public class FundingRepositoryImpl implements FundingRepository {
     @Override
     public Page<GetFundingResponseDto> findFundings(Long memberId, Pageable pageable) {
         return fundingQueryRepository.findFundings(memberId, pageable);
+    }
+
+    @Override
+    public List<Funding> findAllByMemberId(Long memberId) {
+        return jpaFundingRepository.findAllByMemberId(memberId);
     }
 }
