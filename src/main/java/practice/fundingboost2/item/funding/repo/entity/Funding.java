@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.funding.repo.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
@@ -21,7 +22,6 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.common.repo.entity.BaseTimeEntity;
@@ -29,7 +29,6 @@ import practice.fundingboost2.member.repo.entity.Member;
 
 @Getter
 @Entity
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Funding extends BaseTimeEntity {
 
@@ -65,7 +64,10 @@ public class Funding extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private FundingStatus status;
 
-    @OneToMany(mappedBy = "funding")
+    @Column(nullable = false)
+    private Integer fundingCount;
+
+    @OneToMany(mappedBy = "funding", cascade = CascadeType.ALL)
     private final List<FundingItem> fundingItems = new ArrayList<>();
 
     public Funding(Member member, String message, String tag, LocalDateTime deadLine) {
@@ -76,9 +78,11 @@ public class Funding extends BaseTimeEntity {
         this.totalPrice = 0;
         this.collectPrice = 0;
         this.status = FundingStatus.PENDING;
+        this.fundingCount = 0;
     }
 
-    public void plusCollectPrice(int fundMoney) {
+    public void fund(int fundMoney) {
+        this.fundingCount++;
         collectPrice += fundMoney;
     }
 

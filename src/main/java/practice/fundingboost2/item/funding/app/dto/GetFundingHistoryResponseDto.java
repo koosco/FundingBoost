@@ -13,8 +13,8 @@ public record GetFundingHistoryResponseDto(
     int collectPrice,
     int contributorCount) {
 
-    public static GetFundingHistoryResponseDto from(Funding funding, int contributorCount) {
+    public static GetFundingHistoryResponseDto from(Funding funding) {
         return new GetFundingHistoryResponseDto(funding.getId(), funding.getTag(), funding.getCreatedAt(),
-            funding.getDeadLine(), funding.getTotalPrice(), funding.getCollectPrice(), contributorCount);
+            funding.getDeadLine(), funding.getTotalPrice(), funding.getCollectPrice(), funding.getFundingCount());
     }
 }

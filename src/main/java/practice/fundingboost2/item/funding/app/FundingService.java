@@ -45,7 +45,7 @@ public class FundingService {
         Funding funding = new Funding(member, dto.message(), dto.tag(), dto.deadline());
         dto.items().forEach(
             item -> {
-                Item findItem = itemService.findItem(item.itemId());
+                Item findItem = itemService.concurrencyFindItem(item.itemId());
                 Option findOption = optionRepository.findById(item.optionId())
                     .orElseThrow();
                 new FundingItem(funding, findItem, findOption, item.sequence());
@@ -72,9 +72,12 @@ public class FundingService {
 
         GetFundingInfoResponseDto getFundingInfoResponseDto = GetFundingInfoResponseDto.from(funding);
         List<GetItemResponseDto> getFundingItemResponseDtos = funding.getFundingItems().stream()
-            .map(GetItemResponseDto::from).toList();
+            .map(GetItemResponseDto::from)
+            .toList();
         List<GetFundingParticipantDto> getFundingParticipantDtos = contributorRepository.findAll_ByFundingId(fundingId)
-            .stream().map(GetFundingParticipantDto::from).toList();
+            .stream()
+            .map(GetFundingParticipantDto::from)
+            .toList();
 
         return new GetFundingDetailResponseDto(getFundingInfoResponseDto, getFundingItemResponseDtos,
             getFundingParticipantDtos);
@@ -85,11 +88,10 @@ public class FundingService {
     }
 
     public GetFundingHistoryListResponseDto getFundingHistory(Long memberId) {
-
-        List<GetFundingHistoryResponseDto> getFundingHistoryResponseDtos = fundingRepository.findAllByMemberId(memberId).stream().map(funding -> {
-            int contributorCount = contributorRepository.findAll_ByFundingId(funding.getId()).size();
-            return GetFundingHistoryResponseDto.from(funding, contributorCount);
-        }).toList();
+        List<GetFundingHistoryResponseDto> getFundingHistoryResponseDtos = fundingRepository
+            .findAllByMemberId(memberId).stream()
+            .map(GetFundingHistoryResponseDto::from)
+            .toList();
 
         return new GetFundingHistoryListResponseDto(getFundingHistoryResponseDtos);
     }

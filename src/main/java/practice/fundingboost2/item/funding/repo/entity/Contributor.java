@@ -36,6 +36,6 @@ public class Contributor {
         this.member = member;
         this.funding = funding;
         this.contribution = contribution;
-        funding.plusCollectPrice(contribution);
+        funding.fund(contribution);
     }
 }

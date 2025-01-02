@@ -38,4 +38,9 @@ public class FundingRepositoryImpl implements FundingRepository {
     public List<Funding> findAllByMemberId(Long memberId) {
         return jpaFundingRepository.findAllByMemberId(memberId);
     }
+
+    @Override
+    public List<Funding> saveAll(List<Funding> fundings) {
+        return jpaFundingRepository.saveAll(fundings);
+    }
 }
