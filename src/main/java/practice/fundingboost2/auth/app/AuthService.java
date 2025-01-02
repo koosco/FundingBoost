@@ -9,17 +9,17 @@ import org.springframework.stereotype.Service;
 import practice.fundingboost2.auth.app.dto.LoginRequestDto;
 import practice.fundingboost2.auth.app.dto.LoginResponseDto;
 import practice.fundingboost2.auth.app.dto.RegisterRequestDto;
-import practice.fundingboost2.auth.repo.AuthMemberRepository;
-import practice.fundingboost2.auth.repo.entity.AuthMember;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.config.security.form.CustomAuthenticationProvider;
 import practice.fundingboost2.config.security.jwt.JwtTokenGenerator;
+import practice.fundingboost2.member.repo.MemberRepository;
+import practice.fundingboost2.member.repo.entity.Member;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final AuthMemberRepository memberRepository;
+    private final MemberRepository memberRepository;
     private final AuthValidator validator;
     private final PasswordEncoder encoder;
     private final CustomAuthenticationProvider customAuthenticationProvider;
@@ -27,11 +27,11 @@ public class AuthService {
 
 
     public CommonSuccessDto register(RegisterRequestDto dto) {
-        List<AuthMember> findMembers = memberRepository.findByEmailOrNickname(dto.email(), dto.nickname());
+        List<Member> findMembers = memberRepository.findByEmailOrNickname(dto.email(), dto.nickname());
         validate(dto, findMembers);
 
         String encodedPassword = encode(dto.password());
-        AuthMember member = AuthMember.create(dto.email(), dto.nickname(), encodedPassword);
+        Member member = Member.create(dto.email(), dto.nickname(), encodedPassword);
         memberRepository.save(member);
 
         return CommonSuccessDto.fromEntity(true);
@@ -45,7 +45,7 @@ public class AuthService {
         return new LoginResponseDto(accessToken);
     }
 
-    private void validate(RegisterRequestDto dto, List<AuthMember> findMembers) {
+    private void validate(RegisterRequestDto dto, List<Member> findMembers) {
         validator.validateEmailAndNickname(findMembers, dto.email(), dto.nickname());
     }
 

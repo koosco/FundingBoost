@@ -6,6 +6,7 @@ import static practice.fundingboost2.config.security.SecurityConst.ALLOWED_URLS;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -34,10 +35,10 @@ public class SecurityConfig {
             .sessionManagement(
                 sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests((authorize) -> authorize
-                    .requestMatchers(ALLOWED_URLS.toArray(new String[0])).permitAll()
-                    .anyRequest().authenticated())
+                .requestMatchers(ALLOWED_URLS.toArray(new String[0])).permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/item").permitAll()
+                .anyRequest().authenticated())
             .addFilterBefore(jwtProcessingFilter, UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }

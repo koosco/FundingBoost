@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import practice.fundingboost2.auth.repo.entity.AuthMember;
+import practice.fundingboost2.member.repo.entity.Member;
 
 public class CustomUserDetails implements UserDetails {
 
@@ -15,7 +15,7 @@ public class CustomUserDetails implements UserDetails {
     @Getter
     private final String email;
 
-    public CustomUserDetails(AuthMember authMember) {
+    public CustomUserDetails(Member authMember) {
         this.id = String.valueOf(authMember.getId());
         this.password = authMember.getPassword();
         this.email = authMember.getEmail();

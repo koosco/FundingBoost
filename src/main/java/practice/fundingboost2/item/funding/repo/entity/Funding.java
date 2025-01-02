@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,15 +49,19 @@ public class Funding extends BaseTimeEntity {
     private FundingTag tag;
 
     @Min(0)
-    @Column(name = "total_price")
+    @NotNull
+    @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
     @Min(0)
-    @Column(name = "collect_price")
+    @NotNull
+    @Column(name = "collect_price", nullable = false)
     private Integer collectPrice;
 
+    @Column(nullable = false)
     private LocalDateTime deadLine;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FundingStatus status;
 
@@ -73,8 +78,8 @@ public class Funding extends BaseTimeEntity {
         this.status = FundingStatus.PENDING;
     }
 
-    public void plusCollectPrice(int fundMoney){
-        collectPrice+=fundMoney;
+    public void plusCollectPrice(int fundMoney) {
+        collectPrice += fundMoney;
     }
 
     public void plusTotalPrice(int money) {

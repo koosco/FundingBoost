@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.gifthub.repo.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -15,6 +16,7 @@ public class Gifthub {
     private GifthubId id;
 
     @Embedded
+    @Column(nullable = false)
     private Quantity quantity;
 
     public Gifthub(GifthubId id) {
