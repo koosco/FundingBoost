@@ -21,6 +21,7 @@ import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
 import practice.fundingboost2.item.funding.repo.entity.FundingTag;
 import practice.fundingboost2.item.funding.repo.jpa.ContributorRepository;
+import practice.fundingboost2.item.funding.repo.jpa.FundingItemRepository;
 import practice.fundingboost2.item.item.repo.ItemRepository;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
@@ -44,6 +45,9 @@ class FundingServiceTest {
 
     @Autowired
     ContributorRepository contributorRepository;
+
+    @Autowired
+    FundingItemRepository fundingItemRepository;
 
     Member member;
     List<Item> items = new ArrayList<>();
@@ -140,6 +144,8 @@ class FundingServiceTest {
     @Test
     void givenTenItems_whenCreateFunding_thenCreateNewFunding() {
         // given
+        Member member = new Member("email", "nickname", "imageUrl", "phoneNumber");
+        member = memberRepository.save(member);
         List<CreateFundingItemRequestDto> fundingItemDtos = new ArrayList<>();
         for (int i = 0; i < OPTION_SIZE; i++) {
             Item item = items.get(i);
@@ -148,6 +154,7 @@ class FundingServiceTest {
         }
         CreateFundingRequestDto dto = new CreateFundingRequestDto(fundingItemDtos, LocalDateTime.now(), "BIRTHDAY",
             "happy birthday");
+
         // when
         CommonSuccessDto resultDto = fundingService.createFunding(member.getId(), dto);
 
@@ -170,7 +177,10 @@ class FundingServiceTest {
             ));
             raisePrice += i * 1000;
         }
-        fundingRepository.save(fundings.getFirst());
+        Funding funding = fundings.getFirst();
+        fundingRepository.save(funding);
+        List<FundingItem> fundingItems = funding.getFundingItems();
+        fundingItemRepository.saveAll(fundingItems);
         contributors = contributorRepository.saveAll(contributors);
 
         //when
@@ -195,7 +205,6 @@ class FundingServiceTest {
         }
         fundingRepository.save(fundings.getFirst());
         contributors = contributorRepository.saveAll(contributors);
-
 
         //when
         GetFundingHistoryListResponseDto result = fundingService.getFundingHistory(memberId);

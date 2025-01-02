@@ -1,6 +1,5 @@
 package practice.fundingboost2.item.funding.repo.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
@@ -14,8 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,13 +44,9 @@ public class Funding extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private FundingTag tag;
 
-    @Min(0)
-    @NotNull
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
-    @Min(0)
-    @NotNull
     @Column(name = "collect_price", nullable = false)
     private Integer collectPrice;
 
@@ -64,10 +57,10 @@ public class Funding extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private FundingStatus status;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private Integer fundingCount;
 
-    @OneToMany(mappedBy = "funding", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "funding")
     private final List<FundingItem> fundingItems = new ArrayList<>();
 
     public Funding(Member member, String message, String tag, LocalDateTime deadLine) {
