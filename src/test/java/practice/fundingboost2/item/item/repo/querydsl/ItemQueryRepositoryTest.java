@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.item.repo.jpa;
+package practice.fundingboost2.item.item.repo.querydsl;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,6 @@ import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
-import practice.fundingboost2.item.item.ui.dto.GetItemListResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemResponseDto;
 import practice.fundingboost2.member.repo.entity.Member;
 
@@ -95,10 +95,10 @@ class ItemQueryRepositoryTest {
         PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.desc("funding")));
 
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems(null, pageable);
 
         // then
-        List<GetItemResponseDto> dtos = dto.getItems();
+        List<GetItemResponseDto> dtos = dto.getContent();
         assertThat(dtos).hasSize(10);
         assertThat(dtos.get(0).getFundingCount()).isGreaterThan(dtos.get(1).getFundingCount());
         assertThat(dtos.get(1).getFundingCount()).isGreaterThan(dtos.get(2).getFundingCount());
@@ -110,10 +110,10 @@ class ItemQueryRepositoryTest {
         PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.desc("most")));
 
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems(null, pageable);
 
         // then
-        List<GetItemResponseDto> dtos = dto.getItems();
+        List<GetItemResponseDto> dtos = dto.getContent();
         assertThat(dtos).hasSize(10);
         assertThat(dtos.get(0).getLikeCount()).isGreaterThan(dtos.get(1).getLikeCount());
         assertThat(dtos.get(1).getLikeCount()).isGreaterThan(dtos.get(2).getLikeCount());
@@ -125,10 +125,10 @@ class ItemQueryRepositoryTest {
         PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.desc("review")));
 
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems(null, pageable);
 
         // then
-        List<GetItemResponseDto> dtos = dto.getItems();
+        List<GetItemResponseDto> dtos = dto.getContent();
         assertThat(dtos).hasSize(10);
         assertThat(dtos.get(0).getReviewCount()).isGreaterThan(dtos.get(1).getReviewCount());
         assertThat(dtos.get(1).getReviewCount()).isGreaterThan(dtos.get(2).getReviewCount());
@@ -140,10 +140,10 @@ class ItemQueryRepositoryTest {
         PageRequest pageable = PageRequest.of(0, 10);
 
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems(null, pageable);
 
         // then
-        List<GetItemResponseDto> dtos = dto.getItems();
+        List<GetItemResponseDto> dtos = dto.getContent();
         assertThat(dtos).hasSize(10);
         assertThat(dtos.get(0).getLikeCount()).isGreaterThan(dtos.get(1).getLikeCount());
         assertThat(dtos.get(1).getLikeCount()).isGreaterThan(dtos.get(2).getLikeCount());
@@ -155,10 +155,10 @@ class ItemQueryRepositoryTest {
         PageRequest pageable = PageRequest.of(0, 10, Sort.by(Sort.Order.desc("xxxx")));
 
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems(null, pageable);
 
         // then
-        List<GetItemResponseDto> dtos = dto.getItems();
+        List<GetItemResponseDto> dtos = dto.getContent();
         assertThat(dtos).hasSize(10);
         assertThat(dtos.get(0).getLikeCount()).isGreaterThan(dtos.get(1).getLikeCount());
         assertThat(dtos.get(1).getLikeCount()).isGreaterThan(dtos.get(2).getLikeCount());
@@ -169,9 +169,9 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageable = PageRequest.of(0, 10);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems(null, pageable);
         // then
-        assertThat(dto.getItems()).hasSize(10);
+        assertThat(dto.getContent()).hasSize(10);
     }
 
     @Test
@@ -183,9 +183,9 @@ class ItemQueryRepositoryTest {
 
         PageRequest pageable = PageRequest.of(1, 10);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getItems(null, pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems(null, pageable);
         // then
-        assertThat(dto.getItems()).isEmpty();
+        assertThat(dto.getContent()).isEmpty();
     }
 
     @Test
@@ -193,10 +193,10 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageable = PageRequest.of(0, 10);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getItems("category1", pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems("category1", pageable);
         // then
-        assertThat(dto.getItems()).hasSize(1);
-        assertThat(dto.getItems().getFirst().getCategory()).isEqualTo("category1");
+        assertThat(dto.getContent()).hasSize(1);
+        assertThat(dto.getContent().getFirst().getCategory()).isEqualTo("category1");
     }
 
     @Test
@@ -205,10 +205,10 @@ class ItemQueryRepositoryTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
 
         // then
-        assertThat(dto.getItems()).hasSize(10);
+        assertThat(dto.getContent()).hasSize(10);
     }
 
     @Test
@@ -216,10 +216,10 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 10);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(2L, pageRequest);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getLikedItems(2L, pageRequest);
 
         // then
-        assertThat(dto.getItems()).isEmpty();
+        assertThat(dto.getContent()).isEmpty();
     }
 
     @Test
@@ -227,9 +227,9 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageRequest = PageRequest.of(1, 10);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
         // then
-        assertThat(dto.getItems()).hasSize(2);
+        assertThat(dto.getContent()).hasSize(2);
     }
 
     @Test
@@ -237,9 +237,9 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 1);
         // when
-        GetItemListResponseDto dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getLikedItems(member.getId(), pageRequest);
         // then
-        assertThat(dto.getItems()).hasSize(1);
+        assertThat(dto.getContent()).hasSize(1);
     }
 
     @Test
