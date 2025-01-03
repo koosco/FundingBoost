@@ -57,7 +57,7 @@ public class Funding extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private FundingStatus status;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private Integer fundingCount;
 
     @OneToMany(mappedBy = "funding")
@@ -75,8 +75,16 @@ public class Funding extends BaseTimeEntity {
     }
 
     public void fund(int fundMoney) {
+        validateFundingPrice();
+        isTerminated();
         this.fundingCount++;
         collectPrice += fundMoney;
+    }
+
+    private void validateFundingPrice() {
+        if (collectPrice >= totalPrice) {
+            throw new CommonException(ErrorCode.INVALID_FUNDING_STATUS);
+        }
     }
 
     public void plusTotalPrice(int money) {

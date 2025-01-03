@@ -1,8 +1,8 @@
 package practice.fundingboost2.item.funding.repo.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +25,54 @@ class FundingTest {
     }
 
     @Test
+    void givenFunding_whenCollectPriceEqualsToTotalPrice_thenMustThrowException() {
+        // given
+        final int totalPrice = 1000;
+        final int extraPrice = 1000;
+        funding.plusTotalPrice(totalPrice);
+        funding.fund(totalPrice);
+
+        // when
+        // then
+        assertThatThrownBy(() -> funding.fund(extraPrice))
+            .isInstanceOf(CommonException.class);
+    }
+
+    @Test
+    void givenFunding_whenCollectPriceLessThanTotalPrice_thenFundMustSuccess() {
+        // given
+        final int totalPrice = 1000;
+        final int fundPrice = 500;
+        funding.plusTotalPrice(totalPrice);
+        // when
+        funding.fund(fundPrice);
+
+        // then
+        assertThat(funding.getCollectPrice()).isEqualTo(fundPrice);
+    }
+
+    @Test
+    void givenOutdatedFunding_whenFund_thenThrowException() {
+        // given
+        Funding funding = new Funding(member, "message", "BIRTHDAY", LocalDateTime.now().minusDays(1));
+        // when
+        // then
+        assertThatThrownBy(() -> funding.fund(1000))
+            .isInstanceOf(CommonException.class);
+    }
+
+    @Test
+    void givenTerminatedFunding_whenFund_thenThrowException() {
+        // given
+        Funding funding = new Funding(member, "message", "BIRTHDAY", LocalDateTime.now().plusDays(1));
+        funding.update(null, "SUCCESS");
+        // when
+        // then
+        assertThatThrownBy(() -> funding.fund(1000))
+            .isInstanceOf(CommonException.class);
+    }
+
+    @Test
     void givenMember_whenCreateFunding_thenFundingPriceMustBeZero() {
         // given
         // when
@@ -42,9 +90,10 @@ class FundingTest {
         // given
         // when
         // then
-        assertDoesNotThrow(() -> funding.validateMember(member));
+        assertThatNoException()
+            .isThrownBy(() -> funding.validateMember(member));
     }
-    
+
     @Test
     void givenFunding_whenValidateOther_thenThrowException() {
         // given
@@ -52,17 +101,20 @@ class FundingTest {
 
         // when
         // then
-        assertThrows(CommonException.class, () -> funding.validateMember(other));
+        assertThatThrownBy(() -> funding.validateMember(other))
+            .isInstanceOf(CommonException.class);
     }
-    
+
     @Test
     void givenOutdatedFunding_whenUpdate_thenThrowException() {
         // given
+        Funding funding = new Funding(member, "message", "BIRTHDAY", LocalDateTime.now().minusDays(1));
         // when
         // then
-        assertThrows(CommonException.class, () -> funding.update(LocalDateTime.now(), "PENDING"));
+        assertThatThrownBy(() -> funding.update(LocalDateTime.now(), "PENDING"))
+            .isInstanceOf(CommonException.class);
     }
-    
+
     @Test
     void givenFailedFunding_whenUpdate_thenThrowException() {
         // given
@@ -70,7 +122,8 @@ class FundingTest {
 
         // when
         // then
-        assertThrows(CommonException.class, () -> funding.update(LocalDateTime.now(), "SUCCESS"));
+        assertThatThrownBy(() -> funding.update(LocalDateTime.now(), "PENDING"))
+            .isInstanceOf(CommonException.class);
     }
 
     @Test
@@ -80,7 +133,8 @@ class FundingTest {
 
         // when
         // then
-        assertThrows(CommonException.class, () -> funding.update(LocalDateTime.now(), "PENDING"));
+        assertThatThrownBy(() -> funding.update(LocalDateTime.now(), "PENDING"))
+            .isInstanceOf(CommonException.class);
     }
 
     @Test
