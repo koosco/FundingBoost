@@ -1,37 +1,33 @@
 package practice.fundingboost2.member.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.member.app.dto.GetMemberResponseDto;
 import practice.fundingboost2.member.app.dto.UpdateMemberRequestDto;
+import practice.fundingboost2.member.repo.MemberRepository;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @SpringBootTest
-@Transactional
 class MemberServiceTest {
 
     @Autowired
     MemberService memberService;
 
-    @PersistenceContext
-    EntityManager em;
+    @Autowired
+    MemberRepository memberRepository;
 
     Member member;
 
     @BeforeEach
     void init() {
         member = new Member("email", "nickname", "imageUrl", "phoneNumber");
-        em.persist(member);
-        em.flush();
+        member = memberRepository.save(member);
     }
 
     @Test
@@ -53,7 +49,8 @@ class MemberServiceTest {
         Long NOT_EXISTS_ID = 100_000_000_000L;
         // when
         // then
-        assertThrows(CommonException.class, () -> memberService.getMember(NOT_EXISTS_ID));
+        assertThatThrownBy(() -> memberService.getMember(NOT_EXISTS_ID))
+            .isInstanceOf(CommonException.class);
     }
 
     @Test
@@ -74,5 +71,23 @@ class MemberServiceTest {
         GetMemberResponseDto updateDto = memberService.updateMember(member.getId(), dto);
         // then
         assertThat(updateDto.phoneNumber()).isEqualTo("newPhoneNumber");
+    }
+    
+    @Test
+    void givenMember_whenMemberExists_thenReturnTrue() {
+        // given
+        // when
+        Boolean result = memberService.existsById(member.getId());
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void whenMemberNotExists_thenReturnFalse() {
+        // given
+        // when
+        Boolean result = memberService.existsById(100_000_000_000L);
+        // then
+        assertThat(result).isFalse();
     }
 }

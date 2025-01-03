@@ -23,7 +23,6 @@ public class MemberService {
             .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_LOGIN_USER));
     }
 
-    @Transactional
     public Boolean existsById(Long id) {
         return memberRepository.existsById(id);
     }
