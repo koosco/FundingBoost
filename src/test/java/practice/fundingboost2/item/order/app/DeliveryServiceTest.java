@@ -1,4 +1,4 @@
-package practice.fundingboost2.order.app;
+package practice.fundingboost2.item.order.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
