@@ -39,6 +39,8 @@ class ItemQueryRepositoryTest {
 
     final int ITEM_SIZE = 12;
 
+    final String CATEGORY_PREFIX = "TEST_CATEGORY";
+
     @BeforeEach
     void init() {
         member = new Member("member1", "password", "nickname", "email");
@@ -50,7 +52,7 @@ class ItemQueryRepositoryTest {
                 i * 1000,
                 "https://koosco.tistory.com",
                 "brand" + i,
-                "category" + i
+                CATEGORY_PREFIX + i
             );
 
             initCount(item, i);
@@ -193,10 +195,10 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageable = PageRequest.of(0, 10);
         // when
-        Page<GetItemResponseDto> dto = itemQueryRepository.getItems("category1", pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems(CATEGORY_PREFIX + "1", pageable);
         // then
         assertThat(dto.getContent()).hasSize(1);
-        assertThat(dto.getContent().getFirst().getCategory()).isEqualTo("category1");
+        assertThat(dto.getContent().getFirst().getCategory()).isEqualTo(CATEGORY_PREFIX + "1");
     }
 
     @Test

@@ -10,6 +10,6 @@ import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
 public interface GifthubRepository extends JpaRepository<Gifthub, GifthubId> {
 
     @Modifying(clearAutomatically = true)
-    @Query("update Gifthub g set g.quantity.quantity = g.quantity.quantity + 1 where g.id=:id")
+    @Query("update Gifthub g set g.quantity = g.quantity + 1 where g.id=:id")
     void updateQuantityById(@Param("id") GifthubId id);
 }
