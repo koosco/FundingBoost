@@ -2,7 +2,6 @@ package practice.fundingboost2.item.item.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +62,7 @@ class ItemServiceTest {
         item = itemRepository.findById(item.getId());
         assertThat(dto.isSuccess()).isTrue();
         assertThat(item.getLikeCount()).isEqualTo(1);
-        assertTrue(bookmarkRepository.existsById(bookmark.getId()));
+        assertThat(bookmarkRepository.existsById(bookmark.getId())).isTrue();
     }
 
     @Test
@@ -79,7 +78,7 @@ class ItemServiceTest {
 
         // then
         assertThat(item.getLikeCount()).isEqualTo(0);
-        assertFalse(bookmarkRepository.existsById(bookmark.getId()));
+        assertThat(bookmarkRepository.existsById(bookmark.getId())).isFalse();
     }
 
     @Test

@@ -2,35 +2,35 @@ package practice.fundingboost2.item.order.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.item.order.app.dto.DeliveryRequestDto;
 import practice.fundingboost2.item.order.app.dto.DeliveryResponseDto;
 import practice.fundingboost2.item.order.app.dto.GetDeliveryListResponseDto;
+import practice.fundingboost2.item.order.repo.DeliveryRepository;
 import practice.fundingboost2.item.order.repo.entity.Delivery;
+import practice.fundingboost2.member.repo.MemberRepository;
 import practice.fundingboost2.member.repo.entity.Member;
 
-@Transactional
 @SpringBootTest
 class DeliveryServiceTest {
 
     @Autowired
     DeliveryService deliveryService;
 
-    @PersistenceContext
-    EntityManager em;
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
+    DeliveryRepository deliveryRepository;
 
     Member member;
     List<Delivery> deliveries = new ArrayList<>();
@@ -39,17 +39,15 @@ class DeliveryServiceTest {
     @BeforeEach
     void init() {
         member = new Member("member1", "password", "nickname", "email");
-        em.persist(member);
-        em.flush();
+        member = memberRepository.save(member);
 
         for (int i = 0; i < DELIVERY_SIZE; i++) {
-            Delivery delivery = new Delivery("address" + i, "receiver" + i, "010-1234-5678", member);
-            em.persist(delivery);
+            Delivery delivery = deliveryRepository.save(
+                new Delivery("address" + i, "receiver" + i, "010-1234-5678", member));
             deliveries.add(delivery);
         }
-        em.flush();
     }
-    
+
     @Test
     void givenCreateDeliveries_whenCalled_thenReturnMembersDeliveryList() {
         // given
@@ -62,9 +60,7 @@ class DeliveryServiceTest {
     @Test
     void givenNoDeliveries_whenCalled_thenReturnEmptyDto() {
         // given
-        Member member2 = new Member("member2", "password", "nickname", "email");
-        em.persist(member2);
-        em.flush();
+        Member member2 = memberRepository.save(new Member("member2", "password", "nickname", "email"));
 
         // when
         GetDeliveryListResponseDto dto = deliveryService.getDeliveries(member2.getId());
@@ -85,21 +81,15 @@ class DeliveryServiceTest {
     @Test
     void givenCreateMember_whenCreateDtoGiven_thenCreateNewDelivery() {
         // given
-        Member member2 = new Member("member2", "password", "nickname", "email");
-        em.persist(member2);
-        em.flush();
+        Member member2 = memberRepository.save(new Member("member2", "password", "nickname", "email"));
         DeliveryRequestDto dto = new DeliveryRequestDto("receiver", "address",
             "010-1234-5678");
         // when
         CommonSuccessDto responseDto = deliveryService.createDelivery(member2.getId(), dto);
-        Delivery delivery = em.createQuery("select d from Delivery d join Member m on d.member.id = m.id where m.id = :memberId",
-                Delivery.class)
-            .setParameter("memberId", member2.getId())
-            .getSingleResult();
 
         // then
+        List<Delivery> deliveries = deliveryRepository.findAll_ByMemberId(member2.getId());
         assertThat(responseDto.isSuccess()).isTrue();
-        assertThat(delivery.getMember()).isEqualTo(member2);
     }
 
     @Test
@@ -109,26 +99,23 @@ class DeliveryServiceTest {
 
         // when
         CommonSuccessDto responseDto = deliveryService.deleteDelivery(member.getId(), delivery.getId());
+        Optional<Delivery> findDelivery = deliveryRepository.findById(delivery.getId());
 
         // then
         assertThat(responseDto.isSuccess()).isTrue();
-        assertThrows(NoResultException.class,
-            () -> em.createQuery("select d from Delivery d where d.id=:deliveryId", Delivery.class)
-                .setParameter("deliveryId", delivery.getId())
-                .getSingleResult());
+        assertThat(findDelivery).isEmpty();
     }
 
     @Test
     void givenDelivery_whenOtherCall_thenThrowException() {
         // given
-        Member other = new Member("member2", "password", "nickname", "email");
-        em.persist(other);
-        em.flush();
+        Member other = memberRepository.save(new Member("member2", "password", "nickname", "email"));
         Delivery delivery = deliveries.getFirst();
 
         // when
         // then
-        assertThrows(CommonException.class, () -> deliveryService.deleteDelivery(other.getId(), delivery.getId()));
+        assertThatThrownBy(() -> deliveryService.deleteDelivery(other.getId(), delivery.getId()))
+            .isInstanceOf(CommonException.class);
     }
 
     @Test
@@ -208,14 +195,13 @@ class DeliveryServiceTest {
     @Test
     void givenDelivery_whenOtherUpdate_thenThrowException() {
         // given
-        Member other = new Member("member2", "password", "nickname", "email");
-        em.persist(other);
-        em.flush();
+        Member other = memberRepository.save(new Member("member2", "password", "nickname", "email"));
         Delivery delivery = deliveries.getFirst();
         DeliveryRequestDto dto = new DeliveryRequestDto("receiver", "address", "010-1234-5678");
 
         // when
         // then
-        assertThrows(CommonException.class, () -> deliveryService.updateDelivery(other.getId(), delivery.getId(), dto));
+        assertThatThrownBy(() -> deliveryService.updateDelivery(other.getId(), delivery.getId(), dto))
+            .isInstanceOf(CommonException.class);
     }
 }

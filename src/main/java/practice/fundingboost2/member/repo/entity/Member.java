@@ -85,7 +85,7 @@ public class Member {
     }
 
     public void validateNickname(String nickname) {
-        if (this.email.equals(nickname)) {
+        if (this.nickname.equals(nickname)) {
             throw new CommonException(ErrorCode.ALREADY_EXISTS_EMAIL);
         }
     }
