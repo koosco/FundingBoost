@@ -65,7 +65,7 @@ public class FundingConcurrencyTest {
         IntStream.range(0, ITEM_SIZE)
             .forEach(i -> {
                 items.add(
-                    new Item("name" + i, 100000 * i, "image" + i, "brand" + i, "category" + i));
+                    new Item("name" + i, 1_000_000 * i, "image" + i, "brand" + i, "category" + i));
             });
         items = itemRepository.saveAll(items);
 

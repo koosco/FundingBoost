@@ -1,6 +1,7 @@
-package practice.fundingboost2.order.app;
+package practice.fundingboost2.item.order.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import jakarta.persistence.EntityManager;
@@ -15,12 +16,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
-import practice.fundingboost2.item.order.app.DeliveryService;
-import practice.fundingboost2.member.repo.entity.Member;
 import practice.fundingboost2.item.order.app.dto.DeliveryRequestDto;
 import practice.fundingboost2.item.order.app.dto.DeliveryResponseDto;
 import practice.fundingboost2.item.order.app.dto.GetDeliveryListResponseDto;
 import practice.fundingboost2.item.order.repo.entity.Delivery;
+import practice.fundingboost2.member.repo.entity.Member;
 
 @Transactional
 @SpringBootTest
@@ -78,7 +78,8 @@ class DeliveryServiceTest {
         // given
         // when
         // then
-        assertThrows(CommonException.class, () -> deliveryService.getDeliveries(1L));
+        assertThatThrownBy(() -> deliveryService.getDeliveries(1_000_000_000L))
+            .isInstanceOf(CommonException.class);
     }
 
     @Test

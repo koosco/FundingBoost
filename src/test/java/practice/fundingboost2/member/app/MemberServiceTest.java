@@ -50,9 +50,10 @@ class MemberServiceTest {
     @Test
     void givenCreatedMember_whenNotFound_thenThrowException() {
         // given
+        Long NOT_EXISTS_ID = 100_000_000_000L;
         // when
         // then
-        assertThrows(CommonException.class, () -> memberService.getMember(2L));
+        assertThrows(CommonException.class, () -> memberService.getMember(NOT_EXISTS_ID));
     }
 
     @Test
