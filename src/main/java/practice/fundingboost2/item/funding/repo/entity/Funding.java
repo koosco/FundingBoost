@@ -82,7 +82,7 @@ public class Funding extends BaseTimeEntity {
     }
 
     private void validateFundingPrice() {
-        if (collectPrice >= totalPrice) {
+        if (totalPrice > 0 && collectPrice >= totalPrice) {
             throw new CommonException(ErrorCode.INVALID_FUNDING_STATUS);
         }
     }
