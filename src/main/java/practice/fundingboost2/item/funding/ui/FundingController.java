@@ -15,10 +15,10 @@ import practice.fundingboost2.common.dto.ResponseDto;
 import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.item.funding.app.FundingService;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
-import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequest;
+import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequestDto;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,19 +32,26 @@ public class FundingController {
         return ResponseDto.created(fundingService.createFunding(memberId, dto));
     }
 
+    @PostMapping("/{funding_id}")
+    public ResponseDto<CommonSuccessDto> fund(@PathVariable("funding_id") Long fundingId,
+        @RequestBody UpdateFundingRequestDto dto) {
+        return ResponseDto.ok(fundingService.fund(fundingId, dto));
+    }
+
     @PatchMapping("/{funding_id}")
     public ResponseDto<CommonSuccessDto> updateFunding(@Auth Long memberId, @PathVariable("funding_id") Long fundingId,
-        @RequestBody UpdateFundingRequest dto) {
+        @RequestBody UpdateFundingRequestDto dto) {
         return ResponseDto.ok(fundingService.updateFunding(memberId, fundingId, dto));
     }
 
     @GetMapping("/{funding_id}")
-    public ResponseDto<GetFundingDetailResponseDto> getFunding(@Auth Long memberId, @PathVariable("funding_id") Long fundingId){
+    public ResponseDto<GetFundingDetailResponseDto> getFunding(@Auth Long memberId,
+        @PathVariable("funding_id") Long fundingId) {
         return ResponseDto.ok(fundingService.getFunding(memberId, fundingId));
     }
 
     @GetMapping("/history")
-    public ResponseDto<GetFundingHistoryListResponseDto> getFundingHistory(@Auth Long memberId){
+    public ResponseDto<GetFundingHistoryListResponseDto> getFundingHistory(@Auth Long memberId) {
         return ResponseDto.ok(fundingService.getFundingHistory(memberId));
     }
 

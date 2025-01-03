@@ -2,8 +2,10 @@ package practice.fundingboost2.item.funding.app.dto;
 
 import java.time.LocalDateTime;
 
-public record UpdateFundingRequest(
+public record UpdateFundingRequestDto(
+    Long friendId,
     LocalDateTime deadline,
-    String fundingStatus) {
+    String fundingStatus,
+    Integer fundPrice) {
 
 }

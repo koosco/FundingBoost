@@ -8,9 +8,11 @@ import practice.fundingboost2.item.funding.repo.entity.Funding;
 
 public interface FundingRepository {
 
-    void save(Funding funding);
+    Funding save(Funding funding);
 
-    Funding findFunding(Long fundingId);
+    Funding findById(Long fundingId);
+
+    Funding concurrentFindFunding(Long fundingId);
 
     Page<GetFundingResponseDto> findFundings(Long memberId, Pageable pageable);
 

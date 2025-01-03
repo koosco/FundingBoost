@@ -15,6 +15,7 @@ import practice.fundingboost2.item.funding.app.dto.CreateFundingItemRequestDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponseDto;
+import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.interfaces.FundingRepository;
 import practice.fundingboost2.item.funding.repo.entity.Contributor;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
@@ -74,12 +75,14 @@ class FundingServiceTest {
 
     private void initFriends() {
         for (int i = 1; i <= FRIEND_SIZE; i++) {
-            friends.add(new Member(
+            Member friend = new Member(
                 "friend" + i + "@email",
                 "friend" + i,
                 "image" + i + ".jpg",
                 "010" + String.valueOf(i).repeat(8)
-            ));
+            );
+            friend.increasePoint(100_000);
+            friends.add(friend);
         }
         friends = memberRepository.saveAll(friends);
     }
@@ -139,6 +142,43 @@ class FundingServiceTest {
 
         // then
         assertTrue(resultDto.isSuccess());
+    }
+
+    @Test
+    void givenFunding_whenFriendFund_thenFundingPriceMustIncrease() {
+        // given
+        Member friend = friends.getFirst();
+        Funding funding = fundings.getFirst();
+        int fundingPrice = 1000;
+        UpdateFundingRequestDto dto = new UpdateFundingRequestDto(friend.getId(), null, null, fundingPrice);
+
+        // when
+        CommonSuccessDto response = fundingService.fund(funding.getId(), dto);
+
+        // then
+        funding = fundingRepository.findById(funding.getId());
+        assertThat(response.isSuccess()).isTrue();
+        assertThat(funding.getFundingCount()).isEqualTo(1);
+        assertThat(funding.getCollectPrice()).isEqualTo(fundingPrice);
+    }
+
+    @Test
+    void givenFunding_whenFundingPriceExceed_thenFundingMustSuccess() {
+        // given
+        Member friend = friends.getFirst();
+        Member friend2 = friends.get(1);
+        Funding funding = fundings.getFirst();
+        Integer totalPrice = funding.getTotalPrice();
+        Integer friendOneFundingPrice = totalPrice / 2 + 1000;
+        Integer friendTwoFundingPrice = totalPrice / 2 + 2000;
+
+        // when
+        fundingService.fund(funding.getId(), new UpdateFundingRequestDto(friend.getId(), null, null, friendOneFundingPrice));
+        fundingService.fund(funding.getId(), new UpdateFundingRequestDto(friend2.getId(), null, null, friendTwoFundingPrice));
+
+        // then
+        funding = fundingRepository.findById(funding.getId());
+        assertThat(funding.getCollectPrice()).isEqualTo(friendOneFundingPrice + friendTwoFundingPrice);
     }
 
     @Test

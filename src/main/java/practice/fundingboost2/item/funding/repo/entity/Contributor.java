@@ -33,9 +33,10 @@ public class Contributor {
     private Funding funding;
 
     public Contributor(Member member, Funding funding, int contribution) {
+        member.decreasePoint(contribution);
+        funding.fund(contribution);
         this.member = member;
         this.funding = funding;
         this.contribution = contribution;
-        funding.fund(contribution);
     }
 }

@@ -19,13 +19,19 @@ public class FundingRepositoryImpl implements FundingRepository {
     private final FundingQueryRepository fundingQueryRepository;
 
     @Override
-    public void save(Funding funding) {
-        jpaFundingRepository.save(funding);
+    public Funding save(Funding funding) {
+        return jpaFundingRepository.save(funding);
     }
 
     @Override
-    public Funding findFunding(Long fundingId) {
+    public Funding findById(Long fundingId) {
         return jpaFundingRepository.findById(fundingId)
+            .orElseThrow();
+    }
+
+    @Override
+    public Funding concurrentFindFunding(Long fundingId) {
+        return jpaFundingRepository.findByIdWithLock(fundingId)
             .orElseThrow();
     }
 
