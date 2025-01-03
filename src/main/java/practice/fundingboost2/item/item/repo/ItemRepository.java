@@ -34,4 +34,8 @@ public class ItemRepository {
     public Item save(Item item) {
         return itemRepository.save(item);
     }
+
+    public List<Item> saveAll(List<Item> items) {
+        return itemRepository.saveAll(items);
+    }
 }

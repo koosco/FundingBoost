@@ -13,8 +13,9 @@ import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponse
 import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingInfoResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
-import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequest;
+import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.interfaces.FundingRepository;
+import practice.fundingboost2.item.funding.repo.entity.Contributor;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
 import practice.fundingboost2.item.funding.repo.jpa.ContributorRepository;
@@ -37,7 +38,15 @@ public class FundingService {
     private final MemberService memberService;
     private final OptionRepository optionRepository;
     private final ContributorRepository contributorRepository;
+    private final ContributorService contributorService;
 
+    public Funding findFunding(Long fundingId) {
+        return fundingRepository.findById(fundingId);
+    }
+
+    public Funding concurrentFindFunding(Long fundingId) {
+        return fundingRepository.concurrentFindFunding(fundingId);
+    }
 
     public CommonSuccessDto createFunding(Long memberId, CreateFundingRequestDto dto) {
         Member member = memberService.findMember(memberId);
@@ -45,7 +54,7 @@ public class FundingService {
         Funding funding = new Funding(member, dto.message(), dto.tag(), dto.deadline());
         dto.items().forEach(
             item -> {
-                Item findItem = itemService.findItem(item.itemId());
+                Item findItem = itemService.concurrencyFindItem(item.itemId());
                 Option findOption = optionRepository.findById(item.optionId())
                     .orElseThrow();
                 new FundingItem(funding, findItem, findOption, item.sequence());
@@ -55,9 +64,18 @@ public class FundingService {
         return CommonSuccessDto.fromEntity(true);
     }
 
-    public CommonSuccessDto updateFunding(Long memberId, Long fundingId, UpdateFundingRequest dto) {
+    public CommonSuccessDto fund(Long fundingId, UpdateFundingRequestDto dto) {
+        Member friend = memberService.findMember(dto.friendId());
+        Funding funding = concurrentFindFunding(fundingId);
+        Contributor contributor = new Contributor(friend, funding, dto.fundPrice());
+
+        contributorService.save(contributor);
+        return new CommonSuccessDto(true);
+    }
+
+    public CommonSuccessDto updateFunding(Long memberId, Long fundingId, UpdateFundingRequestDto dto) {
         Member member = memberService.findMember(memberId);
-        Funding funding = fundingRepository.findFunding(fundingId);
+        Funding funding = findFunding(fundingId);
         funding.validateMember(member);
 
         funding.update(dto.deadline(), dto.fundingStatus());
@@ -67,14 +85,17 @@ public class FundingService {
 
     public GetFundingDetailResponseDto getFunding(Long memberId, Long fundingId) {
         Member member = memberService.findMember(memberId);
-        Funding funding = fundingRepository.findFunding(fundingId);
+        Funding funding = findFunding(fundingId);
         funding.validateMember(member);
 
         GetFundingInfoResponseDto getFundingInfoResponseDto = GetFundingInfoResponseDto.from(funding);
         List<GetItemResponseDto> getFundingItemResponseDtos = funding.getFundingItems().stream()
-            .map(GetItemResponseDto::from).toList();
+            .map(GetItemResponseDto::from)
+            .toList();
         List<GetFundingParticipantDto> getFundingParticipantDtos = contributorRepository.findAll_ByFundingId(fundingId)
-            .stream().map(GetFundingParticipantDto::from).toList();
+            .stream()
+            .map(GetFundingParticipantDto::from)
+            .toList();
 
         return new GetFundingDetailResponseDto(getFundingInfoResponseDto, getFundingItemResponseDtos,
             getFundingParticipantDtos);
@@ -85,11 +106,10 @@ public class FundingService {
     }
 
     public GetFundingHistoryListResponseDto getFundingHistory(Long memberId) {
-
-        List<GetFundingHistoryResponseDto> getFundingHistoryResponseDtos = fundingRepository.findAllByMemberId(memberId).stream().map(funding -> {
-            int contributorCount = contributorRepository.findAll_ByFundingId(funding.getId()).size();
-            return GetFundingHistoryResponseDto.from(funding, contributorCount);
-        }).toList();
+        List<GetFundingHistoryResponseDto> getFundingHistoryResponseDtos = fundingRepository
+            .findAllByMemberId(memberId).stream()
+            .map(GetFundingHistoryResponseDto::from)
+            .toList();
 
         return new GetFundingHistoryListResponseDto(getFundingHistoryResponseDtos);
     }

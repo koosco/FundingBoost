@@ -77,4 +77,8 @@ public class Item {
     public void unmark() {
         this.likeCount--;
     }
+
+    public void fund() {
+        this.fundingCount++;
+    }
 }
