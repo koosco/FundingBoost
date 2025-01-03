@@ -19,7 +19,7 @@ public class GifthubService {
     private final GifthubRepository gifthubRepository;
     private final ItemService itemService;
 
-    public Gifthub findCart(GifthubId gifthubId) {
+    public Gifthub findGifthub(GifthubId gifthubId) {
         return gifthubRepository.findById(gifthubId)
             .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_GIFTHUB_ITEM));
     }
@@ -46,14 +46,14 @@ public class GifthubService {
     }
 
     public CommonSuccessDto deleteFromCart(Long memberId, Long itemId, Long optionId) {
-        Gifthub cart = findCart(new GifthubId(memberId, itemId, optionId));
+        Gifthub cart = findGifthub(new GifthubId(memberId, itemId, optionId));
         gifthubRepository.delete(cart);
 
         return CommonSuccessDto.fromEntity(true);
     }
 
     public CommonSuccessDto updateCart(Long memberId, Long itemId, Long optionId, Integer quantity) {
-        Gifthub cart = findCart(new GifthubId(memberId, itemId, optionId));
+        Gifthub cart = findGifthub(new GifthubId(memberId, itemId, optionId));
 
         cart.updateQuantity(quantity);
 
