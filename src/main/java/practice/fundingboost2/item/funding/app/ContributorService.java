@@ -13,7 +13,7 @@ public class ContributorService {
     private final ContributorRepository contributorRepository;
 
     @Transactional
-    public void save(Contributor contributor) {
-        contributorRepository.save(contributor);
+    public Contributor save(Contributor contributor) {
+        return contributorRepository.save(contributor);
     }
 }
