@@ -8,10 +8,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class MerchantUidGenerator {
 
-    public String generate() {
-        String prefix = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
-        int randomSuffix = ThreadLocalRandom.current().nextInt(10000, 99999); // 10000 ~ 99999
+    private static final String PREFIX = "FB-";
+    private static final String RANDOM_SEED = "0123456789abcdefghijklmnopqrstuvwxyz";
+    private static final int RANDOM_SEED_LENGTH = 5;
 
-        return prefix + randomSuffix;
+    public String generate() {
+        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
+        StringBuilder randomSuffix = new StringBuilder();
+
+        for (int i=0;i<RANDOM_SEED_LENGTH;i++) {
+            int randomIndex = ThreadLocalRandom.current().nextInt(0, RANDOM_SEED.length());
+            randomSuffix.append(RANDOM_SEED.charAt(randomIndex));
+        }
+
+        return PREFIX + date + randomSuffix;
     }
 }
