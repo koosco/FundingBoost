@@ -52,4 +52,27 @@ class PaymentServiceTest {
         // then
         assertThat(responseDto.isSuccess()).isTrue();
     }
+    
+    @Test
+    void givenMember_whenSavePay_thenMemberPointMustBeIncrease() {
+        // given
+        PayDto dto = new PayDto(
+            "merchantUid",
+            "impUid",
+            "buyerName",
+            "buyerEmail",
+            "buyerPhoneNumber",
+            "buyerAddress",
+            "buyerPostcode",
+            1000,
+            "productName"
+        );
+        // when
+        paymentService.savePay(member.getId(), dto);
+        Member savedMember = memberRepository.findById(member.getId())
+            .orElseThrow();
+
+        // then
+        assertThat(savedMember.getPoint()).isEqualTo(1000);
+    }
 }

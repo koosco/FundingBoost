@@ -74,6 +74,7 @@ public class PaymentService {
             dto.postcode(),
             dto.amount(),
             dto.productName());
+        member.increasePoint(pay.getAmount());
         payRepository.save(pay);
         log.info("{} save success", pay.getMerchantUid());
         return CommonSuccessDto.fromEntity(true);
