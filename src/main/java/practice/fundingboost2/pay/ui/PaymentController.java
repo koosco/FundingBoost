@@ -26,16 +26,19 @@ public class PaymentController {
 
     @GetMapping
     public ResponseDto<String> getMerchantUid() {
+        log.debug("get merchant uid");
         return ResponseDto.ok(paymentService.getMerchantUid());
     }
 
     @PostMapping("/{imp_uid}/validation")
     public ResponseDto<IamportResponse<Payment>> validateIamport(@PathVariable("imp_uid") String impUid) {
+        log.debug("validate iamport: {}", impUid);
         return ResponseDto.ok(paymentService.validateIamport(impUid));
     }
 
     @PostMapping
     public ResponseDto<CommonSuccessDto> processOrder(@Auth Long memberId, @RequestBody PayDto dto) {
-        return ResponseDto.ok(paymentService.saveOrder(memberId, dto));
+        log.debug("process order: {}", dto);
+        return ResponseDto.ok(paymentService.savePay(memberId, dto));
     }
 }

@@ -34,6 +34,7 @@ public class PaymentService {
 
     public IamportResponse<Payment> validateIamport(String impUid) {
         try {
+            log.info("{} : 결제 요청", impUid);
             IamportResponse<Payment> payment = iamportClient.paymentByImpUid(impUid);
             Payment response = payment.getResponse();
             log.info("{} : Iamport Response, buyer name: {}, fail reason: {}, started at: {}, paid at: {}",
@@ -61,7 +62,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public CommonSuccessDto saveOrder(Long memberId, PayDto dto) {
+    public CommonSuccessDto savePay(Long memberId, PayDto dto) {
         Member member = memberService.findMember(memberId);
         Pay pay = new Pay(member,
             dto.merchantUid(),
