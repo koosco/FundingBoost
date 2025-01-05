@@ -22,3 +22,6 @@ spring:
   security:
     secret: ${JWT_SECRET}
     token-validity-time: ${JWT_TOKEN_VALIDITY_TIME}
+iamport:
+  api-key: ${PAY_API_KEY}
+  secret-key: ${PAY_SECRET_KEY}
