@@ -15,7 +15,7 @@ import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.member.app.MemberService;
 import practice.fundingboost2.member.repo.entity.Member;
 import practice.fundingboost2.pay.app.dto.PayDto;
-import practice.fundingboost2.pay.repo.PayRepository;
+import practice.fundingboost2.pay.repo.PaymentRepository;
 import practice.fundingboost2.pay.repo.entity.Pay;
 
 @Slf4j
@@ -25,7 +25,7 @@ public class PaymentService {
 
     private final IamportClient iamportClient;
     private final MerchantUidGenerator generator;
-    private final PayRepository payRepository;
+    private final PaymentRepository payRepository;
     private final MemberService memberService;
 
     public String getMerchantUid() {
