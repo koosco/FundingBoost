@@ -1,4 +1,4 @@
-package practice.fundingboost2.item.order.app;
+package practice.fundingboost2.pay.app;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
