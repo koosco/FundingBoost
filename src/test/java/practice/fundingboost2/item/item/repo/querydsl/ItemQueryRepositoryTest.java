@@ -8,6 +8,7 @@ import jakarta.persistence.PersistenceContext;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
+import practice.fundingboost2.item.item.app.dto.GetItemReviewListResponseDto;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
+import practice.fundingboost2.item.item.repo.entity.Review;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemResponseDto;
 import practice.fundingboost2.member.repo.entity.Member;
@@ -44,7 +47,11 @@ class ItemQueryRepositoryTest {
     @BeforeEach
     void init() {
         member = new Member("member1", "password", "nickname", "email");
+        Member user1 = new Member("user1@email", "User1", "nickname", "email");
+        Member user2 = new Member("user2@email", "User2", "nickname", "email");
         em.persist(member);
+        em.persist(user1);
+        em.persist(user2);
 
         for (int i = 1; i <= ITEM_SIZE; i++) {
             Item item = new Item(
@@ -69,6 +76,14 @@ class ItemQueryRepositoryTest {
             em.persist(bookmark);
             bookmarks.add(bookmark);
         }
+
+        List<Review> reviews = List.of(
+                new Review(5, "Great product!", user1, items.getFirst()),
+                new Review(4, "Good value for money.", user2, items.getFirst())
+        );
+
+        em.persist(reviews.get(0));
+        em.persist(reviews.get(1));
 
         em.flush();
     }
@@ -195,10 +210,10 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageable = PageRequest.of(0, 10);
         // when
-        Page<GetItemResponseDto> dto = itemQueryRepository.getItems(CATEGORY_PREFIX + "1", pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems("category1", pageable);
         // then
         assertThat(dto.getContent()).hasSize(1);
-        assertThat(dto.getContent().getFirst().getCategory()).isEqualTo(CATEGORY_PREFIX + "1");
+        assertThat(dto.getContent().getFirst().getCategory()).isEqualTo("category1");
     }
 
     @Test
@@ -280,5 +295,35 @@ class ItemQueryRepositoryTest {
 
         // then
         assertThat(dto.isLiked()).isFalse();
+    }
+
+    @Test
+    public void givenItemId_whenReviewsIsNotNull_thenReturnDto() {
+        //given
+        Item item = items.getFirst();
+        PageRequest pageable = PageRequest.of(0, 20, Sort.by(Sort.Order.desc("createdAt")));
+
+        //when
+        GetItemReviewListResponseDto result = itemQueryRepository.getReviews(item.getId(),pageable);
+
+        //then
+        Assertions.assertNotNull(result); // 결과가 null이 아님을 확인
+        assertThat(result.getItemReviewResponseDtos().size()).isEqualTo(2); // 반환된 리뷰 개수 확인
+        assertThat(result.getItemReviewResponseDtos().getFirst().memberName()).isEqualTo("User2"); // 가장 최근 리뷰 작성자 확인
+        assertThat(result.getItemReviewResponseDtos().getFirst().reviewScore()).isEqualTo(4); // 가장 최근 리뷰 점수 확인
+        assertThat(result.getItemReviewResponseDtos().getFirst().reviewContent()).isEqualTo("Good value for money."); // 가장 최근 리뷰 내용 확인
+    }
+
+    @Test
+    public void givenItemId_whenReviewsIsNull_thenReturnEmptyDto() {
+        //given
+        Item item = items.get(3);
+        PageRequest pageable = PageRequest.of(0, 20, Sort.by(Sort.Order.desc("createdAt")));
+
+        //when
+        GetItemReviewListResponseDto result = itemQueryRepository.getReviews(item.getId(),pageable);
+
+        //then
+        assertThat(result.getItemReviewResponseDtos()).isEmpty();
     }
 }
