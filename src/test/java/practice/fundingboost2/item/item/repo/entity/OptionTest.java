@@ -38,4 +38,15 @@ class OptionTest {
         // then
         assertThat(option.getQuantity()).isEqualTo(QUANTITY_SIZE);
     }
+
+    @Test
+    public void givenFiveQuantity_whenMinusQuantity_thenTwoQuantity() {
+        //given
+        final int QUANTITY_SIZE = 5;
+        Option option = new Option(item, "option", QUANTITY_SIZE);
+        //when
+        option.minusQuantity(3);
+        //then
+        assertThat(option.getQuantity()).isEqualTo(2);
+    }
 }
