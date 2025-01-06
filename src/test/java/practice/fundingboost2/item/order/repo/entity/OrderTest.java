@@ -54,7 +54,7 @@ class OrderTest {
     void givenDefault_whenCreate_thenCreateNewOrder() {
         // given
         // when
-        Order order = new Order(member, item, delivery, item.getOptions().getFirst().getName());
+        Order order = new Order(member, item , item.getOptions().getFirst().getName(), delivery);
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PENDING_PAYMENT);
         assertThat(order.getDelivery()).isEqualTo(delivery);
