@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import practice.fundingboost2.common.dto.ResponseDto;
 import practice.fundingboost2.config.security.annotation.Auth;
-import practice.fundingboost2.item.item.app.dto.GetItemReviewListResponseDto;
 import practice.fundingboost2.item.item.repo.querydsl.ItemQueryRepository;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemResponseDto;
@@ -37,10 +36,5 @@ public class ItemQueryController {
     public ResponseDto<GetItemDetailResponseDto> getItemInfo(@Auth Long memberId,
         @PathVariable("item_id") Long itemId) {
         return ResponseDto.ok(itemQueryRepository.getItemInfo(memberId, itemId));
-    }
-
-    @GetMapping("/review/{item_id}")
-    public GetItemReviewListResponseDto getReviews(@PathVariable("item_id") Long itemId, Pageable pageable){
-        return itemQueryRepository.getReviews(itemId, pageable);
     }
 }

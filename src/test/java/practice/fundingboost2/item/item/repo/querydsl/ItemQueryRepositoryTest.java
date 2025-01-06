@@ -8,7 +8,6 @@ import jakarta.persistence.PersistenceContext;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
-import practice.fundingboost2.item.item.app.dto.GetItemReviewListResponseDto;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
@@ -210,10 +208,10 @@ class ItemQueryRepositoryTest {
         // given
         PageRequest pageable = PageRequest.of(0, 10);
         // when
-        Page<GetItemResponseDto> dto = itemQueryRepository.getItems("category1", pageable);
+        Page<GetItemResponseDto> dto = itemQueryRepository.getItems("TEST_CATEGORY1", pageable);
         // then
         assertThat(dto.getContent()).hasSize(1);
-        assertThat(dto.getContent().getFirst().getCategory()).isEqualTo("category1");
+        assertThat(dto.getContent().getFirst().getCategory()).isEqualTo("TEST_CATEGORY1");
     }
 
     @Test
@@ -295,35 +293,5 @@ class ItemQueryRepositoryTest {
 
         // then
         assertThat(dto.isLiked()).isFalse();
-    }
-
-    @Test
-    public void givenItemId_whenReviewsIsNotNull_thenReturnDto() {
-        //given
-        Item item = items.getFirst();
-        PageRequest pageable = PageRequest.of(0, 20, Sort.by(Sort.Order.desc("createdAt")));
-
-        //when
-        GetItemReviewListResponseDto result = itemQueryRepository.getReviews(item.getId(),pageable);
-
-        //then
-        Assertions.assertNotNull(result); // 결과가 null이 아님을 확인
-        assertThat(result.getItemReviewResponseDtos().size()).isEqualTo(2); // 반환된 리뷰 개수 확인
-        assertThat(result.getItemReviewResponseDtos().getFirst().memberName()).isEqualTo("User2"); // 가장 최근 리뷰 작성자 확인
-        assertThat(result.getItemReviewResponseDtos().getFirst().reviewScore()).isEqualTo(4); // 가장 최근 리뷰 점수 확인
-        assertThat(result.getItemReviewResponseDtos().getFirst().reviewContent()).isEqualTo("Good value for money."); // 가장 최근 리뷰 내용 확인
-    }
-
-    @Test
-    public void givenItemId_whenReviewsIsNull_thenReturnEmptyDto() {
-        //given
-        Item item = items.get(3);
-        PageRequest pageable = PageRequest.of(0, 20, Sort.by(Sort.Order.desc("createdAt")));
-
-        //when
-        GetItemReviewListResponseDto result = itemQueryRepository.getReviews(item.getId(),pageable);
-
-        //then
-        assertThat(result.getItemReviewResponseDtos()).isEmpty();
     }
 }
