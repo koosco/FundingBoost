@@ -48,12 +48,15 @@ public class Item {
     @Column(name = "category", length = 100)
     private String category;
 
+    @Min(0)
     @ColumnDefault("0")
     private Integer reviewCount;
 
+    @Min(0)
     @ColumnDefault("0")
     private Integer likeCount;
 
+    @Min(0)
     @ColumnDefault("0")
     private Integer fundingCount;
 
@@ -79,6 +82,10 @@ public class Item {
     public void unmark() {
         validateNegativeCount(likeCount);
         this.likeCount--;
+    }
+
+    public void review() {
+        this.reviewCount++;
     }
 
     private void validateNegativeCount(Integer count) {
