@@ -1,7 +1,6 @@
-package practice.fundingboost2.item.repo;
+package practice.fundingboost2.item.item.repo.querydsl;
 
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.persistence.EntityManager;
@@ -23,7 +22,6 @@ import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.item.item.repo.entity.Review;
-import practice.fundingboost2.item.item.repo.querydsl.ItemQueryRepository;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemResponseDto;
 import practice.fundingboost2.member.repo.entity.Member;
@@ -44,6 +42,8 @@ class ItemQueryRepositoryTest {
 
     final int ITEM_SIZE = 12;
 
+    final String CATEGORY_PREFIX = "TEST_CATEGORY";
+
     @BeforeEach
     void init() {
         member = new Member("member1", "password", "nickname", "email");
@@ -59,7 +59,7 @@ class ItemQueryRepositoryTest {
                 i * 1000,
                 "https://koosco.tistory.com",
                 "brand" + i,
-                "category" + i
+                CATEGORY_PREFIX + i
             );
 
             initCount(item, i);
@@ -115,7 +115,6 @@ class ItemQueryRepositoryTest {
         Page<GetItemResponseDto> dto = itemQueryRepository.getItems(null, pageable);
 
         // then
-
         List<GetItemResponseDto> dtos = dto.getContent();
         assertThat(dtos).hasSize(10);
         assertThat(dtos.get(0).getFundingCount()).isGreaterThan(dtos.get(1).getFundingCount());
@@ -297,7 +296,7 @@ class ItemQueryRepositoryTest {
         // then
         assertThat(dto.isLiked()).isFalse();
     }
-    
+
     @Test
     public void givenItemId_whenReviewsIsNotNull_thenReturnDto() {
         //given

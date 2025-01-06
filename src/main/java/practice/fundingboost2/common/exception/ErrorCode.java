@@ -25,6 +25,7 @@ public enum ErrorCode {
   NOT_FOUND_CONTRIBUTOR(40409, HttpStatus.NOT_FOUND, "펀딩한 이력이 존재하지 않습니다."),
   NOT_FOUND_ORDER(40410, HttpStatus.NOT_FOUND, "물품이 존재하지 않습니다."),
   NOT_FOUND_BOOKMARK(40411, HttpStatus.NOT_FOUND, "좋아요가 존재하지 않습니다."),
+  NOT_FOUND_OPTION(40412, HttpStatus.NOT_FOUND, "아이템 옵션이 존재하지 않습니다."),
 
 
   // Invalid Argument Error
@@ -44,7 +45,7 @@ public enum ErrorCode {
   ONGOING_FUNDING_ERROR(40014, HttpStatus.BAD_REQUEST, "현재 진행중인 펀딩입니다."),
   INVALID_ACCESS_URL(40015, HttpStatus.BAD_REQUEST, "잘못된 사용자 접근입니다."),
   INVALID_ITEM_QUANTITY(40016, HttpStatus.BAD_REQUEST, "최소 1개 이상의 수량을 선택해야 합니다."),
-
+  LACK_ITEM_QUANTITY(40017, HttpStatus.BAD_REQUEST, "아이템 수량이 부족합니다."),
 
   // Gone Error
   GONE_SHARED_URL(41001, HttpStatus.GONE, "해당 공유 URL이 만료되었습니다."),
@@ -70,9 +71,12 @@ public enum ErrorCode {
   INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러입니다."),
   UPLOAD_FILE_ERROR(50001, HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패하였습니다."),
   ALREADY_EXIST_FUNDING(50002, HttpStatus.INTERNAL_SERVER_ERROR, "펀딩이 이미 존재합니다."),
-  INTERNAL_SAVE_ERROR(50003, HttpStatus.INTERNAL_SERVER_ERROR, "기프트에 아이템 담기 실패"),
-  ALREADY_EXISTS_EMAIL(50004, HttpStatus.INTERNAL_SERVER_ERROR, "이미 가입된 이메일입니다"),
-  ALREADY_EXISTS_NICKNAME(50005, HttpStatus.INTERNAL_SERVER_ERROR, "이미 등록된 닉네임입니다");
+  INTERNAL_SAVE_ERROR(50003, HttpStatus.INTERNAL_SERVER_ERROR, "장바구니에 아이템 담기 실패."),
+  ALREADY_EXISTS_EMAIL(50004, HttpStatus.INTERNAL_SERVER_ERROR, "이미 가입된 이메일입니다."),
+  ALREADY_EXISTS_NICKNAME(50005, HttpStatus.INTERNAL_SERVER_ERROR, "이미 등록된 닉네임입니다."),
+  PAYMENT_VALIDATION_ERROR(50006, HttpStatus.INTERNAL_SERVER_ERROR, "결제 검증 도중 에러가 발생했습니다."),
+  PAYMENT_NETWORK_ERROR(50007, HttpStatus.INTERNAL_SERVER_ERROR, "네트워크 오류로 인해 결제 검증에 실패했습니다."),
+  PAYMENT_INVALID_ERROR(50008, HttpStatus.INTERNAL_SERVER_ERROR, "유효하지 않은 결제 요청입니다.");
 
   private final Integer code;
   private final HttpStatus httpStatus;

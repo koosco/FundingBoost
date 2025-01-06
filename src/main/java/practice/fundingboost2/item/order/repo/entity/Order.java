@@ -2,7 +2,6 @@ package practice.fundingboost2.item.order.repo.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,7 +15,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import practice.fundingboost2.item.gifthub.repo.entity.Quantity;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.member.repo.entity.Member;
 
@@ -25,6 +23,8 @@ import practice.fundingboost2.member.repo.entity.Member;
 @Table(name = "orders")
 @NoArgsConstructor
 public class Order {
+
+    private static final Integer DEFAULT_QUANTITY = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,15 +42,14 @@ public class Order {
     @JoinColumn(name = "delivery_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Delivery delivery;
 
-    @Embedded
     @Column(nullable = false)
-    private Quantity quantity;
+    private Integer quantity;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus orderStatus = OrderStatus.PENDING_PAYMENT;
 
-    public Order(Member member, Item item, Delivery delivery, Quantity quantity) {
+    public Order(Member member, Item item, Delivery delivery, Integer quantity) {
         this.member = member;
         this.item = item;
         this.delivery = delivery;
@@ -58,6 +57,6 @@ public class Order {
     }
 
     public Order(Member member, Item item, Delivery delivery) {
-        this(member, item, delivery, new Quantity(1));
+        this(member, item, delivery, DEFAULT_QUANTITY);
     }
 }

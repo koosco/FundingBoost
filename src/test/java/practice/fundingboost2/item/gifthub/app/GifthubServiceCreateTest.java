@@ -1,33 +1,35 @@
 package practice.fundingboost2.item.gifthub.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.item.gifthub.repo.entity.Gifthub;
 import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
+import practice.fundingboost2.item.item.repo.ItemRepository;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
+import practice.fundingboost2.member.repo.MemberRepository;
 import practice.fundingboost2.member.repo.entity.Member;
 
-@Transactional
 @SpringBootTest
 class GifthubServiceCreateTest {
 
     @Autowired
     GifthubService gifthubService;
 
-    @PersistenceContext
-    EntityManager em;
+    @Autowired
+    ItemRepository itemRepository;
+
+    @Autowired
+    MemberRepository memberRepository;
 
     Item item;
 
@@ -38,32 +40,26 @@ class GifthubServiceCreateTest {
     @BeforeEach
     void init() {
         item = new Item("item", 1000, "url", "brand", "category");
-        em.persist(item);
 
         List<String> optionNames = List.of("option1", "option2", "option3");
         int optionPrice = 100;
-        for (String optionName : optionNames) {
-            Option option = new Option(item, optionName, optionPrice);
-            em.persist(option);
-        }
+        optionNames.forEach(optionName -> new Option(item, optionName, optionPrice));
+        item = itemRepository.save(item);
+
 
         option = item.getOptions().getFirst();
 
         member = new Member("member", "name", "imageUrl", "phone");
-        em.persist(member);
-        em.flush();
+        member = memberRepository.save(member);
     }
 
     @Test
-    void givenNoGifthub_whenCreateGifthub_thenQuantityMustBeOne() {
+    void whenCreateGifthub_thenQuantityMustBeOne() {
         // given
         // when
         CommonSuccessDto dto = gifthubService.addToCart(member.getId(), item.getId(), option.getId());
-        Gifthub findGifthub = em.createQuery(
-                "select g from Gifthub g where g.id.memberId=:memberId and g.id.itemId=:itemId", Gifthub.class)
-            .setParameter("memberId", member.getId())
-            .setParameter("itemId", item.getId())
-            .getSingleResult();
+        Gifthub findGifthub = gifthubService.findGifthub(
+            new GifthubId(member.getId(), item.getId(), item.getOptions().getFirst().getId()));
 
         // then
         assertTrue(dto.isSuccess());
@@ -79,10 +75,7 @@ class GifthubServiceCreateTest {
 
         // when
         CommonSuccessDto dto = gifthubService.addToCart(member.getId(), item.getId(), option.getId());
-        Gifthub findGifthub = em.createQuery(
-                "select g from Gifthub g where g.id=:id", Gifthub.class)
-            .setParameter("id", new GifthubId(member.getId(), item.getId(), option.getId()))
-            .getSingleResult();
+        Gifthub findGifthub = gifthubService.findGifthub(new GifthubId(member.getId(), item.getId(), option.getId()));
 
         // then
         assertTrue(dto.isSuccess());
@@ -95,21 +88,16 @@ class GifthubServiceCreateTest {
     void givenMyGifthub_whenOtherCreateGifthub_thenQuantityMustBeOne() {
         // given
         Member other = new Member("member2", "name", "imageUrl", "phone");
-        em.persist(other);
-        em.flush();
+        other = memberRepository.save(other);
 
         gifthubService.addToCart(member.getId(), item.getId(), option.getId());
 
         // when
         CommonSuccessDto dto = gifthubService.addToCart(other.getId(), item.getId(), option.getId());
-        Gifthub findGifthub = em.createQuery(
-                "select g from Gifthub g where g.id.memberId=:memberId and g.id.itemId=:itemId", Gifthub.class)
-            .setParameter("memberId", other.getId())
-            .setParameter("itemId", item.getId())
-            .getSingleResult();
+        Gifthub findGifthub = gifthubService.findGifthub(new GifthubId(member.getId(), item.getId(), option.getId()));
 
         // then
-        assertTrue(dto.isSuccess());
+        assertThat(dto.isSuccess()).isTrue();
         assertThat(findGifthub.getQuantity()).isEqualTo(1);
     }
 
@@ -119,6 +107,7 @@ class GifthubServiceCreateTest {
         Long notExistsItemId = 100000000000000L;
         // when
         // then
-        assertThrows(CommonException.class, () -> gifthubService.addToCart(member.getId(), notExistsItemId, 1L));
+        assertThatThrownBy(() -> gifthubService.addToCart(member.getId(), notExistsItemId, 1L))
+            .isInstanceOf(CommonException.class);
     }
 }

@@ -1,38 +1,44 @@
 package practice.fundingboost2.item.gifthub.repo.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import practice.fundingboost2.common.exception.CommonException;
+import practice.fundingboost2.common.exception.ErrorCode;
 
+@Getter
 @Entity
 @NoArgsConstructor
 public class Gifthub {
+
+    private static final Integer DEFAULT_QUANTITY = 1;
 
     @Getter
     @EmbeddedId
     private GifthubId id;
 
-    @Embedded
     @Column(nullable = false)
-    private Quantity quantity;
+    private Integer quantity;
 
     public Gifthub(GifthubId id) {
         this.id = id;
-        this.quantity = new Quantity();
+        this.quantity = DEFAULT_QUANTITY;
     }
 
     public void updateQuantity(Integer quantity) {
-        this.quantity = new Quantity(quantity);
+        validateQuantity(quantity);
+        this.quantity = quantity;
+    }
+
+    private static void validateQuantity(Integer quantity) {
+        if (quantity <= 0) {
+            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
     }
 
     public Long getItemId() {
         return id.getItemId();
-    }
-
-    public Integer getQuantity() {
-        return quantity.getQuantity();
     }
 }

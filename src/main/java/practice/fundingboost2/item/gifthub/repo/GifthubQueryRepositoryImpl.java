@@ -27,7 +27,7 @@ public class GifthubQueryRepositoryImpl implements GifthubQueryRepository {
     public Page<GetGifthubResponseDto> getAllGifthub(Long memberId, Pageable pageable) {
         List<GetGifthubResponseDto> dtos = queryFactory
             .select(Projections.constructor(GetGifthubResponseDto.class,
-                item.id, item.name, item.imageUrl, option.name, gifthub.quantity.quantity))
+                item.id, item.name, item.imageUrl, option.name, gifthub.quantity))
             .from(gifthub)
             .where(gifthub.id.memberId.eq(memberId))
             .join(item).on(gifthub.id.itemId.eq(item.id)).fetchJoin()

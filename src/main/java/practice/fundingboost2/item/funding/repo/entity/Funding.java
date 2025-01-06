@@ -13,15 +13,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.common.repo.entity.BaseTimeEntity;
@@ -29,7 +26,6 @@ import practice.fundingboost2.member.repo.entity.Member;
 
 @Getter
 @Entity
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Funding extends BaseTimeEntity {
 
@@ -48,13 +44,9 @@ public class Funding extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private FundingTag tag;
 
-    @Min(0)
-    @NotNull
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
-    @Min(0)
-    @NotNull
     @Column(name = "collect_price", nullable = false)
     private Integer collectPrice;
 
@@ -64,6 +56,9 @@ public class Funding extends BaseTimeEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FundingStatus status;
+
+    @Column(nullable = false)
+    private Integer fundingCount;
 
     @OneToMany(mappedBy = "funding")
     private final List<FundingItem> fundingItems = new ArrayList<>();
@@ -76,10 +71,20 @@ public class Funding extends BaseTimeEntity {
         this.totalPrice = 0;
         this.collectPrice = 0;
         this.status = FundingStatus.PENDING;
+        this.fundingCount = 0;
     }
 
-    public void plusCollectPrice(int fundMoney) {
+    public void fund(int fundMoney) {
+        validateFundingPrice();
+        isTerminated();
+        this.fundingCount++;
         collectPrice += fundMoney;
+    }
+
+    private void validateFundingPrice() {
+        if (totalPrice > 0 && collectPrice >= totalPrice) {
+            throw new CommonException(ErrorCode.INVALID_FUNDING_STATUS);
+        }
     }
 
     public void plusTotalPrice(int money) {

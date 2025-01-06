@@ -63,6 +63,21 @@ public class Member {
         return member;
     }
 
+    public void increasePoint(Integer point) {
+        this.point += point;
+    }
+
+    public void decreasePoint(Integer point) {
+        validatePoint(point);
+        this.point -= point;
+    }
+
+    private void validatePoint(Integer point) {
+        if (this.point < point) {
+            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
+    }
+
     public void validateEmail(String email) {
         if (this.email.equals(email)) {
             throw new CommonException(ErrorCode.ALREADY_EXISTS_EMAIL);
@@ -70,7 +85,7 @@ public class Member {
     }
 
     public void validateNickname(String nickname) {
-        if (this.email.equals(nickname)) {
+        if (this.nickname.equals(nickname)) {
             throw new CommonException(ErrorCode.ALREADY_EXISTS_EMAIL);
         }
     }

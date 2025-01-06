@@ -22,3 +22,15 @@ spring:
   security:
     secret: ${JWT_SECRET}
     token-validity-time: ${JWT_TOKEN_VALIDITY_TIME}
+iamport:
+  api-key: ${PAY_API_KEY}
+  secret-key: ${PAY_SECRET_KEY}
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION}

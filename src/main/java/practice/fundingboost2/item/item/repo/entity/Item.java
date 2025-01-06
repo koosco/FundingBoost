@@ -16,6 +16,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
+import practice.fundingboost2.common.exception.CommonException;
+import practice.fundingboost2.common.exception.ErrorCode;
 
 @Getter
 @Entity
@@ -58,7 +60,7 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Option> options = new ArrayList<>();
 
-    public Item(String name, int price, String imageUrl, String brand, String category) {
+    public Item(String name, Integer price, String imageUrl, String brand, String category) {
         this.name = name;
         this.price = 0;
         this.imageUrl = imageUrl;
@@ -69,11 +71,23 @@ public class Item {
         this.fundingCount = 0;
     }
 
-    public void mark() {
+    public Bookmark mark(BookmarkId bookmarkId) {
         this.likeCount++;
+        return new Bookmark(bookmarkId);
     }
 
     public void unmark() {
+        validateNegativeCount(likeCount);
         this.likeCount--;
+    }
+
+    private void validateNegativeCount(Integer count) {
+        if (count <= 0) {
+            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
+    }
+
+    public void fund() {
+        this.fundingCount++;
     }
 }
