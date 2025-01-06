@@ -28,6 +28,7 @@ public class OrderService {
     private final DeliveryService deliveryService;
     private final OrderRepository orderRepository;
 
+    @Transactional
     public CommonSuccessDto createOrder(Long memberId, CreateOrderRequestDto dto) {
         Member member = memberService.findMember(memberId);
         Delivery delivery = deliveryService.findDelivery(dto.deliveryId());
