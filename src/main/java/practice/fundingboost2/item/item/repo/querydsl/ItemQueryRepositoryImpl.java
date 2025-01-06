@@ -14,19 +14,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
-import practice.fundingboost2.item.item.app.dto.GetItemReviewListResponseDto;
-import practice.fundingboost2.item.item.app.dto.GetItemReviewResponseDto;
 import practice.fundingboost2.item.item.repo.entity.Bookmark;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.QBookmark;
 import practice.fundingboost2.item.item.repo.entity.QItem;
 import practice.fundingboost2.item.item.repo.entity.QOption;
 import practice.fundingboost2.item.item.repo.entity.QReview;
-import practice.fundingboost2.item.item.repo.entity.Review;
 import practice.fundingboost2.item.item.ui.dto.GetItemDetailResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetItemResponseDto;
 import practice.fundingboost2.item.item.ui.dto.GetOptionResponseDto;
-import practice.fundingboost2.member.repo.entity.Member;
 
 @Repository
 @RequiredArgsConstructor
@@ -129,33 +125,6 @@ public class ItemQueryRepositoryImpl implements ItemQueryRepository {
             .toList();
 
         return GetItemDetailResponseDto.from(item, isLiked, options);
-    }
-
-    @Override
-    public GetItemReviewListResponseDto getReviews(Long itemId, Pageable pageable) {
-        List<Review> reviews = queryFactory
-                .selectFrom(review)
-                .where(review.item.id.eq(itemId))
-                .orderBy(review.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        return new GetItemReviewListResponseDto(convertToResponseDtos(reviews));
-    }
-
-    private List<GetItemReviewResponseDto> convertToResponseDtos(List<Review> reviews) {
-        return reviews.stream().map(
-                review1 -> {
-                    Member member = review1.getMember();
-                    return new GetItemReviewResponseDto(
-                            member.getNickname(),
-                            member.getImageUrl(),
-                            review1.getScore(),
-                            review1.getCreatedAt(),
-                            review1.getContent());
-                }
-        ).toList();
     }
 
     private boolean findLike(Long memberId, Long itemId) {

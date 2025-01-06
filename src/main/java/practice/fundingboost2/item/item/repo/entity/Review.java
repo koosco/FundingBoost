@@ -1,6 +1,8 @@
 package practice.fundingboost2.item.item.repo.entity;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ConstraintMode;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
@@ -9,17 +11,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import org.hibernate.validator.constraints.Range;
 import practice.fundingboost2.common.repo.entity.BaseTimeEntity;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @Getter
 @Entity
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review extends BaseTimeEntity {
 
@@ -27,7 +29,9 @@ public class Review extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Range(min = 1, max = 5)
     private int score;
+
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,10 +42,25 @@ public class Review extends BaseTimeEntity {
     @JoinColumn(name = "item_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Item item;
 
+    @Size(max = 3)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "review_image",
+        joinColumns = @JoinColumn(name = "review_id"),
+        foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT)
+    )
+    private List<String> reviewImages;
+
     public Review(int score, String content, Member member, Item item) {
+        this(score, content, member, item, List.of());
+    }
+
+    public Review(int score, String content, Member member, Item item, List<String> reviewImages) {
         this.score = score;
         this.content = content;
         this.member = member;
         this.item = item;
+        this.reviewImages = reviewImages;
+        item.review();
     }
 }
