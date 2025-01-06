@@ -42,13 +42,14 @@ public class OrderService {
 
     private Order createOrderEntity(Member member, Delivery delivery, OrderItemRequestDto itemInfo) {
         Item item = itemService.findItem(itemInfo.itemId());
-        Option option = findOption(item, itemInfo.optionId());
-        return new Order(member, item, delivery, option.getName());
+        Option option = findOption(item, itemInfo.optionId(), itemInfo.quantity());
+        return new Order(member, item, option.getName(), delivery);
     }
 
-    private Option findOption(Item item, Long optionId) {
+    private Option findOption(Item item, Long optionId, int quantity) {
         for(Option option : item.getOptions()){
             if(option.getId().equals(optionId)){
+                option.minusQuantity(quantity);
                 return option;
             }
         }

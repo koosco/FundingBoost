@@ -38,4 +38,8 @@ public class Option {
         this.quantity = quantity;
         item.getOptions().add(this);
     }
+
+    public void minusQuantity(int quantity) {
+        this.quantity -= quantity;
+    }
 }
