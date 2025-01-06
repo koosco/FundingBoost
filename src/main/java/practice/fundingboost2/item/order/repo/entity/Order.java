@@ -38,6 +38,8 @@ public class Order {
     @JoinColumn(name = "item_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Item item;
 
+    private String optionName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Delivery delivery;
@@ -49,14 +51,15 @@ public class Order {
     @Column(nullable = false)
     private OrderStatus orderStatus = OrderStatus.PENDING_PAYMENT;
 
-    public Order(Member member, Item item, Delivery delivery, Integer quantity) {
+    public Order(Member member, Item item, String optionName, Delivery delivery, Integer quantity) {
         this.member = member;
         this.item = item;
+        this.optionName = optionName;
         this.delivery = delivery;
         this.quantity = quantity;
     }
 
-    public Order(Member member, Item item, Delivery delivery) {
-        this(member, item, delivery, DEFAULT_QUANTITY);
+    public Order(Member member, Item item , String optionName, Delivery delivery) {
+        this(member, item , optionName, delivery, DEFAULT_QUANTITY);
     }
 }
