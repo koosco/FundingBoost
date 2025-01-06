@@ -25,6 +25,7 @@ public class ReviewQueryRepositoryImpl implements ReviewQueryRepository {
             .selectFrom(review)
             .where(review.item.id.eq(itemId))
             .leftJoin(review.member, member).fetchJoin()
+            .orderBy(review.createdAt.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch()
