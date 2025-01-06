@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
+import practice.fundingboost2.item.item.app.dto.GetMemberReviewResponseDto;
 import practice.fundingboost2.item.item.app.dto.GetReviewResponseDto;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
@@ -30,15 +31,22 @@ class ReviewQueryRepositoryImplTest {
     @PersistenceContext
     EntityManager em;
 
+    Member member;
+
+    List<Item> MemberOrderItems = new ArrayList<>();
+
+    List<Review> MemberOrderReviews = new ArrayList<>();
+
     List<Member> reviewers = new ArrayList<>();
 
     Item item;
 
-    Option ItemOption;
+    Option itemOption;
 
     List<Review> reviews = new ArrayList<>();
 
     final static int REVIEWER_SIZE = 20;
+    final static int MEMBER_REVIEW_SIZE = 20;
 
     @BeforeEach
     void init() {
@@ -52,14 +60,34 @@ class ReviewQueryRepositoryImplTest {
         item = new Item("name", 1000, "imageUrl", "brand", "category");
         em.persist(item);
 
-        ItemOption = new Option(item, "option", 3);
+        itemOption = new Option(item, "option1", 3);
+        em.persist(itemOption);
 
         IntStream.range(0, REVIEWER_SIZE)
             .forEach(i -> {
-                Review review = new Review((int) (Math.random() * 5) + 1, "content", reviewers.get(i), item, ItemOption);
+                Review review = new Review((int) (Math.random() * 5) + 1, "content", reviewers.get(i), item, item.getOptions().getFirst());
                 reviews.add(review);
                 em.persist(review);
             });
+
+        member = new Member("aa.@aa", "inho", "url.com", "phoneNumber-123");
+        em.persist(member);
+
+        IntStream.range(0, MEMBER_REVIEW_SIZE)
+                        .forEach(i -> {
+                            Item item = new Item("item"+i, i*1000, "imageUrl"+i, "brand"+i, "category"+i);
+                            MemberOrderItems.add(item);
+                            em.persist(item);
+
+                            Option option1 = new Option(item, "option"+i, 5);
+                            em.persist(option1);
+
+                            Review review = new Review((int) (Math.random() * 5) + 1, "content" + i, member, item, item.getOptions().getFirst());
+                            reviews.add(review);
+                            em.persist(review);
+                        });
+
+
         em.flush();
     }
 
@@ -101,5 +129,45 @@ class ReviewQueryRepositoryImplTest {
         Page<GetReviewResponseDto> result = reviewQueryRepositoryImpl.getReviews(item.getId(), pageRequest);
         // then
         assertThat(result.getTotalPages()).isEqualTo(REVIEWER_SIZE / 10);
+    }
+
+    @Test
+    public void givenTwentyMemberReviews_whenGetMemberReviews_thenReturnTenMemberReviews() throws Exception {
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        //when
+        Page<GetMemberReviewResponseDto> result = reviewQueryRepositoryImpl.getMemberReviews(member.getId(), pageRequest);
+        //then
+        assertThat(result.getContent()).hasSize(10);
+    }
+
+    @Test
+    public void givenTwentyMemberReviews_whenPageSizeIsFive_thenReturnFiveMemberReviews() throws Exception {
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        //when
+        Page<GetMemberReviewResponseDto> result = reviewQueryRepositoryImpl.getMemberReviews(member.getId(), pageRequest);
+        //then
+        assertThat(result.getContent()).hasSize(5);
+    }
+
+    @Test
+    public void givenMemberReviewerSize_whenGetMemberReviews_thenTotalElementSizeMustMemberReviewerSize() throws Exception {
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        //when
+        Page<GetMemberReviewResponseDto> result = reviewQueryRepositoryImpl.getMemberReviews(member.getId(), pageRequest);
+        //then
+        assertThat(result.getTotalElements()).isEqualTo(MEMBER_REVIEW_SIZE);
+    }
+
+    @Test
+    public void givenTwentyMemberReviews_whenGetMemberReviews_thenTotalPageSizeMustBeTwo() throws Exception {
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        //when
+        Page<GetMemberReviewResponseDto> result = reviewQueryRepositoryImpl.getMemberReviews(member.getId(), pageRequest);
+        //then
+        assertThat(result.getTotalPages()).isEqualTo(MEMBER_REVIEW_SIZE / 10);
     }
 }
