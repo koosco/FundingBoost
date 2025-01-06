@@ -12,7 +12,7 @@ import practice.fundingboost2.item.item.app.dto.GetReviewResponseDto;
 import practice.fundingboost2.item.item.repo.querydsl.ReviewQueryRepository;
 
 @RestController
-@RequestMapping("/api/item")
+@RequestMapping("/api/item/review")
 @RequiredArgsConstructor
 public class ReviewQueryController {
 
