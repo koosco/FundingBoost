@@ -35,8 +35,6 @@ class ReviewQueryRepositoryImplTest {
 
     List<Item> MemberOrderItems = new ArrayList<>();
 
-    List<Review> MemberOrderReviews = new ArrayList<>();
-
     List<Member> reviewers = new ArrayList<>();
 
     Item item;
