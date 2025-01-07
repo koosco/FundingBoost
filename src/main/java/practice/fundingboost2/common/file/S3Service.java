@@ -15,13 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class S3Service {
+public class S3Service implements FileService {
 
     private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Override
     public List<String> uploadMultipleFiles(List<MultipartFile> files) {
         return files.stream()
             .map(file -> {
@@ -36,6 +37,7 @@ public class S3Service {
             .toList();
     }
 
+    @Override
     public String uploadSingleFile(MultipartFile file) {
         validateFile(file);
         ObjectMetadata meta = getMetadata(file);
