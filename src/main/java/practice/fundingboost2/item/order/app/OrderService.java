@@ -63,7 +63,7 @@ public class OrderService {
         throw new CommonException(ErrorCode.NOT_FOUND_OPTION);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public CommonSuccessDto createOrderFromGifthub(Long memberId, CreateOrderRequestDto dto) {
         createOrder(memberId, dto);
         dto.orderItemListRequestDto().forEach(orderItemRequestDto ->
