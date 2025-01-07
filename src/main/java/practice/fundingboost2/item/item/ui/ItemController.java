@@ -19,7 +19,12 @@ public class ItemController {
     private final ItemService itemService;
 
     @PutMapping("/like/{item_id}")
-    public ResponseDto<CommonSuccessDto> likeItem(@Auth Long memberId, @PathVariable("item_id") Long itemId) {
+    public ResponseDto<CommonSuccessDto> likeItem(
+        @Auth
+        Long memberId,
+
+        @PathVariable("item_id")
+        Long itemId) {
         return ResponseDto.ok(itemService.likeItem(memberId, itemId));
     }
 }
