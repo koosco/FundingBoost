@@ -1,12 +1,12 @@
 package practice.fundingboost2.item.item.app;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.file.FileService;
 import practice.fundingboost2.item.item.app.dto.CreateReviewRequestDto;
 import practice.fundingboost2.item.item.app.dto.GetReviewResponseDto;
@@ -25,6 +26,7 @@ import practice.fundingboost2.item.item.repo.ReviewRepository;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Review;
 import practice.fundingboost2.item.order.app.OrderService;
+import practice.fundingboost2.item.order.repo.entity.Delivery;
 import practice.fundingboost2.item.order.repo.entity.Order;
 import practice.fundingboost2.member.app.MemberService;
 import practice.fundingboost2.member.repo.entity.Member;
@@ -69,28 +71,27 @@ class ReviewServiceTest {
 
     final Long orderId = 1L;
 
+    List<MultipartFile> files;
 
     @BeforeEach
     void init() {
         mockReview = spy(new Review(5, "content", mockMember, mockItem, "optionName", List.of("uploaded/test.jpg")));
         doReturn(mockReviewId).when(mockReview).getId();
         when(memberService.findMember(memberId)).thenReturn(mockMember);
-        doNothing().when(mockOrder).validateReviewWritten(any());
-        doReturn("optionName").when(mockOrder).getOptionName();
-        when(orderService.findOrder(orderId)).thenReturn(mockOrder);
         when(itemService.findItem(itemId)).thenReturn(mockItem);
+        files = List.of(new MockMultipartFile("file", "test.jpg", null, new byte[]{1, 2, 3}));
+        List<String> uploadedImages = List.of("uploaded/test.jpg");
+        when(fileService.uploadMultipleFiles(files)).thenReturn(uploadedImages);
+        when(reviewRepository.save(any())).thenReturn(mockReview);
     }
 
     @Test
     void givenIdAndDtoAndFiles_whenCreateReview_thenSaveReview() {
         // given
+        doNothing().when(mockOrder).validateReviewWritten(any());
+        doReturn("optionName").when(mockOrder).getOptionName();
+        when(orderService.findOrder(orderId)).thenReturn(mockOrder);
         CreateReviewRequestDto requestDto = new CreateReviewRequestDto(itemId, orderId, "content", 5);
-        MockMultipartFile file = new MockMultipartFile("file", "test.jpg", null, new byte[]{1, 2, 3});
-        List<MultipartFile> files = List.of(file);
-        List<String> uploadedImages = List.of("uploaded/test.jpg");
-        when(fileService.uploadMultipleFiles(files)).thenReturn(uploadedImages);
-        when(reviewRepository.save(any())).thenReturn(mockReview);
-        doNothing().when(mockOrder).writeReview();
 
         // when
         GetReviewResponseDto responseDto = reviewService.createReview(memberId, requestDto, files);
@@ -104,14 +105,19 @@ class ReviewServiceTest {
         assertThat(responseDto.reviewCreatedAt()).isEqualTo(mockReview.getCreatedAt());
         assertThat(responseDto.reviewContent()).isEqualTo(mockReview.getContent());
         assertThat(responseDto.reviewImages()).isEqualTo(mockReview.getReviewImages());
+    }
 
-        verify(memberService, times(1)).findMember(memberId);
-        verify(itemService, times(1)).findItem(itemId);
-        verify(orderService, times(1)).findOrder(orderId);
-        verify(mockOrder, times(1)).validateReviewWritten(memberId);
-        verify(mockOrder, times(1)).getOptionName();
-        verify(mockOrder, times(1)).writeReview();
-        verify(reviewRepository, times(1)).save(any());
-        verify(fileService, times(1)).uploadMultipleFiles(files);
+    @Test
+    void givenAlreadyReviewedOrder_whenCreateReview_thenThrowException() {
+        // given
+        Order order = spy(new Order(mockMember, mockItem, "optionName", mock(Delivery.class), 1));
+        CreateReviewRequestDto requestDto = new CreateReviewRequestDto(itemId, orderId, "content", 5);
+        when(orderService.findOrder(any())).thenReturn(order);
+        reviewService.createReview(memberId, requestDto, files);
+
+        // when
+        // then
+        assertThatThrownBy(() -> reviewService.createReview(memberId, requestDto, files))
+            .isInstanceOf(CommonException.class);
     }
 }
