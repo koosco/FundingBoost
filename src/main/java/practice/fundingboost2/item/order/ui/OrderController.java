@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
-import practice.fundingboost2.common.dto.IdListDto;
 import practice.fundingboost2.common.dto.ResponseDto;
 import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.item.order.app.OrderService;
