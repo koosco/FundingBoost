@@ -1,7 +1,5 @@
 package practice.fundingboost2.item.order.app;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -14,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
+import practice.fundingboost2.item.gifthub.repo.entity.Gifthub;
+import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
 import practice.fundingboost2.item.item.app.dto.OrderItemRequestDto;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
@@ -34,6 +34,8 @@ class OrderServiceTest {
     Member member;
 
     List<Item> items = new ArrayList<>();
+
+    List<Gifthub> gifthubs = new ArrayList<>();
 
     Delivery delivery;
 
@@ -56,6 +58,15 @@ class OrderServiceTest {
             }
         }
 
+        IntStream.range(0, ITEM_COUNT)
+                .forEach(i -> {
+                    GifthubId gifthubId = new GifthubId(member.getId(), items.get(i).getId(), items.get(i).getOptions().get(i).getId());
+                    Gifthub gifthub = new Gifthub(gifthubId);
+                    gifthub.updateQuantity(i+1);
+                    gifthubs.add(gifthub);
+                    em.persist(gifthub);
+                });
+
 
         delivery = new Delivery("friend", "address", "phoneNumber", member);
         em.persist(delivery);
@@ -75,6 +86,23 @@ class OrderServiceTest {
         CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(delivery.getId(), orderItemRequestDto);
         //when
         CommonSuccessDto commonSuccessDto = orderService.createOrder(member.getId(), createOrderRequestDto);
+        //then
+        Assertions.assertTrue(commonSuccessDto.isSuccess());
+    }
+
+    @Test
+    public void givenGifthubAndRequestDto_whenCreateOrderFromGifthub_thenReturnDto() throws Exception {
+        //given
+        List<OrderItemRequestDto> orderItemRequestDto = IntStream.range(0, 3)
+                .mapToObj(i -> new OrderItemRequestDto(
+                        items.get(i).getId(),
+                        items.get(i).getOptions().get(i).getId(),
+                        i
+                ))
+                .toList();
+        CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(delivery.getId(), orderItemRequestDto);
+        //when
+        CommonSuccessDto commonSuccessDto = orderService.createOrderFromGifthub(member.getId(), createOrderRequestDto);
         //then
         Assertions.assertTrue(commonSuccessDto.isSuccess());
     }
