@@ -6,6 +6,9 @@ public record CreateReviewRequestDto(
     @NotNull
     Long itemId,
 
+    @NotNull
+    Long orderId,
+
     String content,
 
     @NotNull
