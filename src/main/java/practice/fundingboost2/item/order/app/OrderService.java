@@ -60,8 +60,4 @@ public class OrderService {
         }
         throw new CommonException(ErrorCode.NOT_FOUND_OPTION);
     }
-
-    public boolean existsByMemberId(Long memberId) {
-        return orderRepository.existsByMember_Id(memberId);
-    }
 }
