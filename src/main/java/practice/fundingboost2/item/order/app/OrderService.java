@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
-import practice.fundingboost2.common.dto.IdListDto;
 import practice.fundingboost2.item.item.app.ItemService;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.order.app.dto.CreateOrderRequestDto;
@@ -36,5 +35,9 @@ public class OrderService {
         orderRepository.saveAll(orders);
 
         return CommonSuccessDto.fromEntity(true);
+    }
+
+    public boolean existsByMemberId(Long memberId) {
+        return orderRepository.existsByMember_Id(memberId);
     }
 }
