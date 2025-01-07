@@ -1,7 +1,8 @@
 package practice.fundingboost2.item.order.app.dto;
 
-import practice.fundingboost2.common.dto.IdListDto;
+import java.util.List;
+import practice.fundingboost2.item.item.app.dto.OrderItemRequestDto;
 
-public record CreateOrderRequestDto(Long deliveryId, IdListDto itemIds) {
+public record CreateOrderRequestDto(Long deliveryId, List<OrderItemRequestDto> orderItemListRequestDto) {
 
 }

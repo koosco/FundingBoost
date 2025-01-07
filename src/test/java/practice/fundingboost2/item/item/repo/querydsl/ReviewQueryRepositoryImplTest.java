@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.item.item.app.dto.GetReviewResponseDto;
 import practice.fundingboost2.item.item.repo.entity.Item;
+import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.item.item.repo.entity.Review;
 import practice.fundingboost2.member.repo.entity.Member;
 
@@ -33,6 +34,8 @@ class ReviewQueryRepositoryImplTest {
 
     Item item;
 
+    Option ItemOption;
+
     List<Review> reviews = new ArrayList<>();
 
     final static int REVIEWER_SIZE = 20;
@@ -49,9 +52,11 @@ class ReviewQueryRepositoryImplTest {
         item = new Item("name", 1000, "imageUrl", "brand", "category");
         em.persist(item);
 
+        ItemOption = new Option(item, "option", 3);
+
         IntStream.range(0, REVIEWER_SIZE)
             .forEach(i -> {
-                Review review = new Review((int) (Math.random() * 5) + 1, "content", reviewers.get(i), item);
+                Review review = new Review((int) (Math.random() * 5) + 1, "content", reviewers.get(i), item, ItemOption);
                 reviews.add(review);
                 em.persist(review);
             });
