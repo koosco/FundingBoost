@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import practice.fundingboost2.common.repo.entity.BaseTimeEntity;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.member.repo.entity.Member;
 
@@ -22,7 +23,7 @@ import practice.fundingboost2.member.repo.entity.Member;
 @Entity
 @Table(name = "orders")
 @NoArgsConstructor
-public class Order {
+public class Order extends BaseTimeEntity {
 
     private static final Integer DEFAULT_QUANTITY = 1;
 
