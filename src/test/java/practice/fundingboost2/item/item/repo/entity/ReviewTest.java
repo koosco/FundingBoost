@@ -20,22 +20,19 @@ class ReviewTest {
 
     Validator validator;
 
-    Option itemOption;
-
     @BeforeEach
     void init() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
         member = new Member("email", "nickname", "imageUrl", "phoneNumber");
         item = new Item("name", null, "image", "brand", "ITEM_TEST");
-        itemOption = new Option(item, "option", 3);
     }
 
     @Test
     void whenCreateReview_thenItemReviewCountMustIncrease() {
         // given
         // when
-        Review review = new Review(5, "content", member, item, itemOption);
+        Review review = new Review(5, "content", member, item, "optionName");
 
         // then
         assertThat(item.getReviewCount()).isEqualTo(1);
@@ -47,7 +44,7 @@ class ReviewTest {
         List<String> images = List.of("image1", "image2", "image3");
 
         // when
-        Review review = new Review(5, "content", member, item, itemOption, images);
+        Review review = new Review(5, "content", member, item, "optionName", images);
         // then
         assertThat(review.getReviewImages()).hasSize(images.size());
     }
@@ -56,7 +53,7 @@ class ReviewTest {
     void givenReview_whenScoreIsZero_thenValidationFails() {
         // given
         // when
-        Review review = new Review(0, "content", member, item, itemOption);
+        Review review = new Review(0, "content", member, item, "optionName");
         // then
         Set<ConstraintViolation<Review>> violations = validator.validate(review);
         assertThat(violations).isNotEmpty();
@@ -66,7 +63,7 @@ class ReviewTest {
     void givenReview_whenScoreIsOne_thenValidationPasses() {
         // given
         // when
-        Review review = new Review(1, "content", member, item, itemOption);
+        Review review = new Review(1, "content", member, item, "optionName");
         // then
         Set<ConstraintViolation<Review>> violations = validator.validate(review);
         assertThat(violations).isEmpty();
@@ -76,7 +73,7 @@ class ReviewTest {
     void givenReview_whenScoreIsFive_thenValidationPasses() {
         // given
         // when
-        Review review = new Review(5, "content", member, item, itemOption);
+        Review review = new Review(5, "content", member, item, "optionName");
         // then
         Set<ConstraintViolation<Review>> violations = validator.validate(review);
         assertThat(violations).isEmpty();
@@ -86,7 +83,7 @@ class ReviewTest {
     void givenReview_whenScoreIsSix_thenValidationFails() {
         // given
         // when
-        Review review = new Review(6, "content", member, item, itemOption);
+        Review review = new Review(6, "content", member, item, "optionName");
         // then
         Set<ConstraintViolation<Review>> violations = validator.validate(review);
         assertThat(violations).isNotEmpty();
@@ -97,7 +94,7 @@ class ReviewTest {
         // given
         List<String> images = List.of("image1", "image2", "image3");
         // when
-        Review review = new Review(5, "content", member, item, itemOption, images);
+        Review review = new Review(5, "content", member, item, "optionName", images);
         // then
         Set<ConstraintViolation<Review>> violations = validator.validate(review);
         assertThat(violations).isEmpty();
@@ -108,7 +105,7 @@ class ReviewTest {
         // given
         List<String> images = List.of("image1", "image2", "image3", "image4");
         // when
-        Review review = new Review(5, "content", member, item, itemOption, images);
+        Review review = new Review(5, "content", member, item, "optionName", images);
         // then
         Set<ConstraintViolation<Review>> violations = validator.validate(review);
         assertThat(violations).isNotEmpty();
