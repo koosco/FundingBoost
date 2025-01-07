@@ -47,6 +47,7 @@ public enum ErrorCode {
   INVALID_ACCESS_URL(40015, HttpStatus.BAD_REQUEST, "잘못된 사용자 접근입니다."),
   INVALID_ITEM_QUANTITY(40016, HttpStatus.BAD_REQUEST, "최소 1개 이상의 수량을 선택해야 합니다."),
   LACK_ITEM_QUANTITY(40017, HttpStatus.BAD_REQUEST, "아이템 수량이 부족합니다."),
+  ALREADY_WRITTEN_REVIEW(40018, HttpStatus.BAD_REQUEST, "이미 리뷰를 작성했습니다."),
 
   // Gone Error
   GONE_SHARED_URL(41001, HttpStatus.GONE, "해당 공유 URL이 만료되었습니다."),
