@@ -31,42 +31,82 @@ class CreateReviewRequestDtoTest {
     }
 
     @Test
-    void givenNullOrderId_thenThrowException() {
+    void givenNullOrderId_thenValidationFails() {
         // given
         // when
         CreateReviewRequestDto dto = new CreateReviewRequestDto(1L, null, "content", 5);
         // then
         Set<ConstraintViolation<CreateReviewRequestDto>> violations = validator.validate(dto);
-        assertThat(violations).isNotEmpty();
+        assertThat(violations).hasSize(1);
     }
     
     @Test
-    void givenNullItemId_thenThrowException() {
+    void givenNullItemId_thenValidationFails() {
         // given
         // when
         CreateReviewRequestDto dto = new CreateReviewRequestDto(null, 1L, "content", 5);
         // then
         Set<ConstraintViolation<CreateReviewRequestDto>> violations = validator.validate(dto);
-        assertThat(violations).isNotEmpty();
+        assertThat(violations).hasSize(1);
     }
     
     @Test
-    void givenNullScore_thenThrowException() {
+    void givenNullScore_thenValidationFails() {
         // given
         // when
         CreateReviewRequestDto dto = new CreateReviewRequestDto(1L, 1L, "content", null);
         // then
         Set<ConstraintViolation<CreateReviewRequestDto>> violations = validator.validate(dto);
-        assertThat(violations).isNotEmpty();
+        assertThat(violations).hasSize(1);
     }
 
     @Test
-    void givenNotNullItemIdAndScore_thenShouldNotThrowException() {
+    void givenNotNullItemIdAndScore_thenValidationPasses() {
         // given
         // when
         CreateReviewRequestDto dto = new CreateReviewRequestDto(1L, 1L, "content", 5);
         // then
         Set<ConstraintViolation<CreateReviewRequestDto>> violations = validator.validate(dto);
         assertThat(violations).isEmpty();
+    }
+    
+    @Test
+    void givenScoreZero_thenValidationFails() {
+        // given
+        // when
+        CreateReviewRequestDto dto = new CreateReviewRequestDto(1L, 1L, "content", 0);
+        // then
+        Set<ConstraintViolation<CreateReviewRequestDto>> violations = validator.validate(dto);
+        assertThat(violations).hasSize(1);
+    }
+    
+    @Test
+    void givenScoreOne_thenValidationPasses() {
+        // given
+        // when
+        CreateReviewRequestDto dto = new CreateReviewRequestDto(1L, 1L, "content", 1);
+        // then
+        Set<ConstraintViolation<CreateReviewRequestDto>> violations = validator.validate(dto);
+        assertThat(violations).isEmpty();
+    }
+    
+    @Test
+    void givenScoreFive_thenValidationPasses() {
+        // given
+        // when
+        CreateReviewRequestDto dto = new CreateReviewRequestDto(1L, 1L, "content", 5);
+        // then
+        Set<ConstraintViolation<CreateReviewRequestDto>> violations = validator.validate(dto);
+        assertThat(violations).isEmpty();
+    }
+
+    @Test
+    void givenScoreSix_thenValidationFails() {
+        // given
+        // when
+        CreateReviewRequestDto dto = new CreateReviewRequestDto(1L, 1L, "content", 6);
+        // then
+        Set<ConstraintViolation<CreateReviewRequestDto>> violations = validator.validate(dto);
+        assertThat(violations).hasSize(1);
     }
 }

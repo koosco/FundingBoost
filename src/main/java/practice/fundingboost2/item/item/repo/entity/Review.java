@@ -17,6 +17,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
+import practice.fundingboost2.common.exception.CommonException;
+import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.common.repo.entity.BaseTimeEntity;
 import practice.fundingboost2.member.repo.entity.Member;
 
@@ -52,6 +54,12 @@ public class Review extends BaseTimeEntity {
         foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT)
     )
     private List<String> reviewImages;
+
+    public void validateMember(Long memberId) {
+        if (member.validateId(memberId)) {
+            throw new CommonException(ErrorCode.ACCESS_DENIED);
+        }
+    }
 
     public Review(int score, String content, Member member, Item item, String optionName) {
         this(score, content, member, item, optionName, List.of());

@@ -135,4 +135,23 @@ class ItemTest {
         Set<ConstraintViolation<Item>> violations = validator.validate(item);
         assertThat(violations).isNotEmpty();
     }
+    
+    @Test
+    void givenItem_whenRemoveReview_thenReviewCountDecrease() {
+        // given
+        item.review();
+        // when
+        item.removeReview();
+        // then
+        assertThat(item.getReviewCount()).isEqualTo(0);
+    }
+    
+    @Test
+    void givenItemReviewCountZero_whenRemoveReview_thenThrowException() {
+        // given
+        // when
+        // then
+        assertThatThrownBy(item::removeReview)
+            .isInstanceOf(CommonException.class);
+    }
 }
