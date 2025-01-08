@@ -1,6 +1,8 @@
 package practice.fundingboost2.item.order.app;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,12 +39,25 @@ public class OrderService {
         Member member = memberService.findMember(memberId);
         Delivery delivery = deliveryService.findDelivery(dto.deliveryId());
 
-        List<Order> orders = dto.orderItemListRequestDto().stream()
-                .map(itemInfo -> createOrderEntity(member, delivery, itemInfo))
-                .toList();
+        List<Order> orders = new ArrayList<>();
+
+        dto.orderItemListRequestDto().forEach(itemInfo -> {
+            Order order = createOrderEntity(member, delivery, itemInfo);
+            int price = itemService.findItem(itemInfo.itemId()).getPrice();
+            int quantity = itemInfo.quantity();
+            validateQuantity(quantity);
+            member.decreasePoint(price*quantity);
+            orders.add(order);
+        });
         orderRepository.saveAll(orders);
 
         return CommonSuccessDto.fromEntity(true);
+    }
+
+    private void validateQuantity(int quantity) {
+        if (quantity <= 0) {
+            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
     }
 
     private Order createOrderEntity(Member member, Delivery delivery, OrderItemRequestDto itemInfo) {

@@ -65,7 +65,7 @@ public class Item {
 
     public Item(String name, Integer price, String imageUrl, String brand, String category) {
         this.name = name;
-        this.price = 0;
+        this.price = price;
         this.imageUrl = imageUrl;
         this.brand = brand;
         this.category = category;
