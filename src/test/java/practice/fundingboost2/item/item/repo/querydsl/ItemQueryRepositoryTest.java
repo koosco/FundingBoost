@@ -76,8 +76,8 @@ class ItemQueryRepositoryTest {
         }
 
         List<Review> reviews = List.of(
-                new Review(5, "Great product!", user1, items.getFirst(), items.getFirst().getOptions().getFirst()),
-                new Review(4, "Good value for money.", user2, items.getFirst(), items.getFirst().getOptions().getFirst())
+                new Review(5, "Great product!", user1, items.getFirst(), items.getFirst().getOptions().getFirst().getName()),
+                new Review(4, "Good value for money.", user2, items.getFirst(), items.getFirst().getOptions().getFirst().getName())
         );
 
         em.persist(reviews.get(0));

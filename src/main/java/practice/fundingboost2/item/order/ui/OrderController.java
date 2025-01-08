@@ -1,6 +1,7 @@
 package practice.fundingboost2.item.order.ui;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,13 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/item")
-    public ResponseDto<CommonSuccessDto> createOrderFromItems(@Auth Long memberId, @RequestBody CreateOrderRequestDto dto) {
+    public ResponseDto<CommonSuccessDto> createOrderFromItems(
+        @Auth
+        Long memberId,
+
+        @RequestBody
+        @Validated
+        CreateOrderRequestDto dto) {
         return ResponseDto.created(orderService.createOrder(memberId, dto));
     }
 }

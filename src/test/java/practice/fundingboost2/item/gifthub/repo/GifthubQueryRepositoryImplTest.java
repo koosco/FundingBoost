@@ -15,7 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.item.gifthub.repo.entity.Gifthub;
 import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
-import practice.fundingboost2.item.gifthub.ui.dto.GetGifthubResponseDto;
+import practice.fundingboost2.item.gifthub.app.dto.GetGifthubResponseDto;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.member.repo.entity.Member;

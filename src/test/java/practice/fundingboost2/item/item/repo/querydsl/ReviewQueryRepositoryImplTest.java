@@ -52,11 +52,9 @@ class ReviewQueryRepositoryImplTest {
         item = new Item("name", 1000, "imageUrl", "brand", "category");
         em.persist(item);
 
-        ItemOption = new Option(item, "option", 3);
-
         IntStream.range(0, REVIEWER_SIZE)
             .forEach(i -> {
-                Review review = new Review((int) (Math.random() * 5) + 1, "content", reviewers.get(i), item, ItemOption);
+                Review review = new Review((int) (Math.random() * 5) + 1, "content", reviewers.get(i), item, "optionName");
                 reviews.add(review);
                 em.persist(review);
             });

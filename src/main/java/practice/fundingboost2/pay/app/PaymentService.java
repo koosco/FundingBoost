@@ -14,7 +14,7 @@ import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.member.app.MemberService;
 import practice.fundingboost2.member.repo.entity.Member;
-import practice.fundingboost2.pay.app.dto.PayDto;
+import practice.fundingboost2.pay.app.dto.PaymentRequestDto;
 import practice.fundingboost2.pay.repo.PaymentRepository;
 import practice.fundingboost2.pay.repo.entity.Pay;
 
@@ -62,7 +62,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public CommonSuccessDto savePay(Long memberId, PayDto dto) {
+    public CommonSuccessDto savePay(Long memberId, PaymentRequestDto dto) {
         Member member = memberService.findMember(memberId);
         Pay pay = new Pay(member,
             dto.merchantUid(),
