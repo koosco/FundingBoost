@@ -17,7 +17,9 @@ public class MemberQueryController {
     private final MemberService memberService;
 
     @GetMapping
-    public ResponseDto<GetMemberResponseDto> getMember(@Auth Long memberId) {
+    public ResponseDto<GetMemberResponseDto> getMember(
+        @Auth
+        Long memberId) {
         return ResponseDto.ok(memberService.getMember(memberId));
     }
 }

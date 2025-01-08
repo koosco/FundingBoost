@@ -8,7 +8,7 @@ public record GetMemberReviewResponseDto(
         Long reviewId,
         String itemName,
         Integer score,
-        Option itemOption,
+        String optionName,
         String content,
         String itemImageUrl,
         List<String> reviewImages
@@ -18,7 +18,7 @@ public record GetMemberReviewResponseDto(
                 review.getId(),
                 review.getItem().getName(),
                 review.getScore(),
-                review.getItemOption(),
+                review.getOptionName(),
                 review.getContent(),
                 review.getItem().getImageUrl(),
                 review.getReviewImages()

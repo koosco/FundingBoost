@@ -5,8 +5,8 @@ import java.util.List;
 import practice.fundingboost2.item.item.repo.entity.Review;
 
 public record GetReviewResponseDto(
-    Long memberId,
     Long reviewId,
+    Long memberId,
     String memberName,
     String memberImageUrl,
     int reviewScore,

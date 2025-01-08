@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import practice.fundingboost2.item.gifthub.repo.entity.QGifthub;
-import practice.fundingboost2.item.gifthub.ui.dto.GetGifthubResponseDto;
+import practice.fundingboost2.item.gifthub.app.dto.GetGifthubResponseDto;
 import practice.fundingboost2.item.item.repo.entity.QItem;
 import practice.fundingboost2.item.item.repo.entity.QOption;
 

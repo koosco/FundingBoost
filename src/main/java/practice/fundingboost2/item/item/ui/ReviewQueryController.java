@@ -21,7 +21,9 @@ public class ReviewQueryController {
     private final ReviewQueryRepository reviewQueryRepository;
 
     @GetMapping("/{item_id}")
-    public ResponseDto<Page<GetReviewResponseDto>> getReviews(@PathVariable("item_id") Long itemId, Pageable pageable) {
+    public ResponseDto<Page<GetReviewResponseDto>> getReviews(
+        @PathVariable("item_id") Long itemId,
+        Pageable pageable) {
         return ResponseDto.ok(reviewQueryRepository.getReviews(itemId, pageable));
     }
 

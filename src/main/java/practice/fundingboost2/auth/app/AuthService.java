@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import practice.fundingboost2.auth.app.dto.LoginRequestDto;
-import practice.fundingboost2.auth.app.dto.LoginResponseDto;
+import practice.fundingboost2.auth.app.dto.TokenDto;
 import practice.fundingboost2.auth.app.dto.RegisterRequestDto;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.config.security.form.CustomAuthenticationProvider;
@@ -37,12 +37,12 @@ public class AuthService {
         return CommonSuccessDto.fromEntity(true);
     }
 
-    public LoginResponseDto login(LoginRequestDto dto) {
+    public TokenDto login(LoginRequestDto dto) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
         Authentication token = customAuthenticationProvider.authenticate(authentication);
         String accessToken = tokenGenerator.generateToken(token);
 
-        return new LoginResponseDto(accessToken);
+        return new TokenDto(accessToken);
     }
 
     private void validate(RegisterRequestDto dto, List<Member> findMembers) {

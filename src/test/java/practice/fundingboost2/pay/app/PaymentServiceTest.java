@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.member.repo.MemberRepository;
 import practice.fundingboost2.member.repo.entity.Member;
-import practice.fundingboost2.pay.app.dto.PayDto;
+import practice.fundingboost2.pay.app.dto.PaymentRequestDto;
 import practice.fundingboost2.pay.repo.PaymentRepository;
 
 @SpringBootTest
@@ -34,7 +34,7 @@ class PaymentServiceTest {
     @Test
     void givenMemberIdAndPayDto_whenSavePay_thenMustSaveCreatedPay() {
         // given
-        PayDto dto = new PayDto(
+        PaymentRequestDto dto = new PaymentRequestDto(
             "merchantUid",
             "impUid",
             "buyerName",
@@ -56,7 +56,7 @@ class PaymentServiceTest {
     @Test
     void givenMember_whenSavePay_thenMemberPointMustBeIncrease() {
         // given
-        PayDto dto = new PayDto(
+        PaymentRequestDto dto = new PaymentRequestDto(
             "merchantUid",
             "impUid",
             "buyerName",
