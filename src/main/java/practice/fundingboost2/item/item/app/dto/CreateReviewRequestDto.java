@@ -1,15 +1,18 @@
 package practice.fundingboost2.item.item.app.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public record OrderItemRequestDto(
+public record CreateReviewRequestDto(
     @NotNull
     Long itemId,
 
     @NotNull
-    Long optionId,
+    Long orderId,
 
-    @Min(1)
-    int quantity) {
+    String content,
+
+    @NotNull
+    Integer score
+) {
+
 }

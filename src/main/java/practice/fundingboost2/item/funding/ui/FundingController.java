@@ -28,35 +28,61 @@ public class FundingController {
     private final FundingService fundingService;
 
     @PostMapping
-    public ResponseDto<CommonSuccessDto> createFunding(@Auth Long memberId, @RequestBody CreateFundingRequestDto dto) {
+    public ResponseDto<CommonSuccessDto> createFunding(
+        @Auth
+        Long memberId,
+
+        @RequestBody
+        CreateFundingRequestDto dto) {
         return ResponseDto.created(fundingService.createFunding(memberId, dto));
     }
 
     @PostMapping("/{funding_id}")
-    public ResponseDto<CommonSuccessDto> fund(@PathVariable("funding_id") Long fundingId,
-        @RequestBody UpdateFundingRequestDto dto) {
+    public ResponseDto<CommonSuccessDto> fund(
+        @PathVariable("funding_id")
+        Long fundingId,
+
+        @RequestBody
+        UpdateFundingRequestDto dto) {
         return ResponseDto.ok(fundingService.fund(fundingId, dto));
     }
 
     @PatchMapping("/{funding_id}")
-    public ResponseDto<CommonSuccessDto> updateFunding(@Auth Long memberId, @PathVariable("funding_id") Long fundingId,
-        @RequestBody UpdateFundingRequestDto dto) {
+    public ResponseDto<CommonSuccessDto> updateFunding(
+        @Auth
+        Long memberId,
+
+        @PathVariable("funding_id")
+        Long fundingId,
+
+        @RequestBody
+        UpdateFundingRequestDto dto) {
         return ResponseDto.ok(fundingService.updateFunding(memberId, fundingId, dto));
     }
 
     @GetMapping("/{funding_id}")
-    public ResponseDto<GetFundingDetailResponseDto> getFunding(@Auth Long memberId,
-        @PathVariable("funding_id") Long fundingId) {
+    public ResponseDto<GetFundingDetailResponseDto> getFunding(
+        @Auth
+        Long memberId,
+
+        @PathVariable("funding_id")
+        Long fundingId) {
         return ResponseDto.ok(fundingService.getFunding(memberId, fundingId));
     }
 
     @GetMapping("/history")
-    public ResponseDto<GetFundingHistoryListResponseDto> getFundingHistory(@Auth Long memberId) {
+    public ResponseDto<GetFundingHistoryListResponseDto> getFundingHistory(
+        @Auth
+        Long memberId) {
         return ResponseDto.ok(fundingService.getFundingHistory(memberId));
     }
 
     @GetMapping
-    public ResponseDto<Page<GetFundingResponseDto>> getFundings(@Auth Long memberId, Pageable pageable) {
+    public ResponseDto<Page<GetFundingResponseDto>> getFundings(
+        @Auth
+        Long memberId,
+
+        Pageable pageable) {
         return ResponseDto.ok(fundingService.getFundings(memberId, pageable));
     }
 }

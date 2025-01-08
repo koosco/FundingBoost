@@ -24,7 +24,6 @@ import practice.fundingboost2.member.app.MemberService;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class OrderService {
 
@@ -33,6 +32,11 @@ public class OrderService {
     private final DeliveryService deliveryService;
     private final OrderRepository orderRepository;
     private final GifthubService gifthubService;
+
+    public Order findOrder(Long orderId) {
+        return orderRepository.findById(orderId)
+            .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_ORDER));
+    }
 
     @Transactional
     public CommonSuccessDto createOrder(Long memberId, CreateOrderRequestDto dto) {

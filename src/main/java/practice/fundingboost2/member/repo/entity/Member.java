@@ -63,6 +63,10 @@ public class Member {
         return member;
     }
 
+    public boolean validateId(Long memberId) {
+        return this.id.equals(memberId);
+    }
+
     public void increasePoint(Integer point) {
         this.point += point;
     }

@@ -34,6 +34,8 @@ public class Review extends BaseTimeEntity {
 
     private String content;
 
+    private String optionName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Member member;
@@ -41,10 +43,6 @@ public class Review extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Item item;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Option itemOption;
 
     @Size(max = 3)
     @ElementCollection(fetch = FetchType.EAGER)
@@ -55,16 +53,16 @@ public class Review extends BaseTimeEntity {
     )
     private List<String> reviewImages;
 
-    public Review(int score, String content, Member member, Item item, Option itemOption) {
-        this(score, content, member, item, itemOption, List.of());
+    public Review(int score, String content, Member member, Item item, String optionName) {
+        this(score, content, member, item, optionName, List.of());
     }
 
-    public Review(int score, String content, Member member, Item item, Option itemOption, List<String> reviewImages) {
+    public Review(int score, String content, Member member, Item item, String optionName, List<String> reviewImages) {
         this.score = score;
         this.content = content;
         this.member = member;
         this.item = item;
-        this.itemOption = itemOption;
+        this.optionName = optionName;
         this.reviewImages = reviewImages;
         item.review();
     }
