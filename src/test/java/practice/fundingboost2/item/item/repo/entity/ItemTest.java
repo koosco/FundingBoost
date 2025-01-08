@@ -18,6 +18,10 @@ class ItemTest {
     Validator validator;
 
     Item item;
+    
+    Item priceNotNullItem;
+
+    final int PRICE = 1000;
 
     @BeforeEach
     void init() {
@@ -25,8 +29,18 @@ class ItemTest {
         validator = factory.getValidator();
 
         item = new Item("name", null, "image", "brand", "ITEM_TEST");
+        
+        priceNotNullItem = new Item("name2", PRICE, "image2", "brand2", "ITEM_TEST2");
     }
 
+    @Test
+    public void givenPriceItem_whenCreated_thenPriceMustBeThousand() {
+        //given
+        //when
+        //then
+        assertThat(priceNotNullItem.getPrice()).isEqualTo(PRICE);
+    }
+    
     @Test
     void givenItem_whenCreated_thenCountMustBeZero() {
         // given
