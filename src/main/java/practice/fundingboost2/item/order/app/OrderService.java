@@ -1,17 +1,14 @@
 package practice.fundingboost2.item.order.app;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.item.gifthub.app.GifthubService;
-import practice.fundingboost2.item.gifthub.repo.entity.Gifthub;
-import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
 import practice.fundingboost2.item.item.app.ItemService;
 import practice.fundingboost2.item.item.app.dto.OrderItemRequestDto;
 import practice.fundingboost2.item.item.repo.entity.Item;
@@ -43,12 +40,25 @@ public class OrderService {
         Member member = memberService.findMember(memberId);
         Delivery delivery = deliveryService.findDelivery(dto.deliveryId());
 
-        List<Order> orders = dto.orderItemListRequestDto().stream()
-                .map(itemInfo -> createOrderEntity(member, delivery, itemInfo))
-                .toList();
+        List<Order> orders = new ArrayList<>();
+
+        dto.orderItemListRequestDto().forEach(itemInfo -> {
+            Order order = createOrderEntity(member, delivery, itemInfo);
+            int price = itemService.findItem(itemInfo.itemId()).getPrice();
+            int quantity = itemInfo.quantity();
+            validateQuantity(quantity);
+            member.decreasePoint(price*quantity);
+            orders.add(order);
+        });
         orderRepository.saveAll(orders);
 
         return CommonSuccessDto.fromEntity(true);
+    }
+
+    private void validateQuantity(int quantity) {
+        if (quantity <= 0) {
+            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
     }
 
     private Order createOrderEntity(Member member, Delivery delivery, OrderItemRequestDto itemInfo) {

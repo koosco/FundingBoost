@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import practice.fundingboost2.item.item.app.dto.GetMemberReviewResponseDto;
 import practice.fundingboost2.item.item.app.dto.GetReviewResponseDto;
 import practice.fundingboost2.item.item.repo.entity.QReview;
 import practice.fundingboost2.member.repo.entity.QMember;
@@ -36,6 +37,34 @@ public class ReviewQueryRepositoryImpl implements ReviewQueryRepository {
         long pageCount = getPageCount(itemId);
 
         return new PageImpl<>(dtos, pageable, pageCount);
+    }
+
+    @Override
+    public Page<GetMemberReviewResponseDto> getMemberReviews(Long memberId, Pageable pageable) {
+        List<GetMemberReviewResponseDto> dtos = queryFactory
+                .selectFrom(review)
+                .where(review.member.id.eq(memberId))
+                .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch()
+                .stream()
+                .map(GetMemberReviewResponseDto::from)
+                .toList();
+
+        long pageCount = getMemberPageCount(memberId);
+
+        return new PageImpl<>(dtos, pageable, pageCount);
+    }
+
+    private long getMemberPageCount(Long memberId) {
+        Long count = queryFactory
+                .select(review.count())
+                .from(review)
+                .where(review.member.id.eq(memberId))
+                .fetchOne();
+
+        return count != null ? count : 0;
     }
 
     private long getPageCount(Long itemId) {

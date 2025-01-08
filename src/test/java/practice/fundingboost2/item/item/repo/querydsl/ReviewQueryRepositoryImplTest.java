@@ -30,15 +30,18 @@ class ReviewQueryRepositoryImplTest {
     @PersistenceContext
     EntityManager em;
 
+    Member member;
+
+    List<Item> MemberOrderItems = new ArrayList<>();
+
     List<Member> reviewers = new ArrayList<>();
 
     Item item;
 
-    Option ItemOption;
-
     List<Review> reviews = new ArrayList<>();
 
     final static int REVIEWER_SIZE = 20;
+    final static int MEMBER_REVIEW_SIZE = 20;
 
     @BeforeEach
     void init() {
@@ -58,6 +61,25 @@ class ReviewQueryRepositoryImplTest {
                 reviews.add(review);
                 em.persist(review);
             });
+
+        member = new Member("aa.@aa", "inho", "url.com", "phoneNumber-123");
+        em.persist(member);
+
+        IntStream.range(0, MEMBER_REVIEW_SIZE)
+                        .forEach(i -> {
+                            Item item = new Item("item"+i, i*1000, "imageUrl"+i, "brand"+i, "category"+i);
+                            MemberOrderItems.add(item);
+                            em.persist(item);
+
+                            Option option1 = new Option(item, "option"+i, 5);
+                            em.persist(option1);
+
+                            Review review = new Review((int) (Math.random() * 5) + 1, "content" + i, member, item,"option"+i);
+                            reviews.add(review);
+                            em.persist(review);
+                        });
+
+
         em.flush();
     }
 

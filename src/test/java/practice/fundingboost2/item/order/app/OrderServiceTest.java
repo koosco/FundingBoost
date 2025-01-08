@@ -1,7 +1,7 @@
 package practice.fundingboost2.item.order.app;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -10,32 +10,46 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
+import practice.fundingboost2.common.exception.CommonException;
+import practice.fundingboost2.item.gifthub.repo.GifthubRepository;
 import practice.fundingboost2.item.gifthub.repo.entity.Gifthub;
 import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
 import practice.fundingboost2.item.item.app.dto.OrderItemRequestDto;
+import practice.fundingboost2.item.item.repo.ItemRepository;
+import practice.fundingboost2.item.item.repo.OptionRepository;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.item.order.app.dto.CreateOrderRequestDto;
+import practice.fundingboost2.item.order.repo.DeliveryRepository;
 import practice.fundingboost2.item.order.repo.entity.Delivery;
+import practice.fundingboost2.member.repo.MemberRepository;
 import practice.fundingboost2.member.repo.entity.Member;
 
 @SpringBootTest
-@Transactional
 class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
 
-    @PersistenceContext
-    EntityManager em;
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
+
+    @Autowired
+    private OptionRepository optionRepository;
+
+    @Autowired
+    private DeliveryRepository deliveryRepository;
+
+    @Autowired
+    private GifthubRepository gifthubRepository;
 
     Member member;
 
     List<Item> items = new ArrayList<>();
-
-    List<Gifthub> gifthubs = new ArrayList<>();
 
     Delivery delivery;
 
@@ -45,16 +59,17 @@ class OrderServiceTest {
     @BeforeEach
     void init(){
         member = new Member("email@email", "member", "imageUrl", "phoneNumber");
-        em.persist(member);
+        member.increasePoint(20000);
+        memberRepository.save(member);
 
-        for(int i = 0; i < ITEM_COUNT; i++){
+        for(int i = 1; i <= ITEM_COUNT; i++){
             Item item = new Item("item"+i, 1000 * i, "imageUrl"+i, "brand"+i, "category"+i);
             items.add(item);
-            em.persist(item);
+            itemRepository.save(item);
 
-            for (int j = 0; j < OPTION_LIST_SIZE; j++) {
+            for (int j = 1; j <= OPTION_LIST_SIZE; j++) {
                 Option option = new Option(item, item.getName() +" option"+j, 100);
-                em.persist(option);
+                optionRepository.save(option);
             }
         }
 
@@ -63,14 +78,12 @@ class OrderServiceTest {
                     GifthubId gifthubId = new GifthubId(member.getId(), items.get(i).getId(), items.get(i).getOptions().get(i).getId());
                     Gifthub gifthub = new Gifthub(gifthubId);
                     gifthub.updateQuantity(i+1);
-                    gifthubs.add(gifthub);
-                    em.persist(gifthub);
+                    gifthubRepository.save(gifthub);
                 });
 
 
         delivery = new Delivery("friend", "address", "phoneNumber", member);
-        em.persist(delivery);
-
+        deliveryRepository.save(delivery);
     }
 
     @Test
@@ -80,7 +93,7 @@ class OrderServiceTest {
                 .mapToObj(i -> new OrderItemRequestDto(
                         items.get(i).getId(),
                         items.get(i).getOptions().get(i).getId(),
-                        i
+                        i+1
                 ))
                 .toList();
         CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(delivery.getId(), orderItemRequestDto);
@@ -91,13 +104,30 @@ class OrderServiceTest {
     }
 
     @Test
-    public void givenGifthubAndRequestDto_whenCreateOrderFromGifthub_thenReturnDto() throws Exception {
+    public void givenNotInvalidQuantity_whenValidateQuantity_thenThrowCommonException() throws Exception {
         //given
         List<OrderItemRequestDto> orderItemRequestDto = IntStream.range(0, 3)
                 .mapToObj(i -> new OrderItemRequestDto(
                         items.get(i).getId(),
                         items.get(i).getOptions().get(i).getId(),
                         i
+                ))
+                .toList();
+        CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(delivery.getId(), orderItemRequestDto);
+        //when
+        //then
+        assertThatThrownBy(() -> orderService.createOrder(member.getId(), createOrderRequestDto))
+                .isInstanceOf(CommonException.class);
+    }
+
+    @Test
+    public void givenGifthubAndRequestDto_whenCreateOrderFromGifthub_thenReturnDto() {
+        //given
+        List<OrderItemRequestDto> orderItemRequestDto = IntStream.range(0, 3)
+                .mapToObj(i -> new OrderItemRequestDto(
+                        items.get(i).getId(),
+                        items.get(i).getOptions().get(i).getId(),
+                        i+1
                 ))
                 .toList();
         CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(delivery.getId(), orderItemRequestDto);
