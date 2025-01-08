@@ -19,7 +19,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @PatchMapping
-    public ResponseDto<GetMemberResponseDto> updateMember(@Auth Long id, @RequestBody UpdateMemberRequestDto requestDto) {
+    public ResponseDto<GetMemberResponseDto> updateMember(
+        @Auth
+        Long id,
+
+        @RequestBody
+        UpdateMemberRequestDto requestDto) {
         return ResponseDto.ok(memberService.updateMember(id, requestDto));
     }
 }

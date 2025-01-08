@@ -22,18 +22,28 @@ public class ItemQueryController {
     private final ItemQueryRepository itemQueryRepository;
 
     @GetMapping
-    public Page<GetItemResponseDto> getItems(@RequestParam(value = "category", required = false) String category,
+    public Page<GetItemResponseDto> getItems(
+        @RequestParam(value = "category", required = false)
+        String category,
+
         Pageable pageable) {
         return itemQueryRepository.getItems(category, pageable);
     }
 
     @GetMapping("/like")
-    public ResponseDto<Page<GetItemResponseDto>> getLikedItems(@Auth Long memberId, Pageable pageable) {
+    public ResponseDto<Page<GetItemResponseDto>> getLikedItems(
+        @Auth
+        Long memberId,
+
+        Pageable pageable) {
         return ResponseDto.ok(itemQueryRepository.getLikedItems(memberId, pageable));
     }
 
     @GetMapping("{item_id}")
-    public ResponseDto<GetItemDetailResponseDto> getItemInfo(@Auth Long memberId,
+    public ResponseDto<GetItemDetailResponseDto> getItemInfo(
+        @Auth
+        Long memberId,
+
         @PathVariable("item_id") Long itemId) {
         return ResponseDto.ok(itemQueryRepository.getItemInfo(memberId, itemId));
     }

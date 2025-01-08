@@ -1,4 +1,15 @@
 package practice.fundingboost2.item.item.app.dto;
 
-public record OrderItemRequestDto(Long itemId, Long optionId, int quantity) {
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
+public record OrderItemRequestDto(
+    @NotNull
+    Long itemId,
+
+    @NotNull
+    Long optionId,
+
+    @Min(1)
+    int quantity) {
 }
