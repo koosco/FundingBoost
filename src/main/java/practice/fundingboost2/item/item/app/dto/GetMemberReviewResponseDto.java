@@ -40,15 +40,11 @@ public record GetMemberReviewResponseDto(
     @Nullable
     String content,
 
-    /**
-     * TODO : 상품 이미지 url 제외
-     */
     @Schema(
         description = "상품 이미지 URL",
         example = "http://localhost:8080/image/item1.jpg")
     @Nullable
     String itemImageUrl,
-
 
     @Schema(
         description = "리뷰 이미지 URL",
