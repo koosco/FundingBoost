@@ -1,0 +1,33 @@
+name: CI Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out code
+        uses: actions/checkout@v4
+
+      - name: setup jdk
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Write test application.yml
+        run: echo "${{ secrets.TEST_APPLICATION_YML }}" > src/test/resources/application.yml
+
+      - name: Run tests
+        run: ./gradlew test --info --stacktrace
