@@ -38,7 +38,7 @@ public class FundingQueryRepositoryImpl implements FundingQueryRepository {
             .limit(orderedPageable.getPageSize())
             .fetch()
             .stream()
-            .map(GetFundingResponseDto::from)
+            .map(GetFundingResponseDto::getDto)
             .toList();
 
         Long pageCount = getPageCount(memberId);

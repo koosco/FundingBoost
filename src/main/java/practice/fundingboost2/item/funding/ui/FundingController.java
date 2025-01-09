@@ -18,7 +18,6 @@ import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.item.funding.app.FundingService;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequestDto;
 
@@ -78,7 +77,7 @@ public class FundingController {
 
     @Operation(summary = "펀딩 내역 조회", description = "펀딩 내역을 조회합니다.")
     @GetMapping("/history")
-    public ResponseDto<List<GetFundingHistoryResponseDto>> getFundingHistory(
+    public ResponseDto<List<GetFundingResponseDto>> getFundingHistory(
         @Auth
         Long memberId) {
         return ResponseDto.ok(fundingService.getFundingHistory(memberId));
