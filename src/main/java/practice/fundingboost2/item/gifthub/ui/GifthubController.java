@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.gifthub.ui;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,6 +21,7 @@ public class GifthubController {
 
     private final GifthubService gifthubService;
 
+    @Operation(summary = "장바구니 추가", description = "장바구니에 상품을 추가합니다.")
     @PostMapping("/{item_id}/{option_id}")
     public ResponseDto<CommonSuccessDto> addItemToCart(
         @Auth
@@ -33,6 +35,7 @@ public class GifthubController {
         return ResponseDto.ok(gifthubService.addToCart(memberId, itemId, optionId));
     }
 
+    @Operation(summary = "장바구니 삭제", description = "장바구니에서 상품을 삭제합니다.")
     @DeleteMapping("{item_id}/{option_id}")
     public ResponseDto<CommonSuccessDto> deleteItemFromCart(
         @Auth
@@ -46,6 +49,7 @@ public class GifthubController {
         return ResponseDto.ok(gifthubService.deleteFromCart(memberId, itemId, optionId));
     }
 
+    @Operation(summary = "장바구니 수정", description = "장바구니에 담긴 상품을 수정합니다.")
     @PatchMapping("/{item_id}/{option_id}")
     public ResponseDto<CommonSuccessDto> updateItemFromCart(
         @Auth

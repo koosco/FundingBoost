@@ -1,6 +1,7 @@
 package practice.fundingboost2.item.item.ui;
 
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,6 +19,7 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    @Operation(summary = "상품 좋아요", description = "상품을 좋아요합니다. ")
     @PutMapping("/like/{item_id}")
     public ResponseDto<CommonSuccessDto> likeItem(
         @Auth

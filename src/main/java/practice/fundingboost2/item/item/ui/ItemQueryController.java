@@ -1,5 +1,7 @@
 package practice.fundingboost2.item.item.ui;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,8 @@ public class ItemQueryController {
 
     private final ItemQueryRepository itemQueryRepository;
 
+    @Operation(summary = "상품 목록 조회", description = "상품 목록을 조회합니다.")
+    @SecurityRequirements
     @GetMapping
     public Page<GetItemResponseDto> getItems(
         @RequestParam(value = "category", required = false)
@@ -30,6 +34,7 @@ public class ItemQueryController {
         return itemQueryRepository.getItems(category, pageable);
     }
 
+    @Operation(summary = "좋아요 상품 조회", description = "회원이 좋아요한 상품을 조회합니다.")
     @GetMapping("/like")
     public ResponseDto<Page<GetItemResponseDto>> getLikedItems(
         @Auth
@@ -39,6 +44,8 @@ public class ItemQueryController {
         return ResponseDto.ok(itemQueryRepository.getLikedItems(memberId, pageable));
     }
 
+    @Operation(summary = "상품 상세 조회", description = "상품 상세 정보를 조회합니다.")
+    @SecurityRequirements
     @GetMapping("{item_id}")
     public ResponseDto<GetItemDetailResponseDto> getItemInfo(
         @Auth

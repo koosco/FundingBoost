@@ -1,6 +1,8 @@
 package practice.fundingboost2.auth.ui;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,8 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Operation(summary = "로그인", description = "로그인을 수행합니다.")
+    @SecurityRequirements
     @PostMapping("/login")
     public ResponseDto<TokenDto> login(
         @RequestBody
@@ -29,6 +33,8 @@ public class AuthController {
         return ResponseDto.ok(authService.login(dto));
     }
 
+    @Operation(summary = "회원가입", description = "회원가입을 수행합니다.")
+    @SecurityRequirements
     @PostMapping("/register")
     public ResponseDto<CommonSuccessDto> register(
         @RequestBody
