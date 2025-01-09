@@ -33,6 +33,9 @@ public class FundingServiceFundTest {
     ContributorService contributorService;
 
     @Mock
+    FundingQueryService queryService;
+
+    @Mock
     Funding funding;
 
     @Mock
@@ -41,7 +44,7 @@ public class FundingServiceFundTest {
 
     @BeforeEach
     void init() {
-        doReturn(funding).when(fundingRepository).concurrentFindFunding(any());
+        doReturn(funding).when(queryService).concurrentFindFunding(any());
     }
 
     @Test
