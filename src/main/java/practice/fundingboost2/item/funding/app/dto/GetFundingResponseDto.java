@@ -1,6 +1,7 @@
 package practice.fundingboost2.item.funding.app.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -65,12 +66,18 @@ public record GetFundingResponseDto(
 
     @Schema(
         description = "펀딩 참여자 정보")
-    @NotNull
+    @Nullable
     GetMemberInfoDto memberInfo,
-    List<GetFundingItemResponseDto> fundingItems
+    List<GetFundingItemResponseDto> fundingItems,
+
+    @Schema(
+        description = "펀딩 참여자 수",
+        example = "10")
+    @Nullable
+    Integer contributorCount
 ) {
 
-    public static GetFundingResponseDto from(Funding funding) {
+    public static GetFundingResponseDto getDto(Funding funding) {
         return new GetFundingResponseDto(
             funding.getId(),
             funding.getMessage(),
@@ -84,6 +91,37 @@ public record GetFundingResponseDto(
             funding.getFundingItems().stream()
                 .sorted(Comparator.comparingInt(FundingItem::getSequence))
                 .map(GetFundingItemResponseDto::from)
-                .toList());
+                .toList(),
+            null);
+    }
+
+    public static GetFundingResponseDto getHistory(Funding funding) {
+        return new GetFundingResponseDto(
+            funding.getId(),
+            null,
+            funding.getTag(),
+            funding.getTotalPrice(),
+            funding.getCollectPrice(),
+            funding.getCreatedAt(),
+            funding.getDeadLine(),
+            null,
+            null,
+            null,
+            funding.getFundingCount());
+    }
+
+    public static GetFundingResponseDto getDetail(Funding funding) {
+        return new GetFundingResponseDto(
+            funding.getId(),
+            funding.getMessage(),
+            funding.getTag(),
+            funding.getTotalPrice(),
+            funding.getCollectPrice(),
+            funding.getCreatedAt(),
+            funding.getDeadLine(),
+            funding.getStatus(),
+            null,
+            null,
+            null);
     }
 }

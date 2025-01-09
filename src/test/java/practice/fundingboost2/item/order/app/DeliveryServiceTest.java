@@ -14,7 +14,6 @@ import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.item.order.app.dto.DeliveryRequestDto;
 import practice.fundingboost2.item.order.app.dto.DeliveryResponseDto;
-import practice.fundingboost2.item.order.app.dto.GetDeliveryListResponseDto;
 import practice.fundingboost2.item.order.repo.DeliveryRepository;
 import practice.fundingboost2.item.order.repo.entity.Delivery;
 import practice.fundingboost2.member.repo.MemberRepository;
@@ -52,9 +51,9 @@ class DeliveryServiceTest {
     void givenCreateDeliveries_whenCalled_thenReturnMembersDeliveryList() {
         // given
         // when
-        GetDeliveryListResponseDto dto = deliveryService.getDeliveries(member.getId());
+        List<DeliveryResponseDto> dtos = deliveryService.getDeliveries(member.getId());
         // then
-        assertThat(dto.addresses()).hasSize(DELIVERY_SIZE);
+        assertThat(dtos).hasSize(DELIVERY_SIZE);
     }
 
     @Test
@@ -63,10 +62,10 @@ class DeliveryServiceTest {
         Member member2 = memberRepository.save(new Member("member2", "password", "nickname", "email"));
 
         // when
-        GetDeliveryListResponseDto dto = deliveryService.getDeliveries(member2.getId());
+        List<DeliveryResponseDto> dtos = deliveryService.getDeliveries(member2.getId());
 
         // then
-        assertThat(dto.addresses()).isEmpty();
+        assertThat(dtos).isEmpty();
     }
 
     @Test

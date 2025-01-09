@@ -148,4 +148,41 @@ class FundingTest {
         // then
         assertThat(funding.getDeadLine()).isEqualTo(newDeadline);
     }
+
+    @Test
+    void givenFundingPrice_whenNotExceedFundingPrice_thenFundingSuccess() {
+        // given
+        funding.plusTotalPrice(1000);
+        funding.fund(900);
+
+        // when
+        funding.fund(200);
+
+        // then
+        assertThat(funding.getCollectPrice()).isEqualTo(1100);
+    }
+    
+    @Test
+    void givenTotalPriceAndCollectPriceThousand_whenFund_thenThrowException() {
+        // given
+        funding.plusTotalPrice(1000);
+        funding.fund(1000);
+
+        // when
+        // then
+        assertThatThrownBy(() -> funding.fund(1000))
+            .isInstanceOf(CommonException.class);
+    }
+
+    @Test
+    void givenExceedCollectPriceExceedTotalPrice_whenFund_thenThrowException() {
+        // given
+        funding.plusTotalPrice(1000);
+        funding.fund(10000);
+
+        // when
+        // then
+        assertThatThrownBy(() -> funding.fund(1000))
+            .isInstanceOf(CommonException.class);
+    }
 }

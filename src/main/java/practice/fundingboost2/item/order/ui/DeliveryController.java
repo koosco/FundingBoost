@@ -1,6 +1,7 @@
 package practice.fundingboost2.item.order.ui;
 
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +18,6 @@ import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.item.order.app.DeliveryService;
 import practice.fundingboost2.item.order.app.dto.DeliveryRequestDto;
 import practice.fundingboost2.item.order.app.dto.DeliveryResponseDto;
-import practice.fundingboost2.item.order.app.dto.GetDeliveryListResponseDto;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class DeliveryController {
 
     @Operation(summary = "배송지 목록 조회", description = "회원의 배송지 목록을 조회합니다.")
     @GetMapping
-    public ResponseDto<GetDeliveryListResponseDto> getDeliveries(
+    public ResponseDto<List<DeliveryResponseDto>> getDeliveries(
         @Auth
         Long memberId) {
         return ResponseDto.ok(deliveryService.getDeliveries(memberId));
