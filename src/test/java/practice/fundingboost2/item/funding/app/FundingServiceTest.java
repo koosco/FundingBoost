@@ -14,7 +14,7 @@ import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingItemRequestDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponseDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryResponseDto;
 import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.interfaces.FundingRepository;
 import practice.fundingboost2.item.funding.repo.entity.Contributor;
@@ -247,13 +247,13 @@ class FundingServiceTest {
         contributors = contributorRepository.saveAll(contributors);
 
         //when
-        GetFundingHistoryListResponseDto result = fundingService.getFundingHistory(memberId);
+        List<GetFundingHistoryResponseDto> dtos = fundingService.getFundingHistory(memberId);
 
         //then
-        assertThat(result.fundingHistoryDtos().size()).isEqualTo(FUNDING_ITEM_SIZE);
+        assertThat(dtos.size()).isEqualTo(FUNDING_ITEM_SIZE);
 
-        assertThat(result.fundingHistoryDtos().getLast().fundingTag()).isEqualTo(FundingTag.ETC);
-        assertThat(result.fundingHistoryDtos().getFirst().contributorCount()).isEqualTo(FRIEND_SIZE);
+        assertThat(dtos.getLast().fundingTag()).isEqualTo(FundingTag.ETC);
+        assertThat(dtos.getFirst().contributorCount()).isEqualTo(FRIEND_SIZE);
     }
 
     @Test
@@ -262,9 +262,9 @@ class FundingServiceTest {
         Long memberId = friends.getFirst().getId();
 
         //when
-        GetFundingHistoryListResponseDto result = fundingService.getFundingHistory(memberId);
+        List<GetFundingHistoryResponseDto> dtos = fundingService.getFundingHistory(memberId);
 
         //then
-        assertThat(result.fundingHistoryDtos().isEmpty()).isEqualTo(true);
+        assertThat(dtos.isEmpty()).isEqualTo(true);
     }
 }

@@ -1,6 +1,7 @@
 package practice.fundingboost2.item.funding.ui;
 
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,7 @@ import practice.fundingboost2.config.security.annotation.Auth;
 import practice.fundingboost2.item.funding.app.FundingService;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponseDto;
+import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequestDto;
 
@@ -77,7 +78,7 @@ public class FundingController {
 
     @Operation(summary = "펀딩 내역 조회", description = "펀딩 내역을 조회합니다.")
     @GetMapping("/history")
-    public ResponseDto<GetFundingHistoryListResponseDto> getFundingHistory(
+    public ResponseDto<List<GetFundingHistoryResponseDto>> getFundingHistory(
         @Auth
         Long memberId) {
         return ResponseDto.ok(fundingService.getFundingHistory(memberId));

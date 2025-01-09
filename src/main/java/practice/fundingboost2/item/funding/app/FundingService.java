@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryListResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingHistoryResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingInfoResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
@@ -105,12 +104,10 @@ public class FundingService {
         return fundingRepository.findFundings(memberId, pageable);
     }
 
-    public GetFundingHistoryListResponseDto getFundingHistory(Long memberId) {
-        List<GetFundingHistoryResponseDto> getFundingHistoryResponseDtos = fundingRepository
+    public List<GetFundingHistoryResponseDto> getFundingHistory(Long memberId) {
+        return fundingRepository
             .findAllByMemberId(memberId).stream()
             .map(GetFundingHistoryResponseDto::from)
             .toList();
-
-        return new GetFundingHistoryListResponseDto(getFundingHistoryResponseDtos);
     }
 }
