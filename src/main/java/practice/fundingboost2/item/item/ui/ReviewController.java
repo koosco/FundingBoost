@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.item.ui;
 
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -24,6 +25,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    @Operation(summary = "리뷰 생성", description = "리뷰를 생성합니다.")
     @PostMapping
     public ResponseDto<GetReviewResponseDto> createReview(
         @Auth
@@ -37,6 +39,7 @@ public class ReviewController {
         return ResponseDto.created(reviewService.createReview(memberId, dto, files));
     }
 
+    @Operation(summary = "리뷰 삭제", description = "리뷰를 삭제합니다.")
     @DeleteMapping("/{review_id}")
     public ResponseDto<CommonSuccessDto> deleteReview(
         @Auth

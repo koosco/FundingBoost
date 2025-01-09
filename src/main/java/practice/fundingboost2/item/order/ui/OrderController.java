@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.order.ui;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    @Operation(summary = "주문 생성", description = "주문을 생성합니다.")
     @PostMapping("/item")
     public ResponseDto<CommonSuccessDto> createOrderFromItems(
         @Auth

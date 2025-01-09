@@ -6,23 +6,27 @@ import lombok.Getter;
 import practice.fundingboost2.common.exception.ErrorCode;
 
 @Getter
-@Schema(name = "ExceptionDto", description = "API 예외 발생 시 응답 DTO")
+@Schema(name = "ExceptionDto", description = "API 예외 발생 시 응답 Dto")
 public class ExceptionDto {
 
-  @Schema(name = "code", description = "에러 코드")
-  @NotNull
-  private final Integer code;
+    @Schema(
+        name = "code",
+        description = "에러 코드")
+    @NotNull
+    private final Integer code;
 
-  @Schema(name = "message", description = "에러 메시지")
-  @NotNull
-  private final String message;
+    @Schema(
+        name = "message",
+        description = "에러 메시지")
+    @NotNull
+    private final String message;
 
-  public ExceptionDto(ErrorCode errorCode) {
-    this.code = errorCode.getCode();
-    this.message = errorCode.getMessage();
-  }
+    public ExceptionDto(ErrorCode errorCode) {
+        this.code = errorCode.getCode();
+        this.message = errorCode.getMessage();
+    }
 
-  public static ExceptionDto of(ErrorCode errorCode) {
-    return new ExceptionDto(errorCode);
-  }
+    public static ExceptionDto of(ErrorCode errorCode) {
+        return new ExceptionDto(errorCode);
+    }
 }

@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.order.ui;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ public class OrderQueryController {
 
     private final OrderQueryRepository orderQueryRepository;
 
+    @Operation(summary = "주문 내역 조회", description = "회원의 주문 내역을 조회합니다.")
     @GetMapping("")
     public ResponseDto<Page<GetOrderHistoryResponseDto>> getMemberOrders(@Auth Long memberId, Pageable pageable) {
         return ResponseDto.ok(orderQueryRepository.getMemberOrders(memberId, pageable));
