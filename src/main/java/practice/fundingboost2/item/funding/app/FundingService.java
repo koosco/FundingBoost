@@ -15,7 +15,6 @@ import practice.fundingboost2.item.funding.app.interfaces.FundingRepository;
 import practice.fundingboost2.item.funding.repo.entity.Contributor;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
 import practice.fundingboost2.item.funding.repo.entity.FundingItem;
-import practice.fundingboost2.item.funding.repo.jpa.ContributorRepository;
 import practice.fundingboost2.item.item.app.ItemService;
 import practice.fundingboost2.item.item.app.dto.GetItemResponseDto;
 import practice.fundingboost2.item.item.repo.OptionRepository;
@@ -34,7 +33,6 @@ public class FundingService {
     private final ItemService itemService;
     private final MemberService memberService;
     private final OptionRepository optionRepository;
-    private final ContributorRepository contributorRepository;
     private final ContributorService contributorService;
 
     public Funding findFunding(Long fundingId) {
@@ -89,7 +87,7 @@ public class FundingService {
         List<GetItemResponseDto> getFundingItemResponseDtos = funding.getFundingItems().stream()
             .map(GetItemResponseDto::from)
             .toList();
-        List<GetFundingParticipantDto> getFundingParticipantDtos = contributorRepository.findAll_ByFundingId(fundingId)
+        List<GetFundingParticipantDto> getFundingParticipantDtos = contributorService.findAllByFundingId(fundingId)
             .stream()
             .map(GetFundingParticipantDto::from)
             .toList();
