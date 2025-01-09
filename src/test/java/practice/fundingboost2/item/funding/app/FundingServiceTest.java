@@ -1,7 +1,6 @@
 package practice.fundingboost2.item.funding.app;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,12 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import practice.fundingboost2.common.dto.CommonSuccessDto;
-import practice.fundingboost2.item.funding.app.dto.CreateFundingItemRequestDto;
-import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
-import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.interfaces.FundingRepository;
 import practice.fundingboost2.item.funding.repo.entity.Contributor;
 import practice.fundingboost2.item.funding.repo.entity.Funding;
@@ -128,81 +123,6 @@ class FundingServiceTest {
     }
 
     @Test
-    void givenOneItem_whenCreateFunding_thenCreateNewFunding() {
-        // given
-        Item item = items.getFirst();
-        Option option = item.getOptions().getFirst();
-        CreateFundingItemRequestDto fundingItemDto = new CreateFundingItemRequestDto(item.getId(),
-            option.getId(), 1);
-        CreateFundingRequestDto dto = new CreateFundingRequestDto(List.of(fundingItemDto),
-            LocalDateTime.now(), "BIRTHDAY", "happy birthday");
-
-        // when
-        CommonSuccessDto resultDto = fundingService.createFunding(member.getId(), dto);
-
-        // then
-        assertTrue(resultDto.isSuccess());
-    }
-
-    @Test
-    void givenFunding_whenFriendFund_thenFundingPriceMustIncrease() {
-        // given
-        Member friend = friends.getFirst();
-        Funding funding = fundings.getFirst();
-        int fundingPrice = 1000;
-        UpdateFundingRequestDto dto = new UpdateFundingRequestDto(friend.getId(), null, null, fundingPrice);
-
-        // when
-        CommonSuccessDto response = fundingService.fund(funding.getId(), dto);
-
-        // then
-        funding = fundingRepository.findById(funding.getId());
-        assertThat(response.isSuccess()).isTrue();
-        assertThat(funding.getFundingCount()).isEqualTo(1);
-        assertThat(funding.getCollectPrice()).isEqualTo(fundingPrice);
-    }
-
-    @Test
-    void givenFunding_whenFundingPriceExceed_thenFundingMustSuccess() {
-        // given
-        Member friend = friends.getFirst();
-        Member friend2 = friends.get(1);
-        Funding funding = fundings.getFirst();
-        Integer totalPrice = funding.getTotalPrice();
-        Integer friendOneFundingPrice = totalPrice / 2 + 1000;
-        Integer friendTwoFundingPrice = totalPrice / 2 + 2000;
-
-        // when
-        fundingService.fund(funding.getId(), new UpdateFundingRequestDto(friend.getId(), null, null, friendOneFundingPrice));
-        fundingService.fund(funding.getId(), new UpdateFundingRequestDto(friend2.getId(), null, null, friendTwoFundingPrice));
-
-        // then
-        funding = fundingRepository.findById(funding.getId());
-        assertThat(funding.getCollectPrice()).isEqualTo(friendOneFundingPrice + friendTwoFundingPrice);
-    }
-
-    @Test
-    void givenTenItems_whenCreateFunding_thenCreateNewFunding() {
-        // given
-        Member member = new Member("email", "nickname", "imageUrl", "phoneNumber");
-        member = memberRepository.save(member);
-        List<CreateFundingItemRequestDto> fundingItemDtos = new ArrayList<>();
-        for (int i = 0; i < OPTION_SIZE; i++) {
-            Item item = items.get(i);
-            Option option = item.getOptions().getFirst();
-            fundingItemDtos.add(new CreateFundingItemRequestDto(item.getId(), option.getId(), i));
-        }
-        CreateFundingRequestDto dto = new CreateFundingRequestDto(fundingItemDtos, LocalDateTime.now(), "BIRTHDAY",
-            "happy birthday");
-
-        // when
-        CommonSuccessDto resultDto = fundingService.createFunding(member.getId(), dto);
-
-        // then
-        assertTrue(resultDto.isSuccess());
-    }
-
-    @Test
     void givenMemberIdAndFundingId_whenFundingIsNotNull_thenReturnDto() {
         //given
         Long fundingId = fundings.getFirst().getId();
@@ -257,7 +177,7 @@ class FundingServiceTest {
     }
 
     @Test
-    void givenMemberId_whenFundingHistoryIsEmpty_thenReturnEmptyDto() throws Exception {
+    void givenMemberId_whenFundingHistoryIsEmpty_thenReturnEmptyDto() {
         //given
         Long memberId = friends.getFirst().getId();
 

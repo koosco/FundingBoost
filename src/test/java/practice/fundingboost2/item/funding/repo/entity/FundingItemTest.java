@@ -1,6 +1,7 @@
 package practice.fundingboost2.item.funding.repo.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 import practice.fundingboost2.member.repo.entity.Member;
@@ -70,5 +72,30 @@ class FundingItemTest {
         }
         // then
         assertThat(funding.getFundingItems()).hasSize(5);
+    }
+
+    @Test
+    void givenFunding_whenSequenceIsFive_thenThrowException() {
+        // given
+        Item item = items.getFirst();
+        Option option = item.getOptions().getFirst();
+
+        // when
+        // then
+        assertThatThrownBy(() -> new FundingItem(funding, item, option, 6))
+            .isInstanceOf(CommonException.class);
+    }
+
+    @Test
+    void givenFunding_whenSequenceIsFive_thenFundingItemMustBeCreated() {
+        // given
+        Item item = items.getFirst();
+        Option option = item.getOptions().getFirst();
+
+        // when
+        new FundingItem(funding, item, option, 5);
+
+        // then
+        assertThat(funding.getFundingItems()).hasSize(1);
     }
 }

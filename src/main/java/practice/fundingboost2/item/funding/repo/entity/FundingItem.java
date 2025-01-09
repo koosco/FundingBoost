@@ -15,6 +15,8 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import practice.fundingboost2.common.exception.CommonException;
+import practice.fundingboost2.common.exception.ErrorCode;
 import practice.fundingboost2.item.item.repo.entity.Item;
 import practice.fundingboost2.item.item.repo.entity.Option;
 
@@ -22,6 +24,8 @@ import practice.fundingboost2.item.item.repo.entity.Option;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FundingItem {
+
+    private static final int MAX_SEQUENCE = 5;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +51,7 @@ public class FundingItem {
     private FundingItemStatus status;
 
     public FundingItem(Funding funding, Item item, Option option, Integer sequence) {
+        validateSequence(sequence);
         this.funding = funding;
         this.item = item;
         this.option = option;
@@ -55,5 +60,11 @@ public class FundingItem {
         item.fund();
         funding.getFundingItems().add(this);
         funding.plusTotalPrice(item.getPrice());
+    }
+
+    private void validateSequence(Integer sequence) {
+        if (sequence > MAX_SEQUENCE) {
+            throw new CommonException(ErrorCode.INVALID_ARGUMENT);
+        }
     }
 }
