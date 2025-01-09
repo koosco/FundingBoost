@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.item.funding.app.dto.CreateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingDetailResponseDto;
-import practice.fundingboost2.item.funding.app.dto.GetFundingInfoResponseDto;
 import practice.fundingboost2.item.funding.app.dto.GetFundingResponseDto;
 import practice.fundingboost2.item.funding.app.dto.UpdateFundingRequestDto;
 import practice.fundingboost2.item.funding.app.interfaces.FundingRepository;
@@ -86,7 +85,7 @@ public class FundingService {
         Funding funding = findFunding(fundingId);
         funding.validateMember(member);
 
-        GetFundingInfoResponseDto getFundingInfoResponseDto = GetFundingInfoResponseDto.from(funding);
+        GetFundingResponseDto getFundingInfoResponseDto = GetFundingResponseDto.getDetail(funding);
         List<GetItemResponseDto> getFundingItemResponseDtos = funding.getFundingItems().stream()
             .map(GetItemResponseDto::from)
             .toList();

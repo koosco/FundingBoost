@@ -9,7 +9,7 @@ import practice.fundingboost2.member.app.dto.GetFundingParticipantDto;
 public record GetFundingDetailResponseDto(
 
     @Schema(description = "펀딩 정보")
-    GetFundingInfoResponseDto getFundingInfoResponseDto,
+    GetFundingResponseDto getFundingInfoResponseDto,
 
     @Schema(description = "펀딩 상품 목록")
     List<GetItemResponseDto> getFundingItemResponseDtos,

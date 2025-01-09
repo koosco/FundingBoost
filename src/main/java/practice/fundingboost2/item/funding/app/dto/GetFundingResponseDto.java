@@ -109,4 +109,19 @@ public record GetFundingResponseDto(
             null,
             funding.getFundingCount());
     }
+
+    public static GetFundingResponseDto getDetail(Funding funding) {
+        return new GetFundingResponseDto(
+            funding.getId(),
+            funding.getMessage(),
+            funding.getTag(),
+            funding.getTotalPrice(),
+            funding.getCollectPrice(),
+            funding.getCreatedAt(),
+            funding.getDeadLine(),
+            funding.getStatus(),
+            null,
+            null,
+            null);
+    }
 }
