@@ -1,6 +1,6 @@
 package practice.fundingboost2.item.order.app;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
+import practice.fundingboost2.item.gifthub.repo.GifthubRepository;
+import practice.fundingboost2.item.gifthub.repo.entity.Gifthub;
+import practice.fundingboost2.item.gifthub.repo.entity.GifthubId;
 import practice.fundingboost2.item.item.app.dto.OrderItemRequestDto;
 import practice.fundingboost2.item.item.repo.ItemRepository;
 import practice.fundingboost2.item.item.repo.OptionRepository;
@@ -41,6 +44,9 @@ class OrderServiceTest {
     @Autowired
     private DeliveryRepository deliveryRepository;
 
+    @Autowired
+    private GifthubRepository gifthubRepository;
+
     Member member;
 
     List<Item> items = new ArrayList<>();
@@ -66,6 +72,14 @@ class OrderServiceTest {
                 optionRepository.save(option);
             }
         }
+
+        IntStream.range(0, ITEM_COUNT)
+                .forEach(i -> {
+                    GifthubId gifthubId = new GifthubId(member.getId(), items.get(i).getId(), items.get(i).getOptions().get(i).getId());
+                    Gifthub gifthub = new Gifthub(gifthubId);
+                    gifthub.updateQuantity(i+1);
+                    gifthubRepository.save(gifthub);
+                });
 
 
         delivery = new Delivery("friend", "address", "phoneNumber", member);
@@ -104,5 +118,22 @@ class OrderServiceTest {
         //then
         assertThatThrownBy(() -> orderService.createOrder(member.getId(), createOrderRequestDto))
                 .isInstanceOf(CommonException.class);
+    }
+
+    @Test
+    public void givenGifthubAndRequestDto_whenCreateOrderFromGifthub_thenReturnDto() {
+        //given
+        List<OrderItemRequestDto> orderItemRequestDto = IntStream.range(0, 3)
+                .mapToObj(i -> new OrderItemRequestDto(
+                        items.get(i).getId(),
+                        items.get(i).getOptions().get(i).getId(),
+                        i+1
+                ))
+                .toList();
+        CreateOrderRequestDto createOrderRequestDto = new CreateOrderRequestDto(delivery.getId(), orderItemRequestDto);
+        //when
+        CommonSuccessDto commonSuccessDto = orderService.createOrderFromGifthub(member.getId(), createOrderRequestDto);
+        //then
+        Assertions.assertTrue(commonSuccessDto.isSuccess());
     }
 }

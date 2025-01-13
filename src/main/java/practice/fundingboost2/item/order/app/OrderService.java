@@ -2,13 +2,13 @@ package practice.fundingboost2.item.order.app;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
+import practice.fundingboost2.item.gifthub.app.GifthubService;
 import practice.fundingboost2.item.item.app.ItemService;
 import practice.fundingboost2.item.item.app.dto.OrderItemRequestDto;
 import practice.fundingboost2.item.item.repo.entity.Item;
@@ -28,6 +28,7 @@ public class OrderService {
     private final ItemService itemService;
     private final DeliveryService deliveryService;
     private final OrderRepository orderRepository;
+    private final GifthubService gifthubService;
 
     public Order findOrder(Long orderId) {
         return orderRepository.findById(orderId)
@@ -74,5 +75,18 @@ public class OrderService {
             }
         }
         throw new CommonException(ErrorCode.NOT_FOUND_OPTION);
+    }
+
+    @Transactional
+    public CommonSuccessDto createOrderFromGifthub(Long memberId, CreateOrderRequestDto dto) {
+        createOrder(memberId, dto);
+        dto.orderItemListRequestDto().forEach(orderItemRequestDto ->
+                gifthubService.deleteFromCart(
+                        memberId,
+                        orderItemRequestDto.itemId(),
+                        orderItemRequestDto.optionId()
+                )
+        );
+        return CommonSuccessDto.fromEntity(true);
     }
 }

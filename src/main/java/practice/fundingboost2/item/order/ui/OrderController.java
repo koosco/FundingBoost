@@ -31,4 +31,10 @@ public class OrderController {
         CreateOrderRequestDto dto) {
         return ResponseDto.created(orderService.createOrder(memberId, dto));
     }
+
+    @PostMapping("/gifthub")
+    public ResponseDto<CommonSuccessDto> createOrderFromGifthub(@Auth Long memberId, @RequestBody CreateOrderRequestDto dto) {
+        return ResponseDto.created(orderService.createOrderFromGifthub(memberId, dto));
+    }
 }
+
