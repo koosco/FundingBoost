@@ -1,5 +1,6 @@
 package practice.fundingboost2.item.funding.app;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,5 +16,9 @@ public class ContributorService {
     @Transactional
     public Contributor save(Contributor contributor) {
         return contributorRepository.save(contributor);
+    }
+
+    public List<Contributor> findAllByFundingId(Long fundingId) {
+        return contributorRepository.findAll_ByFundingId(fundingId);
     }
 }

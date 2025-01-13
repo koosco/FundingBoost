@@ -88,6 +88,11 @@ public class Item {
         this.reviewCount++;
     }
 
+    public void removeReview() {
+        validateNegativeCount(reviewCount);
+        this.reviewCount--;
+    }
+
     private void validateNegativeCount(Integer count) {
         if (count <= 0) {
             throw new CommonException(ErrorCode.INVALID_ARGUMENT);

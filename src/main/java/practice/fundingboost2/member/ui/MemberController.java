@@ -1,5 +1,6 @@
 package practice.fundingboost2.member.ui;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @Operation(summary = "회원 정보 수정", description = "회원 정보를 수정합니다. 변경된 회원 정보를 응답합니다.")
     @PatchMapping
     public ResponseDto<GetMemberResponseDto> updateMember(
         @Auth

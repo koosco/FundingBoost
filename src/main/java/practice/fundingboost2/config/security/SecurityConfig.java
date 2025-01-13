@@ -1,6 +1,7 @@
 package practice.fundingboost2.config.security;
 
 
+import static practice.fundingboost2.config.security.SecurityConst.ALLOWED_GET_URLS;
 import static practice.fundingboost2.config.security.SecurityConst.ALLOWED_URLS;
 
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class SecurityConfig {
                 sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests((authorize) -> authorize
                 .requestMatchers(ALLOWED_URLS.toArray(new String[0])).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/item").permitAll()
+                .requestMatchers(HttpMethod.GET, ALLOWED_GET_URLS.toArray(new String[0])).permitAll()
                 .anyRequest().authenticated())
             .addFilterBefore(jwtProcessingFilter, UsernamePasswordAuthenticationFilter.class);
 

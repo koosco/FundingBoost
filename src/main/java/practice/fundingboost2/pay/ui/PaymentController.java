@@ -2,6 +2,7 @@ package practice.fundingboost2.pay.ui;
 
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -25,12 +26,14 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
+    @Operation(summary = "결제 준비", description = "결제 준비를 위한 상점 식별 번호를 반환합니다.")
     @GetMapping
     public ResponseDto<String> getMerchantUid() {
         log.debug("get merchant uid");
         return ResponseDto.ok(paymentService.getMerchantUid());
     }
 
+    @Operation(summary = "결제 검증", description = "iamport 결제 정보를 검증합니다. 검증 요청 후 결제 요청이 필요합니다.")
     @PostMapping("/{imp_uid}/validation")
     public ResponseDto<IamportResponse<Payment>> validateIamport(
         @PathVariable("imp_uid")
@@ -39,6 +42,7 @@ public class PaymentController {
         return ResponseDto.ok(paymentService.validateIamport(impUid));
     }
 
+    @Operation(summary = "결제 처리", description = "결제를 진행합니다.")
     @PostMapping
     public ResponseDto<CommonSuccessDto> processOrder(
         @Auth

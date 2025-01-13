@@ -8,13 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.fundingboost2.common.dto.CommonSuccessDto;
 import practice.fundingboost2.common.exception.CommonException;
 import practice.fundingboost2.common.exception.ErrorCode;
-import practice.fundingboost2.member.app.MemberService;
-import practice.fundingboost2.member.repo.entity.Member;
 import practice.fundingboost2.item.order.app.dto.DeliveryRequestDto;
 import practice.fundingboost2.item.order.app.dto.DeliveryResponseDto;
-import practice.fundingboost2.item.order.app.dto.GetDeliveryListResponseDto;
 import practice.fundingboost2.item.order.repo.DeliveryRepository;
 import practice.fundingboost2.item.order.repo.entity.Delivery;
+import practice.fundingboost2.member.app.MemberService;
+import practice.fundingboost2.member.repo.entity.Member;
 
 @Service
 @Transactional
@@ -30,14 +29,16 @@ public class DeliveryService {
     }
 
     @Transactional(readOnly = true)
-    public GetDeliveryListResponseDto getDeliveries(Long memberId) {
+    public List<DeliveryResponseDto> getDeliveries(Long memberId) {
         if (!memberService.existsById(memberId)) {
             throw new CommonException(ErrorCode.NOT_FOUND_LOGIN_USER);
         }
 
-        List<Delivery> deliveryAddresses = deliveryRepository.findAll_ByMemberId(memberId);
+        List<Delivery> deliveries = deliveryRepository.findAll_ByMemberId(memberId);
 
-        return GetDeliveryListResponseDto.from(deliveryAddresses);
+        return deliveries.stream()
+            .map(DeliveryResponseDto::new)
+            .toList();
     }
 
     public CommonSuccessDto createDelivery(Long memberId, DeliveryRequestDto dto) {

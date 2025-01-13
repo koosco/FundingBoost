@@ -22,7 +22,7 @@ public class Contributor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int contribution;
+    private Integer contribution;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -32,7 +32,7 @@ public class Contributor {
     @JoinColumn(name = "funding_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Funding funding;
 
-    public Contributor(Member member, Funding funding, int contribution) {
+    public Contributor(Member member, Funding funding, Integer contribution) {
         member.decreasePoint(contribution);
         funding.fund(contribution);
         this.member = member;

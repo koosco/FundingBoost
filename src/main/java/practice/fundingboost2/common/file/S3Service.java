@@ -69,4 +69,12 @@ public class S3Service implements FileService {
         String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
         return UUID.randomUUID() + extension;
     }
+
+    @Override
+    public void deleteFiles(List<String> urls) {
+        urls.forEach(url -> {
+            String key = url.substring(url.lastIndexOf("/") + 1);
+            amazonS3.deleteObject(bucket, key);
+        });
+    }
 }
